@@ -62,6 +62,48 @@ const workTypes = [
   },
 ];
 
+const clientStories = [
+  {
+    name: "Anita Rao",
+    role: "Founder",
+    company: "BrightDent Clinic",
+    focus: "More bookings without higher ad spend",
+    story:
+      "Anita needed predictable patient inquiries, but her ads were expensive and inconsistent. We rebuilt her landing pages, simplified the offer, and focused on local intent keywords.",
+    outcomes: [
+      "Calendar filled two weeks ahead",
+      "Clear call tracking for every campaign",
+      "Lower cost per inquiry in 45 days",
+    ],
+  },
+  {
+    name: "Sameer Qureshi",
+    role: "Owner",
+    company: "UrbanFit Gym",
+    focus: "Membership growth with a tighter budget",
+    story:
+      "Sameer wanted steady walk-ins without discount-heavy promotions. We created a content + retargeting system that highlighted real member wins.",
+    outcomes: [
+      "Consistent trial sign-ups every week",
+      "Higher retention from better onboarding emails",
+      "Marketing spend shifted to best-performing ads",
+    ],
+  },
+  {
+    name: "Meera Singh",
+    role: "Marketing Lead",
+    company: "CraftKart",
+    focus: "E-commerce growth with better ROAS",
+    story:
+      "Meera needed to scale sales while protecting margins. We optimized product pages, improved email flows, and focused ads on top converters.",
+    outcomes: [
+      "Repeat customers grew month over month",
+      "Faster checkout and fewer drop-offs",
+      "Strong ROAS from fewer campaigns",
+    ],
+  },
+];
+
 const results = [
   {
     title: "Local Law Firm",
@@ -310,6 +352,63 @@ const DigitalMarketing = () => {
               >
                 {strategy}
               </motion.span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Happy Clients */}
+      <section className="bg-card section-padding">
+        <div className="container-max">
+          <div className="text-center mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <span className="text-accent font-medium">Happy Clients</span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
+                Real Stories, Real Growth
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
+                Human-first marketing that respects budgets and delivers clarity
+                to the people running the business.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {clientStories.map((story, index) => (
+              <motion.div
+                key={story.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="card-premium p-6 relative"
+              >
+                <Quote className="absolute top-4 right-4 w-7 h-7 text-accent/15" />
+                <div className="mb-4">
+                  <div className="text-sm text-accent font-medium">{story.company}</div>
+                  <h3 className="font-display text-xl font-semibold text-foreground">
+                    {story.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{story.role}</p>
+                </div>
+                <p className="text-sm text-foreground/80 mb-4">
+                  <span className="font-semibold text-foreground">Focus:</span>{" "}
+                  {story.focus}
+                </p>
+                <p className="text-muted-foreground mb-5">{story.story}</p>
+                <ul className="space-y-2">
+                  {story.outcomes.map((outcome) => (
+                    <li key={outcome} className="flex items-start gap-2 text-sm text-foreground">
+                      <CheckCircle className="w-4 h-4 text-accent mt-0.5" />
+                      {outcome}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
             ))}
           </div>
         </div>

@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Code, TrendingUp, Users, CheckCircle, Star } from "lucide-react";
+import { ArrowRight, Code, TrendingUp, Users, CheckCircle, Star, PlayCircle } from "lucide-react";
 import { SparklesCore } from "@/components/ui/sparkles";
 import heroBg from "@/assets/hero-bg.jpg";
 import webDevImg from "@/assets/web-dev.jpg";
 import socialMediaImg from "@/assets/social-media.jpg";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
+import youtubeImg from "@/assets/youtube.jpg";
 
 const services = [
   {
@@ -28,6 +29,13 @@ const services = [
     description: "Tired of wasting money on ads that don't work? We create marketing campaigns that deliver real, measurable growth.",
     link: "/digital-marketing",
     image: digitalMarketingImg,
+  },
+  {
+    icon: PlayCircle,
+    title: "Video Editing & Reviews",
+    description: "Engaging YouTube edits and honest tech reviews that keep viewers watching and help them decide.",
+    link: "/video-editing",
+    image: youtubeImg,
   },
 ];
 
@@ -161,7 +169,7 @@ const Index = () => {
             </motion.div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map((service, index) => (
               <motion.div
                 key={service.title}

@@ -10,6 +10,7 @@ import Contact from "./pages/Contact";
 import WebDevelopment from "./pages/WebDevelopment";
 import SocialMediaMarketing from "./pages/SocialMediaMarketing";
 import DigitalMarketing from "./pages/DigitalMarketing";
+import VideoEditing from "./pages/VideoEditing";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/web-development" element={<WebDevelopment />} />
             <Route path="/social-media-marketing" element={<SocialMediaMarketing />} />
             <Route path="/digital-marketing" element={<DigitalMarketing />} />
+            <Route path="/video-editing" element={<VideoEditing />} />
             
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />

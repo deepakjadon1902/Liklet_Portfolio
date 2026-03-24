@@ -1,23 +1,31 @@
 import { useState, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Clock, Send, Globe, Share2, BarChart3, ArrowRight } from "lucide-react";
+import { Mail, MapPin, Clock, Send, Globe, Share2, BarChart3, ArrowRight, PlayCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { LampContainer } from "@/components/ui/lamp-effect";
 import webDevImg from "@/assets/web-dev.jpg";
 import socialMediaImg from "@/assets/social-media.jpg";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
+import youtubeImg from "@/assets/youtube.jpg";
 
 const contactInfo = [
   {
     icon: MapPin,
-    title: "Our Office",
-    details: ["Virndavan, Uttar Pradesh", "281121", "India"],
+    title: "Our Office - USA",
+    details: [
+      "2020 Forestview Road, Apt#206",
+      "Rockford, IL-61108",
+    ],
   },
   {
-    icon: Phone,
-    title: "Phone",
-    details: ["+91 9634359003"],
+    icon: MapPin,
+    title: "Our Office - India",
+    details: [
+      "Uttar Pradesh ( +91 9634359003 )",
+      "281121",
+      "India",
+    ],
   },
   {
     icon: Mail,
@@ -55,6 +63,14 @@ const services = [
     image: digitalMarketingImg, 
     link: "/digital-marketing",
     icon: BarChart3
+  },
+  { 
+    id: 4, 
+    title: "Video Editing & Reviews", 
+    description: "YouTube edits and tech reviews", 
+    image: youtubeImg, 
+    link: "/video-editing",
+    icon: PlayCircle
   },
 ];
 
@@ -152,7 +168,7 @@ ${formData.message}`;
             </motion.div>
           </div>
           
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((service, index) => (
               <motion.div
                 key={service.id}

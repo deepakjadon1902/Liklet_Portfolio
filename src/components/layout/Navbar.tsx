@@ -11,6 +11,7 @@ const navLinks = [
       { name: "Web Development", path: "/web-development" },
       { name: "Social Media Marketing", path: "/social-media-marketing" },
       { name: "Digital Marketing", path: "/digital-marketing" },
+      { name: "Video Editing & Reviews", path: "/video-editing" },
     ],
   },
   { name: "About Us", path: "/about" },

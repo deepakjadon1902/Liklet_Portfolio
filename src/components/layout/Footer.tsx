@@ -68,6 +68,11 @@ const Footer = () => {
                   Digital Marketing
                 </Link>
               </li>
+              <li>
+                <Link to="/video-editing" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                  Video Editing & Reviews
+                </Link>
+              </li>
             </ul>
           </div>
 
