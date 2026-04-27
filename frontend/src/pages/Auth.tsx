@@ -1,120 +1,52 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ShieldCheck, Sparkles, Zap } from "lucide-react";
-import { apiFetch } from "@/lib/apiClient";
+import { API_BASE_URL } from "@/lib/apiClient";
 import { setUserToken } from "@/lib/userAuth";
 import { useToast } from "@/hooks/use-toast";
 
-type GoogleAuthResponse = { ok: true; token: string };
-
-declare global {
-  interface Window {
-    google?: {
-      accounts?: {
-        id?: {
-          initialize?: (opts: { client_id: string; callback: (resp: { credential?: string }) => void }) => void;
-          renderButton?: (el: HTMLElement, opts: Record<string, unknown>) => void;
-          prompt?: () => void;
-        };
-      };
-    };
-  }
-}
-
-function loadGoogleScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (window.google?.accounts?.id) return resolve();
-
-    const existing = document.querySelector<HTMLScriptElement>('script[data-google-identity="true"]');
-    if (existing) {
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Failed to load Google script")), { once: true });
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.dataset.googleIdentity = "true";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Google script"));
-    document.head.appendChild(script);
-  });
+function parseHashParams(hash: string): URLSearchParams {
+  const raw = hash.startsWith("#") ? hash.slice(1) : hash;
+  return new URLSearchParams(raw);
 }
 
 export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const buttonRef = useRef<HTMLDivElement | null>(null);
 
   const redirect = useMemo(() => {
     const raw = searchParams.get("redirect");
     return raw && raw.startsWith("/") ? raw : "/";
   }, [searchParams]);
 
-  const googleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) || "";
-  const [isReady, setIsReady] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    if (!googleClientId.trim()) return;
-    let isCancelled = false;
+    const params = parseHashParams(window.location.hash || "");
+    const token = params.get("token");
+    const err = params.get("error");
+    const hashRedirect = params.get("redirect");
 
-    loadGoogleScript()
-      .then(() => {
-        if (isCancelled) return;
-        const google = window.google?.accounts?.id;
-        if (!google?.initialize || !google?.renderButton) throw new Error("Google Identity not available");
+    if (err) {
+      toast({ title: "Login failed", description: err });
+      window.location.hash = "";
+      return;
+    }
 
-        google.initialize({
-          client_id: googleClientId.trim(),
-          callback: async (resp) => {
-            const idToken = resp?.credential;
-            if (!idToken) {
-              toast({ title: "Google sign-in failed", description: "No credential returned." });
-              return;
-            }
+    if (token) {
+      setUserToken(token);
+      const next = hashRedirect && hashRedirect.startsWith("/") ? hashRedirect : redirect;
+      window.location.hash = "";
+      navigate(next, { replace: true });
+    }
+  }, [navigate, redirect, toast]);
 
-            setIsLoading(true);
-            try {
-              const data = await apiFetch<GoogleAuthResponse>("/auth/google", {
-                method: "POST",
-                body: JSON.stringify({ idToken }),
-              });
-              setUserToken(data.token);
-              navigate(redirect, { replace: true });
-            } catch (err: unknown) {
-              toast({ title: "Google sign-in failed", description: err instanceof Error ? err.message : "Try again." });
-            } finally {
-              setIsLoading(false);
-            }
-          },
-        });
-
-        if (buttonRef.current) {
-          buttonRef.current.innerHTML = "";
-          google.renderButton(buttonRef.current, {
-            theme: "outline",
-            size: "large",
-            text: "continue_with",
-            width: 320,
-            shape: "pill",
-          });
-        }
-
-        setIsReady(true);
-        google.prompt?.();
-      })
-      .catch((err: unknown) => {
-        toast({ title: "Google sign-in unavailable", description: err instanceof Error ? err.message : "Try again." });
-      });
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [googleClientId, navigate, redirect, toast]);
+  const startGoogleLogin = () => {
+    setIsRedirecting(true);
+    const url = `${API_BASE_URL}/auth/google/start?redirect=${encodeURIComponent(redirect)}`;
+    window.location.href = url;
+  };
 
   return (
     <div className="overflow-hidden">
@@ -164,18 +96,19 @@ export default function Auth() {
               <h2 className="font-display text-2xl font-bold text-foreground">Sign in</h2>
               <p className="text-muted-foreground mt-2">Click below to continue to your booking.</p>
 
-              {!googleClientId.trim() ? (
-                <div className="mt-6 rounded-lg border border-border bg-background p-4 text-sm text-muted-foreground">
-                  Google sign-in is not configured. Set <span className="font-mono">VITE_GOOGLE_CLIENT_ID</span> in{" "}
-                  <span className="font-mono">frontend/.env</span>.
+              <div className="mt-6">
+                <button
+                  type="button"
+                  onClick={startGoogleLogin}
+                  disabled={isRedirecting}
+                  className="btn-accent w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isRedirecting ? "Redirecting to Google..." : "Continue with Google"}
+                </button>
+                <div className="text-xs text-muted-foreground mt-3">
+                  You will be redirected to Google and then returned to complete your booking.
                 </div>
-              ) : (
-                <div className="mt-6">
-                  <div ref={buttonRef} />
-                  {!isReady ? <div className="text-sm text-muted-foreground mt-3">Loading Google sign-in...</div> : null}
-                  {isLoading ? <div className="text-sm text-muted-foreground mt-3">Signing you in...</div> : null}
-                </div>
-              )}
+              </div>
 
               <div className="mt-6 text-xs text-muted-foreground">
                 By continuing, you agree to our{" "}
@@ -195,4 +128,3 @@ export default function Auth() {
     </div>
   );
 }
-

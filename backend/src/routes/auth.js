@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const { OAuth2Client } = require("google-auth-library");
 const { User } = require("../models/User");
-const { signJwt } = require("../utils/jwt");
+const { signJwt, verifyJwt } = require("../utils/jwt");
 
 const authRouter = express.Router();
 
@@ -187,6 +187,153 @@ authRouter.post("/google", async (req, res) => {
     token,
     user: { id: user._id.toString(), email: user.email, name: user.name, role: user.role },
   });
+});
+
+function getFrontendBaseUrl() {
+  const env = (process.env.FRONTEND_URL || "").trim();
+  if (env) return env.replace(/\/+$/, "");
+
+  const cors = (process.env.CORS_ORIGIN || "").split(",").map((s) => s.trim()).filter(Boolean);
+  if (cors.length) return cors[0].replace(/\/+$/, "");
+
+  return "http://localhost:8080";
+}
+
+function getBackendBaseUrl() {
+  const explicit = (process.env.PUBLIC_BASE_URL || "").trim();
+  if (explicit) return explicit.replace(/\/+$/, "");
+
+  const render = (process.env.RENDER_EXTERNAL_URL || "").trim();
+  if (render) return render.replace(/\/+$/, "");
+
+  const port = process.env.PORT ? Number(process.env.PORT) : 5000;
+  return `http://localhost:${port}`;
+}
+
+function getGoogleRedirectUri() {
+  return `${getBackendBaseUrl()}/api/auth/google/callback`;
+}
+
+async function exchangeGoogleAuthCodeForTokens({ code, redirectUri }) {
+  if (typeof fetch !== "function") throw new Error("fetch is not available in this Node runtime");
+
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  if (!clientId) throw new Error("Missing GOOGLE_CLIENT_ID");
+  if (!clientSecret) throw new Error("Missing GOOGLE_CLIENT_SECRET");
+
+  const body = new URLSearchParams();
+  body.set("code", code);
+  body.set("client_id", clientId);
+  body.set("client_secret", clientSecret);
+  body.set("redirect_uri", redirectUri);
+  body.set("grant_type", "authorization_code");
+
+  const resp = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: body.toString(),
+  });
+
+  const text = await resp.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = null;
+  }
+
+  if (!resp.ok) {
+    const message = data && typeof data === "object" && data.error_description ? data.error_description : text || "Token exchange failed";
+    throw new Error(message);
+  }
+
+  return data;
+}
+
+authRouter.get("/google/start", async (req, res) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  if (!clientId) return res.status(500).send("Missing GOOGLE_CLIENT_ID");
+
+  const redirect = typeof req.query.redirect === "string" && req.query.redirect.startsWith("/") ? req.query.redirect : "/";
+  const state = signJwt({ typ: "google_oauth_state", redirect }, { expiresIn: "10m" });
+
+  const redirectUri = getGoogleRedirectUri();
+  const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  url.searchParams.set("client_id", clientId);
+  url.searchParams.set("redirect_uri", redirectUri);
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("scope", "openid email profile");
+  url.searchParams.set("include_granted_scopes", "true");
+  url.searchParams.set("prompt", "select_account");
+  url.searchParams.set("state", state);
+
+  return res.redirect(url.toString());
+});
+
+authRouter.get("/google/callback", async (req, res) => {
+  const frontendBase = getFrontendBaseUrl();
+
+  const error = typeof req.query.error === "string" ? req.query.error : "";
+  if (error) return res.redirect(`${frontendBase}/auth#error=${encodeURIComponent(error)}`);
+
+  const code = typeof req.query.code === "string" ? req.query.code : "";
+  const state = typeof req.query.state === "string" ? req.query.state : "";
+  if (!code || !state) return res.redirect(`${frontendBase}/auth#error=${encodeURIComponent("missing_code")}`);
+
+  let redirectPath = "/";
+  try {
+    const payload = verifyJwt(state);
+    if (!payload || payload.typ !== "google_oauth_state") throw new Error("Invalid state");
+    if (typeof payload.redirect === "string" && payload.redirect.startsWith("/")) {
+      redirectPath = payload.redirect;
+    }
+  } catch {
+    return res.redirect(`${frontendBase}/auth#error=${encodeURIComponent("invalid_state")}`);
+  }
+
+  try {
+    const redirectUri = getGoogleRedirectUri();
+    const tokens = await exchangeGoogleAuthCodeForTokens({ code, redirectUri });
+    const idToken = tokens && typeof tokens === "object" ? tokens.id_token : null;
+    if (!idToken || typeof idToken !== "string") throw new Error("Missing id_token");
+
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) throw new Error("Missing GOOGLE_CLIENT_ID");
+
+    const client = new OAuth2Client(clientId);
+    const ticket = await client.verifyIdToken({ idToken, audience: clientId });
+    const googlePayload = ticket.getPayload();
+    if (!googlePayload || !googlePayload.email || !googlePayload.sub) throw new Error("Invalid Google token");
+
+    const normalizedEmail = googlePayload.email.toLowerCase().trim();
+    const role = getAdminEmails().includes(normalizedEmail) ? "admin" : "user";
+
+    const user = await User.findOneAndUpdate(
+      { email: normalizedEmail },
+      {
+        $set: {
+          name: googlePayload.name || normalizedEmail.split("@")[0],
+          googleSub: googlePayload.sub,
+          role,
+          isEmailVerified: true,
+          emailVerificationCodeHash: undefined,
+          emailVerificationExpiresAt: undefined,
+        },
+        $setOnInsert: { phone: "" },
+      },
+      { upsert: true, new: true }
+    );
+
+    const token = signToken(user);
+    return res.redirect(
+      `${frontendBase}/auth#token=${encodeURIComponent(token)}&redirect=${encodeURIComponent(redirectPath)}`
+    );
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("[backend] google oauth callback error", err);
+    return res.redirect(`${frontendBase}/auth#error=${encodeURIComponent("google_auth_failed")}`);
+  }
 });
 
 module.exports = { authRouter };
