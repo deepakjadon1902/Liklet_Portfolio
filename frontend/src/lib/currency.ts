@@ -29,11 +29,21 @@ export function inrToUsd(inr: number) {
   return Number(inr || 0) * getFxInrToUsd();
 }
 
+export function usdToInr(usd: number) {
+  const fx = getFxInrToUsd();
+  if (!Number.isFinite(fx) || fx <= 0) return 0;
+  return Number(usd || 0) / fx;
+}
+
 export function getStoredCurrency(): Currency | null {
   const raw = safeLower(localStorage.getItem(STORAGE_KEY));
   if (raw === "inr") return "INR";
   if (raw === "usd") return "USD";
   return null;
+}
+
+export function setStoredCurrency(currency: Currency) {
+  localStorage.setItem(STORAGE_KEY, currency);
 }
 
 export async function detectCurrency(): Promise<Currency> {
@@ -56,4 +66,3 @@ export async function detectCurrency(): Promise<Currency> {
     return currency;
   }
 }
-

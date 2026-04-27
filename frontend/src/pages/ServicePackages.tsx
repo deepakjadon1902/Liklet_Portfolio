@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle, ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
-import { Currency, detectCurrency, formatMoney, inrToUsd } from "@/lib/currency";
+import { Currency, detectCurrency, formatMoney, getStoredCurrency, inrToUsd, setStoredCurrency } from "@/lib/currency";
 import { getUserToken } from "@/lib/userAuth";
 
 type Service = {
@@ -44,6 +44,8 @@ export default function ServicePackages() {
   const [currency, setCurrency] = useState<Currency>("INR");
 
   useEffect(() => {
+    const cached = getStoredCurrency();
+    if (cached) setCurrency(cached);
     detectCurrency().then(setCurrency).catch(() => setCurrency("INR"));
   }, []);
 
@@ -99,7 +101,7 @@ export default function ServicePackages() {
           ) : error ? (
             <div className="text-primary-foreground/90">Unable to load packages.</div>
           ) : (
-            <div className="flex items-center gap-4">
+            <div className="flex items-start justify-between gap-4">
               <div className="w-16 h-16 rounded-xl bg-background/80 border border-border flex items-center justify-center p-3">
                 {data?.service?.logoUrl ? (
                   <img
@@ -112,13 +114,30 @@ export default function ServicePackages() {
                   />
                 ) : null}
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <h1 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground">
                   {data?.service?.name} Packages
                 </h1>
                 <p className="text-primary-foreground/80 max-w-2xl">
                   {data?.service?.tagline || "Choose the package that fits your goals."}
                 </p>
+              </div>
+              <div className="shrink-0 rounded-lg border border-primary-foreground/20 bg-primary-foreground/10 px-3 py-2 text-sm text-primary-foreground/90">
+                <label className="flex items-center gap-2">
+                  <span>Currency:</span>
+                  <select
+                    value={currency}
+                    onChange={(e) => {
+                      const next = e.target.value === "USD" ? "USD" : "INR";
+                      setCurrency(next);
+                      setStoredCurrency(next);
+                    }}
+                    className="bg-transparent text-primary-foreground font-semibold outline-none"
+                  >
+                    <option value="USD">USD ($)</option>
+                    <option value="INR">INR (₹)</option>
+                  </select>
+                </label>
               </div>
             </div>
           )}

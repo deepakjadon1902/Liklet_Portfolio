@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, CreditCard } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
-import { Currency, detectCurrency, formatMoney, inrToUsd } from "@/lib/currency";
+import { Currency, detectCurrency, formatMoney, getStoredCurrency, inrToUsd, setStoredCurrency } from "@/lib/currency";
 import { loadRazorpayCheckout } from "@/lib/razorpay";
 import { useToast } from "@/hooks/use-toast";
 import { getUserToken } from "@/lib/userAuth";
@@ -76,6 +76,8 @@ export default function Checkout() {
   });
 
   useEffect(() => {
+    const cached = getStoredCurrency();
+    if (cached) setCurrency(cached);
     detectCurrency().then(setCurrency).catch(() => setCurrency("INR"));
   }, []);
 
@@ -187,7 +189,7 @@ export default function Checkout() {
           </Link>
 
           {isLoading ? (
-            <div className="text-muted-foreground">Loading packageâ€¦</div>
+            <div className="text-muted-foreground">Loading package¦</div>
           ) : error ? (
             <div className="text-muted-foreground">Unable to load package.</div>
           ) : data ? (
@@ -198,11 +200,25 @@ export default function Checkout() {
                     Book {data.package.name}
                   </h1>
                   <p className="text-muted-foreground">
-                    {data.service.name} â€¢ {formatMoney(displayAmount, currency)}/{data.package.interval || "mo"}
+                    {data.service.name}  {formatMoney(displayAmount, currency)}/{data.package.interval || "mo"}
                   </p>
                 </div>
                 <div className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
-                  Currency: <span className="font-semibold text-foreground">{currency}</span>
+                  <label className="flex items-center gap-2">
+                    <span>Currency:</span>
+                    <select
+                      value={currency}
+                      onChange={(e) => {
+                        const next = e.target.value === "USD" ? "USD" : "INR";
+                        setCurrency(next);
+                        setStoredCurrency(next);
+                      }}
+                      className="bg-transparent text-foreground font-semibold outline-none"
+                    >
+                      <option value="USD">USD ($)</option>
+                      <option value="INR">INR (₹)</option>
+                    </select>
+                  </label>
                 </div>
               </div>
 
