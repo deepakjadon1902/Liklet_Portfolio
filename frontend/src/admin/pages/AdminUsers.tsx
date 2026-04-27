@@ -29,37 +29,38 @@ export default function AdminUsers() {
       {error ? <div className="text-muted-foreground">Unable to load users.</div> : null}
 
       <div className="card-premium p-0 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/40">
-            <tr className="text-left">
-              <th className="p-3">Name</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">Phone</th>
-              <th className="p-3">Role</th>
-              <th className="p-3">Verified</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u._id} className="border-t border-border">
-                <td className="p-3">{u.name || "-"}</td>
-                <td className="p-3">{u.email}</td>
-                <td className="p-3">{u.phone || "-"}</td>
-                <td className="p-3">{u.role}</td>
-                <td className="p-3">{u.isEmailVerified ? "Yes" : "No"}</td>
+        <div className="overflow-x-auto">
+          <table className="min-w-[640px] w-full text-sm">
+            <thead className="bg-muted/40">
+              <tr className="text-left">
+                <th className="p-3">Name</th>
+                <th className="p-3">Email</th>
+                <th className="p-3">Phone</th>
+                <th className="p-3">Role</th>
+                <th className="p-3">Verified</th>
               </tr>
-            ))}
-            {!users.length && !isLoading ? (
-              <tr>
-                <td className="p-3 text-muted-foreground" colSpan={5}>
-                  No users.
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u._id} className="border-t border-border">
+                  <td className="p-3">{u.name || "-"}</td>
+                  <td className="p-3">{u.email}</td>
+                  <td className="p-3">{u.phone || "-"}</td>
+                  <td className="p-3">{u.role}</td>
+                  <td className="p-3">{u.isEmailVerified ? "Yes" : "No"}</td>
+                </tr>
+              ))}
+              {!users.length && !isLoading ? (
+                <tr>
+                  <td className="p-3 text-muted-foreground" colSpan={5}>
+                    No users.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
 }
-

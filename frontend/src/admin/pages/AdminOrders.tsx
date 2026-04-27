@@ -57,7 +57,8 @@ export default function AdminOrders() {
       {error ? <div className="text-muted-foreground">Unable to load orders.</div> : null}
 
       <div className="card-premium p-0 overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+          <table className="min-w-[1000px] w-full text-sm">
           <thead className="bg-muted/40">
             <tr className="text-left">
               <th className="p-3">Date</th>
@@ -172,7 +173,8 @@ export default function AdminOrders() {
               </tr>
             ) : null}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   );

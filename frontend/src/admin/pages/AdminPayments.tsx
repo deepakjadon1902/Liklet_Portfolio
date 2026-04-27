@@ -32,7 +32,8 @@ export default function AdminPayments() {
       {error ? <div className="text-muted-foreground">Unable to load payments.</div> : null}
 
       <div className="card-premium p-0 overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+          <table className="min-w-[720px] w-full text-sm">
           <thead className="bg-muted/40">
             <tr className="text-left">
               <th className="p-3">Date</th>
@@ -52,7 +53,7 @@ export default function AdminPayments() {
                   {Number((p.amount != null ? p.amount : p.amountInr) || 0).toLocaleString("en-IN")}
                 </td>
                 <td className="p-3">{p.status}</td>
-                <td className="p-3 text-xs text-muted-foreground">
+                <td className="p-3 text-xs text-muted-foreground whitespace-nowrap">
                   {p.razorpayOrderId || "-"}
                   {p.razorpayPaymentId ? ` / ${p.razorpayPaymentId}` : ""}
                 </td>
@@ -66,7 +67,8 @@ export default function AdminPayments() {
               </tr>
             ) : null}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   );
