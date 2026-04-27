@@ -1,8 +1,10 @@
-import { useMemo } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle, ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
+import { Currency, detectCurrency, formatMoney, inrToUsd } from "@/lib/currency";
+import { getUserToken } from "@/lib/userAuth";
 
 type Service = {
   _id: string;
@@ -18,6 +20,7 @@ type Package = {
   serviceId: string;
   name: string;
   priceInr: number;
+  priceUsd?: number;
   interval?: string;
   description?: string;
   features?: string[];
@@ -37,6 +40,12 @@ const brandBySlug: Record<string, { color: string; gradientFrom: string; gradien
 
 export default function ServicePackages() {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const [currency, setCurrency] = useState<Currency>("INR");
+
+  useEffect(() => {
+    detectCurrency().then(setCurrency).catch(() => setCurrency("INR"));
+  }, []);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["public-service", slug],
@@ -55,9 +64,16 @@ export default function ServicePackages() {
     });
   }, [data?.packages]);
 
-  const subject = data?.service?.name || "Social Media";
   const brand = slug ? brandBySlug[slug] : undefined;
   const brandColor = brand?.color || "#0ea5e9";
+
+  const formatPackagePrice = (pkg: Package) => {
+    if (currency === "USD") {
+      const usd = Number(pkg.priceUsd ?? inrToUsd(pkg.priceInr));
+      return formatMoney(usd, "USD");
+    }
+    return formatMoney(Number(pkg.priceInr || 0), "INR", "en-IN");
+  };
 
   return (
     <div className="overflow-hidden">
@@ -138,7 +154,7 @@ export default function ServicePackages() {
                     ) : null}
                   </div>
                   <div className="text-3xl font-bold text-foreground">
-                    ₹{Number(pkg.priceInr || 0).toLocaleString("en-IN")}
+                    {formatPackagePrice(pkg)}
                     <span className="text-sm font-medium text-muted-foreground">/{pkg.interval || "mo"}</span>
                   </div>
                   {pkg.description ? (
@@ -155,11 +171,17 @@ export default function ServicePackages() {
                   </ul>
 
                   <Link
-                    to={`/social-media-marketing/contact?subject=${encodeURIComponent(subject)}`}
+                    to={`/checkout/${pkg._id}`}
                     className="w-full inline-flex items-center justify-center mt-6 px-4 py-3 rounded-lg font-medium text-white transition-colors"
                     style={{ backgroundColor: brandColor }}
+                    onClick={(e) => {
+                      const token = getUserToken();
+                      if (token) return;
+                      e.preventDefault();
+                      navigate(`/auth?redirect=${encodeURIComponent(`/checkout/${pkg._id}`)}`, { replace: false });
+                    }}
                   >
-                    Contact for {pkg.name}
+                    Book / Order {pkg.name}
                   </Link>
                 </div>
               ))}

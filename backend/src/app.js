@@ -3,9 +3,11 @@ const cors = require("cors");
 
 const { authRouter } = require("./routes/auth");
 const { publicRouter } = require("./routes/public");
+const { publicContactRouter } = require("./routes/publicContact");
 const { paymentsRouter } = require("./routes/payments");
 const { adminRouter } = require("./routes/admin");
 const { requireDb } = require("./middleware/requireDb");
+const { requireAuth } = require("./middleware/auth");
 
 function createApp({ dbReady = false } = {}) {
   const app = express();
@@ -23,9 +25,12 @@ function createApp({ dbReady = false } = {}) {
     res.json({ ok: true });
   });
 
+  // Public routes that don't require the database.
+  app.use("/api/public", publicContactRouter);
+
   app.use("/api/public", requireDb(), publicRouter);
   app.use("/api/auth", requireDb(), authRouter);
-  app.use("/api/payments", requireDb(), paymentsRouter);
+  app.use("/api/payments", requireDb(), requireAuth(), paymentsRouter);
   app.use("/api/admin", adminRouter);
 
   // eslint-disable-next-line no-unused-vars

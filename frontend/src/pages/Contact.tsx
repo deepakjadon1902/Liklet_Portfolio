@@ -8,6 +8,7 @@ import webDevImg from "@/assets/web-dev.jpg";
 import socialMediaImg from "@/assets/social-media.jpg";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
 import youtubeImg from "@/assets/youtube.jpg";
+import { apiFetch } from "@/lib/apiClient";
 
 const contactInfo = [
   {
@@ -94,6 +95,24 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    try {
+      await apiFetch("/public/contact", {
+        method: "POST",
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: "Website Contact",
+          message: formData.message,
+          pageTitle: "Contact Page",
+          company: formData.company,
+          address: formData.address,
+        }),
+      });
+    } catch (err) {
+      console.warn("[frontend] contact email failed", err);
+    }
+
     // Construct WhatsApp message
     const whatsappNumber = "919634359003"; // Replace with your company WhatsApp number
     const whatsappMessage = `*New Contact Form Submission - Liklet*
@@ -117,8 +136,8 @@ ${formData.message}`;
     // Show success message
     setTimeout(() => {
       toast({
-        title: "Message Sent Successfully!",
-        description: "Thank you for contacting us. We'll get back to you within 24 hours.",
+        title: "WhatsApp + Email",
+        description: "Your message is emailed to our team and opened in WhatsApp (tap send).",
       });
       setFormData({ name: "", email: "", phone: "", company: "", address: "", message: "" });
       setIsSubmitting(false);

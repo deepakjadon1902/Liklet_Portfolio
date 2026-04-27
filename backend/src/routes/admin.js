@@ -104,12 +104,13 @@ adminRouter.get("/packages", async (req, res) => {
 });
 
 adminRouter.post("/packages", async (req, res) => {
-  const { serviceId, name, priceInr, interval, description, features, isPopular, isActive } = req.body || {};
+  const { serviceId, name, priceInr, priceUsd, interval, description, features, isPopular, isActive } = req.body || {};
   if (!serviceId || !name || priceInr == null) return res.status(400).json({ error: "Missing required fields" });
   const pkg = await Package.create({
     serviceId,
     name: String(name).trim(),
     priceInr: Number(priceInr),
+    priceUsd: priceUsd == null ? undefined : Number(priceUsd),
     interval: interval ? String(interval) : "mo",
     description: description ? String(description) : "",
     features: Array.isArray(features) ? features : [],

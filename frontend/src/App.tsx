@@ -16,7 +16,11 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import ServiceContact from "./pages/ServiceContact";
 import ServicePackages from "./pages/ServicePackages";
+import Auth from "./pages/Auth";
+import Checkout from "./pages/Checkout";
+import MyOrders from "./pages/MyOrders";
 import AdminRoutes from "./admin/AdminRoutes";
+import RequireUser from "./components/auth/RequireUser";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +54,16 @@ const App = () => (
               element={<ServiceContact pageTitle="Social Media Marketing" defaultSubject="Instagram" />}
             />
             <Route path="/services/:slug" element={<ServicePackages />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route
+              path="/checkout/:packageId"
+              element={
+                <RequireUser>
+                  <Checkout />
+                </RequireUser>
+              }
+            />
+            <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/digital-marketing" element={<DigitalMarketing />} />
             <Route
               path="/digital-marketing/contact"

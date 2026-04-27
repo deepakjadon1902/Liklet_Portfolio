@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "react-router-dom";
+import { apiFetch } from "@/lib/apiClient";
 
 type Props = {
   pageTitle: string;
@@ -70,9 +71,26 @@ const ServiceContact = ({ pageTitle, defaultSubject }: Props) => {
     message: "",
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    try {
+      await apiFetch("/public/contact", {
+        method: "POST",
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+          pageTitle,
+        }),
+      });
+    } catch (err) {
+      // Still proceed to WhatsApp fallback.
+      console.warn("[frontend] contact email failed", err);
+    }
 
     const whatsappMessage = `*New Query - Liklet*
 
@@ -91,8 +109,8 @@ ${formData.message}`;
 
     setTimeout(() => {
       toast({
-        title: "Message Ready in WhatsApp",
-        description: "Please tap send in WhatsApp to submit your query.",
+        title: "WhatsApp + Email",
+        description: "Your message is emailed to our team and opened in WhatsApp (tap send).",
       });
       setFormData({
         name: "",

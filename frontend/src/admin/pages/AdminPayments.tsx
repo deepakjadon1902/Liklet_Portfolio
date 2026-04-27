@@ -4,7 +4,8 @@ import { adminApiFetch } from "../adminApi";
 type PaymentRow = {
   _id: string;
   createdAt?: string;
-  amountInr: number;
+  amount?: number;
+  amountInr?: number;
   currency?: string;
   status: string;
   userId?: { email?: string };
@@ -47,7 +48,8 @@ export default function AdminPayments() {
                 <td className="p-3">{p.createdAt ? new Date(p.createdAt).toLocaleString() : "-"}</td>
                 <td className="p-3">{p.userId?.email || "-"}</td>
                 <td className="p-3">
-                  {p.currency || "INR"} {Number(p.amountInr || 0).toLocaleString("en-IN")}
+                  {p.currency || "INR"}{" "}
+                  {Number((p.amount != null ? p.amount : p.amountInr) || 0).toLocaleString("en-IN")}
                 </td>
                 <td className="p-3">{p.status}</td>
                 <td className="p-3 text-xs text-muted-foreground">
@@ -69,4 +71,3 @@ export default function AdminPayments() {
     </div>
   );
 }
-

@@ -32,7 +32,7 @@ async function sendVerificationEmail({ to, code }) {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
   const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587;
-  const from = process.env.EMAIL_FROM || "support@liklet.com";
+  const from = process.env.EMAIL_FROM || "mail.liklet@gmail.com";
 
   if (!host || !user || !pass) {
     // eslint-disable-next-line no-console

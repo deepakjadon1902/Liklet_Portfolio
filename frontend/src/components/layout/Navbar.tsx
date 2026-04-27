@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { USER_AUTH_EVENT, clearUserToken, getUserToken } from "@/lib/userAuth";
 
 const serviceNavMeta: Record<
   string,
@@ -49,6 +50,8 @@ const Navbar = () => {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(getUserToken()));
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -59,6 +62,23 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const sync = () => setIsLoggedIn(Boolean(getUserToken()));
+    sync();
+    window.addEventListener("storage", sync);
+    window.addEventListener(USER_AUTH_EVENT, sync as EventListener);
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener(USER_AUTH_EVENT, sync as EventListener);
+    };
+  }, [location.pathname]);
+
+  const onLogout = () => {
+    clearUserToken();
+    setIsOpen(false);
+    navigate("/", { replace: false });
+  };
 
   return (
     <motion.nav
@@ -257,6 +277,41 @@ const Navbar = () => {
                 </motion.div>
               )
             )}
+
+            {isLoggedIn ? (
+              <motion.button
+                type="button"
+                onClick={onLogout}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: navLinks.length * 0.1 }}
+                whileHover={{ scale: 1.05, y: -2 }}
+                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                  scrolled
+                    ? "text-foreground hover:text-accent hover:bg-secondary"
+                    : "text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                }`}
+              >
+                Logout
+              </motion.button>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: navLinks.length * 0.1 }}
+              >
+                <Link
+                  to={`/auth?redirect=${encodeURIComponent(location.pathname || "/")}`}
+                  className={`relative px-4 py-2 rounded-xl font-medium inline-block transition-all duration-300 ${
+                    scrolled
+                      ? "text-foreground hover:text-accent hover:bg-secondary"
+                      : "text-primary-foreground/90 hover:text-primary-foreground hover:bg-primary-foreground/10"
+                  }`}
+                >
+                  Login
+                </Link>
+              </motion.div>
+            )}
           </div>
 
           {/* Mobile Menu Button with 3D effect */}
@@ -375,6 +430,31 @@ const Navbar = () => {
                     </Link>
                   </motion.div>
                 )
+              )}
+
+              <div className="pt-2 border-t border-border/60" />
+              {isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:bg-secondary"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <span className="text-accent text-sm font-bold">L</span>
+                  </div>
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to={`/auth?redirect=${encodeURIComponent(location.pathname || "/")}`}
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 hover:bg-secondary"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <span className="text-accent text-sm font-bold">L</span>
+                  </div>
+                  Login
+                </Link>
               )}
             </div>
           </motion.div>
