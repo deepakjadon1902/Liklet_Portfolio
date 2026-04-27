@@ -6,6 +6,7 @@ import { setUserToken } from "@/lib/userAuth";
 import { useToast } from "@/hooks/use-toast";
 
 type GoogleAuthResponse = { ok: true; token: string };
+type GoogleClientIdResponse = { ok: true; clientId: string };
 
 declare global {
   interface Window {
@@ -62,7 +63,9 @@ export default function Auth() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [isGoogleReady, setIsGoogleReady] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const googleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) || "";
+  const envGoogleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) || "";
+  const [googleClientId, setGoogleClientId] = useState(envGoogleClientId);
+  const [isClientIdLoading, setIsClientIdLoading] = useState(!envGoogleClientId.trim());
 
   useEffect(() => {
     const params = parseHashParams(window.location.hash || "");
@@ -83,6 +86,30 @@ export default function Auth() {
       navigate(next, { replace: true });
     }
   }, [navigate, redirect, toast]);
+
+  useEffect(() => {
+    if (envGoogleClientId.trim()) return;
+
+    let cancelled = false;
+    setIsClientIdLoading(true);
+
+    apiFetch<GoogleClientIdResponse>("/auth/google/client-id")
+      .then((data) => {
+        if (cancelled) return;
+        setGoogleClientId((data.clientId || "").trim());
+      })
+      .catch(() => {
+        // Keep fallback button if we can't get it.
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setIsClientIdLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [envGoogleClientId]);
 
   useEffect(() => {
     if (!googleClientId.trim()) return;
@@ -207,6 +234,8 @@ export default function Auth() {
                       <div className="text-xs text-muted-foreground mt-3 text-center">Signing you in…</div>
                     ) : null}
                   </>
+                ) : isClientIdLoading ? (
+                  <div className="text-xs text-muted-foreground text-center">Loading Google sign-inâ€¦</div>
                 ) : (
                   <>
                     <button

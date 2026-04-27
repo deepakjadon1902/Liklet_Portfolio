@@ -25,6 +25,11 @@ function createApp({ dbReady = false } = {}) {
     res.json({ ok: true });
   });
 
+  // Public config (no DB required)
+  app.get("/api/auth/google/client-id", (_req, res) => {
+    res.json({ ok: true, clientId: process.env.GOOGLE_CLIENT_ID || "" });
+  });
+
   // Public routes that don't require the database.
   app.use("/api/public", publicContactRouter);
 
