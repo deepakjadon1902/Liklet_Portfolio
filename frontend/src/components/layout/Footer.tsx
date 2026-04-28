@@ -117,7 +117,7 @@ const Footer = () => {
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-accent" />
                 <a href="mailto:info@liklet.com" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  support@liklet.com
+                  supportliklet@gmail.com
                 </a>
               </li>
             </ul>
