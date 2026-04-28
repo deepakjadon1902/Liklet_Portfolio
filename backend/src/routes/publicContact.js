@@ -21,7 +21,7 @@ async function sendContactEmail({ subject, text }) {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
   const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587;
-  const from = process.env.EMAIL_FROM || "mail.liklet@gmail.com";
+  const from = process.env.EMAIL_FROM || user || "mail.liklet@gmail.com";
 
   const to = getContactRecipients();
   if (!to.length) return;
@@ -36,6 +36,7 @@ async function sendContactEmail({ subject, text }) {
     host,
     port,
     secure: false,
+    requireTLS: true,
     auth: { user, pass },
   });
 
