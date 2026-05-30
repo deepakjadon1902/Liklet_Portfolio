@@ -122,7 +122,7 @@ export default function ServicePackages() {
                   {data?.service?.tagline || "Choose the package that fits your goals."}
                 </p>
               </div>
-              <div className="shrink-0 rounded-lg border border-primary-foreground/20 bg-primary-foreground/10 px-3 py-2 text-sm text-primary-foreground/90">
+              <div className="shrink-0 rounded-lg border border-primary-foreground/20 bg-white px-3 py-2 text-sm text-black">
                 <label className="flex items-center gap-2">
                   <span>Currency:</span>
                   <select
@@ -132,10 +132,10 @@ export default function ServicePackages() {
                       setCurrency(next);
                       setStoredCurrency(next);
                     }}
-                    className="bg-transparent text-primary-foreground font-semibold outline-none"
+                    className="bg-white text-black font-semibold outline-none"
                   >
-                    <option value="USD">USD ($)</option>
-                    <option value="INR">INR (₹)</option>
+                    <option className="bg-white text-black" value="USD">USD ($)</option>
+                    <option className="bg-white text-black" value="INR">INR (₹)</option>
                   </select>
                 </label>
               </div>

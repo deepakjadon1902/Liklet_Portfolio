@@ -12,8 +12,8 @@ const adminRouter = express.Router();
 
 function getStaticAdminCreds() {
   return {
-    email: (process.env.ADMIN_STATIC_EMAIL || "liket108admin@gmail.com").toLowerCase().trim(),
-    password: process.env.ADMIN_STATIC_PASSWORD || "liket108admin@",
+    email: (process.env.ADMIN_STATIC_EMAIL || "").toLowerCase().trim(),
+    password: process.env.ADMIN_STATIC_PASSWORD || "",
   };
 }
 

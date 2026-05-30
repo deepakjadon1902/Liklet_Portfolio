@@ -1,9 +1,10 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, CreditCard } from "lucide-react";
+import { ArrowLeft, ChevronDown, CreditCard, Search } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
 import { Currency, detectCurrency, formatMoney, getStoredCurrency, inrToUsd, setStoredCurrency } from "@/lib/currency";
+import { countryCodes as allCountryCodes, getFlagUrl } from "@/lib/countries";
 import { loadRazorpayCheckout } from "@/lib/razorpay";
 import { useToast } from "@/hooks/use-toast";
 import { getUserToken } from "@/lib/userAuth";
@@ -68,6 +69,8 @@ export default function Checkout() {
 
   const [currency, setCurrency] = useState<Currency>("INR");
   const [isPaying, setIsPaying] = useState(false);
+  const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["public-package", packageId],
@@ -91,11 +94,32 @@ export default function Checkout() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
+    countryId: "IN",
     mobile: "",
     accountLink: "",
     accountUsername: "",
     notes: "",
   });
+
+  const selectedCountry = useMemo(
+    () => allCountryCodes.find((item) => item.id === formData.countryId) || allCountryCodes[0],
+    [formData.countryId]
+  );
+
+  const filteredCountries = useMemo(() => {
+    const query = countrySearch.trim().toLowerCase();
+    if (!query) return allCountryCodes;
+    return allCountryCodes.filter((item) => {
+      const code = item.code.replace(/\D/g, "");
+      const queryCode = query.replace(/\D/g, "");
+      return (
+        item.country.toLowerCase().includes(query) ||
+        item.id.toLowerCase().includes(query) ||
+        item.code.includes(query) ||
+        (queryCode ? code.includes(queryCode) : false)
+      );
+    });
+  }, [countrySearch]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -112,13 +136,15 @@ export default function Checkout() {
       await loadRazorpayCheckout();
       if (!window.Razorpay) throw new Error("Razorpay Checkout not available");
 
+      const customerPhone = `${selectedCountry.code} ${formData.mobile}`.trim();
+
       const create = await apiFetch<CreatePaymentResponse>("/payments/create", {
         method: "POST",
         token,
         body: JSON.stringify({
           packageId,
           currency,
-          customer: { name: formData.fullName, email: formData.email, phone: formData.mobile },
+          customer: { name: formData.fullName, email: formData.email, phone: customerPhone },
           platformDetails: {
             accountLink: formData.accountLink,
             accountUsername: formData.accountUsername,
@@ -134,7 +160,7 @@ export default function Checkout() {
         name: "Liklet",
         description: `${data?.service?.name || "Service"} - ${data?.package?.name || "Package"}`,
         order_id: create.razorpayOrderId,
-        prefill: { name: formData.fullName, email: formData.email, contact: formData.mobile },
+        prefill: { name: formData.fullName, email: formData.email, contact: customerPhone },
         notes: { orderId: create.orderId },
         handler: async (resp: unknown) => {
           const r = resp as {
@@ -189,7 +215,7 @@ export default function Checkout() {
           </Link>
 
           {isLoading ? (
-            <div className="text-muted-foreground">Loading package¦</div>
+            <div className="text-muted-foreground">Loading package </div>
           ) : error ? (
             <div className="text-muted-foreground">Unable to load package.</div>
           ) : data ? (
@@ -203,7 +229,7 @@ export default function Checkout() {
                     {data.service.name}  {formatMoney(displayAmount, currency)}/{data.package.interval || "mo"}
                   </p>
                 </div>
-                <div className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
+                <div className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-black">
                   <label className="flex items-center gap-2">
                     <span>Currency:</span>
                     <select
@@ -213,10 +239,10 @@ export default function Checkout() {
                         setCurrency(next);
                         setStoredCurrency(next);
                       }}
-                      className="bg-transparent text-foreground font-semibold outline-none"
+                      className="bg-white text-black font-semibold outline-none"
                     >
-                      <option value="USD">USD ($)</option>
-                      <option value="INR">INR (₹)</option>
+                      <option className="bg-white text-black" value="USD">USD ($)</option>
+                      <option className="bg-white text-black" value="INR">INR (₹)</option>
                     </select>
                   </label>
                 </div>
@@ -236,13 +262,74 @@ export default function Checkout() {
                   </div>
                   <div>
                     <label className="text-sm font-medium text-foreground">Mobile</label>
-                    <input
-                      required
-                      value={formData.mobile}
-                      onChange={(e) => setFormData((p) => ({ ...p, mobile: e.target.value }))}
-                      className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
-                      placeholder="+91 XXXXX XXXXX"
-                    />
+                    <div
+                      className="relative mt-2 flex rounded-lg border border-border bg-background focus-within:ring-2 focus-within:ring-accent"
+                      onBlur={(e) => {
+                        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                          setIsCountryOpen(false);
+                        }
+                      }}
+                    >
+                      <button
+                        type="button"
+                        aria-expanded={isCountryOpen}
+                        aria-label="Select country code"
+                        onClick={() => setIsCountryOpen((open) => !open)}
+                        className="flex w-[150px] items-center gap-2 border-r border-border bg-white px-3 py-3 text-left text-sm font-semibold text-black outline-none"
+                      >
+                        <img
+                          src={getFlagUrl(selectedCountry.id)}
+                          alt=""
+                          className="h-4 w-6 rounded-sm object-cover shadow-sm"
+                        />
+                        <span>{selectedCountry.code}</span>
+                        <ChevronDown className="ml-auto h-4 w-4 text-black/60" />
+                      </button>
+                      {isCountryOpen ? (
+                        <div className="absolute left-0 top-full z-50 mt-2 w-[340px] max-w-[calc(100vw-3rem)] overflow-hidden rounded-lg border border-border bg-white text-black shadow-xl">
+                          <div className="relative border-b border-border">
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black/45" />
+                            <input
+                              value={countrySearch}
+                              onChange={(e) => setCountrySearch(e.target.value)}
+                              className="w-full bg-white py-3 pl-9 pr-3 text-sm text-black outline-none"
+                              placeholder="Search country or code"
+                            />
+                          </div>
+                          <div className="max-h-72 overflow-y-auto py-1">
+                            {filteredCountries.map((item) => (
+                              <button
+                                type="button"
+                                key={item.id}
+                                onClick={() => {
+                                  setFormData((p) => ({ ...p, countryId: item.id }));
+                                  setIsCountryOpen(false);
+                                  setCountrySearch("");
+                                }}
+                                className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-black hover:bg-accent/10"
+                              >
+                                <img
+                                  src={getFlagUrl(item.id)}
+                                  alt=""
+                                  className="h-4 w-6 rounded-sm object-cover shadow-sm"
+                                />
+                                <span className="min-w-0 flex-1 truncate">{item.country}</span>
+                                <span className="font-semibold">{item.code}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ) : null}
+                      <input
+                        required
+                        type="tel"
+                        inputMode="tel"
+                        value={formData.mobile}
+                        onChange={(e) => setFormData((p) => ({ ...p, mobile: e.target.value }))}
+                        className="min-w-0 flex-1 bg-background px-4 py-3 text-foreground outline-none"
+                        placeholder="XXXXX XXXXX"
+                      />
+                    </div>
                   </div>
                 </div>
 

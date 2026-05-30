@@ -5,8 +5,8 @@ import { setAdminToken } from "../adminAuth";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("liket108admin@gmail.com");
-  const [password, setPassword] = useState("liket108admin@");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 

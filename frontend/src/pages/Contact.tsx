@@ -1,7 +1,7 @@
-import { useState, FormEvent } from "react";
+import { useMemo, useState, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Mail, MapPin, Clock, Send, Globe, Share2, BarChart3, ArrowRight, PlayCircle } from "lucide-react";
+import { Mail, MapPin, Clock, Send, Globe, Share2, BarChart3, ArrowRight, PlayCircle, ChevronDown, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { LampContainer } from "@/components/ui/lamp-effect";
 import webDevImg from "@/assets/web-dev.jpg";
@@ -9,6 +9,7 @@ import socialMediaImg from "@/assets/social-media.jpg";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
 import youtubeImg from "@/assets/youtube.jpg";
 import { apiFetch } from "@/lib/apiClient";
+import { countryCodes as allCountryCodes, getFlagUrl } from "@/lib/countries";
 
 const contactInfo = [
   {
@@ -31,7 +32,7 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    details: [ "support@liklet.com"],
+    details: ["supportliklet@gmail.com"],
   },
   {
     icon: Clock,
@@ -78,14 +79,37 @@ const services = [
 const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCountryOpen, setIsCountryOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    countryId: "IN",
     phone: "",
     company: "",
     address: "",
     message: "",
   });
+
+  const selectedCountry = useMemo(
+    () => allCountryCodes.find((item) => item.id === formData.countryId) || allCountryCodes[0],
+    [formData.countryId]
+  );
+
+  const filteredCountries = useMemo(() => {
+    const query = countrySearch.trim().toLowerCase();
+    if (!query) return allCountryCodes;
+    return allCountryCodes.filter((item) => {
+      const code = item.code.replace(/\D/g, "");
+      const queryCode = query.replace(/\D/g, "");
+      return (
+        item.country.toLowerCase().includes(query) ||
+        item.id.toLowerCase().includes(query) ||
+        item.code.includes(query) ||
+        (queryCode ? code.includes(queryCode) : false)
+      );
+    });
+  }, [countrySearch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -94,6 +118,7 @@ const Contact = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    const fullPhone = `${selectedCountry.code} ${formData.phone}`.trim();
 
     try {
       await apiFetch("/public/contact", {
@@ -101,7 +126,7 @@ const Contact = () => {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          phone: formData.phone,
+          phone: fullPhone,
           subject: "Website Contact",
           message: formData.message,
           pageTitle: "Contact Page",
@@ -119,7 +144,7 @@ const Contact = () => {
 
 *Name:* ${formData.name}
 *Email:* ${formData.email}
-*Phone:* ${formData.phone}
+*Phone:* ${fullPhone}
 ${formData.company ? `*Company:* ${formData.company}` : ""}
 ${formData.address ? `*Address:* ${formData.address}` : ""}
 
@@ -139,7 +164,7 @@ ${formData.message}`;
         title: "WhatsApp + Email",
         description: "Your message is emailed to our team and opened in WhatsApp (tap send).",
       });
-      setFormData({ name: "", email: "", phone: "", company: "", address: "", message: "" });
+      setFormData({ name: "", email: "", countryId: "IN", phone: "", company: "", address: "", message: "" });
       setIsSubmitting(false);
     }, 1500);
   };
@@ -330,16 +355,75 @@ ${formData.message}`;
                       <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
                         Phone Number *
                       </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-                        placeholder="+91 123 456 7890"
-                      />
+                      <div
+                        className="relative flex rounded-lg border border-border bg-background focus-within:ring-2 focus-within:ring-accent"
+                        onBlur={(e) => {
+                          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                            setIsCountryOpen(false);
+                          }
+                        }}
+                      >
+                        <button
+                          type="button"
+                          aria-expanded={isCountryOpen}
+                          aria-label="Select country code"
+                          onClick={() => setIsCountryOpen((open) => !open)}
+                          className="flex w-[132px] items-center gap-2 border-r border-border bg-white px-3 py-3 text-left text-sm font-semibold text-black outline-none"
+                        >
+                          <img
+                            src={getFlagUrl(selectedCountry.id)}
+                            alt=""
+                            className="h-4 w-6 rounded-sm object-cover shadow-sm"
+                          />
+                          <span>{selectedCountry.code}</span>
+                          <ChevronDown className="ml-auto h-4 w-4 text-black/60" />
+                        </button>
+                        {isCountryOpen ? (
+                          <div className="absolute left-0 top-full z-50 mt-2 w-[340px] max-w-[calc(100vw-3rem)] overflow-hidden rounded-lg border border-border bg-white text-black shadow-xl">
+                            <div className="relative border-b border-border">
+                              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black/45" />
+                              <input
+                                value={countrySearch}
+                                onChange={(e) => setCountrySearch(e.target.value)}
+                                className="w-full bg-white py-3 pl-9 pr-3 text-sm text-black outline-none"
+                                placeholder="Search country or code"
+                              />
+                            </div>
+                            <div className="max-h-72 overflow-y-auto py-1">
+                              {filteredCountries.map((item) => (
+                                <button
+                                  type="button"
+                                  key={item.id}
+                                  onClick={() => {
+                                    setFormData((p) => ({ ...p, countryId: item.id }));
+                                    setIsCountryOpen(false);
+                                    setCountrySearch("");
+                                  }}
+                                  className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-black hover:bg-accent/10"
+                                >
+                                  <img
+                                    src={getFlagUrl(item.id)}
+                                    alt=""
+                                    className="h-4 w-6 rounded-sm object-cover shadow-sm"
+                                  />
+                                  <span className="min-w-0 flex-1 truncate">{item.country}</span>
+                                  <span className="font-semibold">{item.code}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          required
+                          className="min-w-0 flex-1 bg-background px-4 py-3 text-foreground outline-none"
+                          placeholder="123 456 7890"
+                        />
+                      </div>
                     </div>
                   </div>
 
