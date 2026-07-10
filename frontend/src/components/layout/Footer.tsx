@@ -96,10 +96,10 @@ const Footer = () => {
               <li className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-accent" />
                 <a
-                  href="mailto:supportliklet@gmail.com"
+                  href="mailto:support@liklet.com"
                   className="text-sm text-black/70 transition-colors hover:text-accent"
                 >
-                  supportliklet@gmail.com
+                  support@liklet.com
                 </a>
               </li>
             </ul>

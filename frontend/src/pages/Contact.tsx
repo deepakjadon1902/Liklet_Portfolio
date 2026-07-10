@@ -32,7 +32,7 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    details: ["supportliklet@gmail.com"],
+    details: ["support@liklet.com"],
   },
   {
     icon: Clock,

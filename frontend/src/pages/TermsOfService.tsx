@@ -20,7 +20,7 @@ const TermsOfService = () => {
             <div><h2 className="font-display text-2xl font-bold text-foreground">4. Payment Terms</h2><p>Payment terms are specified in individual project proposals. Late payments may incur additional charges and project suspension.</p></div>
             <div><h2 className="font-display text-2xl font-bold text-foreground">5. Intellectual Property</h2><p>Upon full payment, clients receive ownership of deliverables unless otherwise specified. Liklet retains the right to showcase work in portfolios.</p></div>
             <div><h2 className="font-display text-2xl font-bold text-foreground">6. Limitation of Liability</h2><p>Liklet's liability is limited to the amount paid for services. We are not liable for indirect, incidental, or consequential damages.</p></div>
-            <div><h2 className="font-display text-2xl font-bold text-foreground">7. Contact</h2><p>For questions regarding these terms, contact us at supportliklet@gmail.com.</p></div>
+            <div><h2 className="font-display text-2xl font-bold text-foreground">7. Contact</h2><p>For questions regarding these terms, contact us at support@liklet.com.</p></div>
           </div>
         </div>
       </section>
