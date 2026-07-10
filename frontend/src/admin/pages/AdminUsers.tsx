@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { AdminEmptyState, AdminPageHeader, AdminStatusPill } from "../AdminUi";
 import { adminApiFetch } from "../adminApi";
 
 type UserRow = {
@@ -22,45 +23,49 @@ export default function AdminUsers() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-foreground mb-2">Users</h1>
-      <p className="text-muted-foreground mb-6">Registered users.</p>
+      <AdminPageHeader eyebrow="Accounts" title="Users" description="Browse registered users, roles, and verification state." />
 
-      {isLoading ? <div className="text-muted-foreground">Loading…</div> : null}
-      {error ? <div className="text-muted-foreground">Unable to load users.</div> : null}
+      {isLoading ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Loading...</div> : null}
+      {error ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Unable to load users.</div> : null}
 
-      <div className="card-premium p-0 overflow-hidden">
+      <div className="admin-card overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="min-w-[640px] w-full text-sm">
-            <thead className="bg-muted/40">
-              <tr className="text-left">
-                <th className="p-3">Name</th>
-                <th className="p-3">Email</th>
-                <th className="p-3">Phone</th>
-                <th className="p-3">Role</th>
-                <th className="p-3">Verified</th>
+          <table className="admin-table min-w-[680px]">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Verified</th>
               </tr>
             </thead>
             <tbody>
               {users.map((u) => (
-                <tr key={u._id} className="border-t border-border">
-                  <td className="p-3">{u.name || "-"}</td>
-                  <td className="p-3">{u.email}</td>
-                  <td className="p-3">{u.phone || "-"}</td>
-                  <td className="p-3">{u.role}</td>
-                  <td className="p-3">{u.isEmailVerified ? "Yes" : "No"}</td>
-                </tr>
-              ))}
-              {!users.length && !isLoading ? (
-                <tr>
-                  <td className="p-3 text-muted-foreground" colSpan={5}>
-                    No users.
+                <tr key={u._id}>
+                  <td className="font-semibold">{u.name || "-"}</td>
+                  <td>{u.email}</td>
+                  <td>{u.phone || "-"}</td>
+                  <td>
+                    <AdminStatusPill tone={u.role === "admin" ? "dark" : "neutral"}>{u.role}</AdminStatusPill>
+                  </td>
+                  <td>
+                    <AdminStatusPill tone={u.isEmailVerified ? "blue" : "neutral"}>
+                      {u.isEmailVerified ? "Yes" : "No"}
+                    </AdminStatusPill>
                   </td>
                 </tr>
-              ) : null}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {!users.length && !isLoading ? (
+        <div className="mt-4">
+          <AdminEmptyState>No users.</AdminEmptyState>
+        </div>
+      ) : null}
     </div>
   );
 }

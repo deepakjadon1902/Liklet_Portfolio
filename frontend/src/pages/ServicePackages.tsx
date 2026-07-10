@@ -27,16 +27,7 @@ type Package = {
   isPopular?: boolean;
 };
 
-const brandBySlug: Record<string, { color: string; gradientFrom: string; gradientTo: string }> = {
-  youtube: { color: "#FF0000", gradientFrom: "#FF000033", gradientTo: "#111827" },
-  facebook: { color: "#1877F2", gradientFrom: "#1877F233", gradientTo: "#111827" },
-  instagram: { color: "#E1306C", gradientFrom: "#E1306C33", gradientTo: "#111827" },
-  "twitter-x": { color: "#111111", gradientFrom: "#11111122", gradientTo: "#111827" },
-  linkedin: { color: "#0A66C2", gradientFrom: "#0A66C233", gradientTo: "#111827" },
-  tiktok: { color: "#00F2EA", gradientFrom: "#00F2EA33", gradientTo: "#111827" },
-  telegram: { color: "#229ED9", gradientFrom: "#229ED933", gradientTo: "#111827" },
-  "whatsapp-business": { color: "#25D366", gradientFrom: "#25D36633", gradientTo: "#111827" },
-};
+const brandColor = "#4169E1";
 
 export default function ServicePackages() {
   const { slug } = useParams();
@@ -66,9 +57,6 @@ export default function ServicePackages() {
     });
   }, [data?.packages]);
 
-  const brand = slug ? brandBySlug[slug] : undefined;
-  const brandColor = brand?.color || "#0ea5e9";
-
   const formatPackagePrice = (pkg: Package) => {
     if (currency === "USD") {
       const usd = Number(pkg.priceUsd ?? inrToUsd(pkg.priceInr));
@@ -82,9 +70,7 @@ export default function ServicePackages() {
       <section
         className="section-padding pt-28"
         style={{
-          background: `linear-gradient(135deg, ${brand?.gradientFrom || "rgba(14,165,233,0.25)"}, ${
-            brand?.gradientTo || "hsl(var(--primary))"
-          })`,
+          background: "linear-gradient(135deg, #4169E1 0%, #4169E1 68%, #000000 100%)",
         }}
       >
         <div className="container-max">
@@ -97,7 +83,7 @@ export default function ServicePackages() {
           </Link>
 
           {isLoading ? (
-            <div className="text-primary-foreground/90">Loading packages…</div>
+            <div className="text-primary-foreground/90">Loading packages...</div>
           ) : error ? (
             <div className="text-primary-foreground/90">Unable to load packages.</div>
           ) : (
@@ -135,7 +121,7 @@ export default function ServicePackages() {
                     className="bg-white text-black font-semibold outline-none"
                   >
                     <option className="bg-white text-black" value="USD">USD ($)</option>
-                    <option className="bg-white text-black" value="INR">INR (₹)</option>
+                    <option className="bg-white text-black" value="INR">INR (Rs)</option>
                   </select>
                 </label>
               </div>

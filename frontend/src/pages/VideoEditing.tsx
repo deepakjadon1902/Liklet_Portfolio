@@ -141,18 +141,18 @@ const VideoEditing = () => {
   return (
     <div className="overflow-hidden">
       <section
-        className="section-padding pt-32 relative"
+        className="relative px-4 py-10 sm:px-6 md:py-12 lg:px-8 lg:py-14"
         style={{
           background:
-            "linear-gradient(135deg, hsl(215 50% 15%) 0%, hsl(215 50% 23%) 45%, #ff0033 100%)",
+            "linear-gradient(135deg, #4169E1 0%, #4169E1 68%, #000000 100%)",
         }}
       >
         <div className="absolute inset-0 opacity-15 pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#ff0033] blur-[120px]" />
+          <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#4169E1] blur-[120px]" />
           <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-highlight blur-[100px]" />
         </div>
         <div className="container-max relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid min-h-[calc(100vh-9rem)] items-center gap-8 lg:grid-cols-2 lg:gap-10">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -164,9 +164,9 @@ const VideoEditing = () => {
               </span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 Video Editing That
-                <span className="block text-highlight">Respects Your Viewers</span>
+                <span className="block text-white">Respects Your Viewers</span>
               </h1>
-              <p className="text-lg md:text-xl text-white/80 mb-8">
+              <p className="text-lg md:text-xl text-white mb-8">
                 We craft clean, engaging edits and honest tech reviews that make
                 buying decisions easier. Every cut, graphic, and caption is
                 designed to help your audience feel confident and informed.
@@ -178,8 +178,8 @@ const VideoEditing = () => {
                   rel="noreferrer"
                   className="inline-flex items-center justify-center rounded-lg px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105"
                   style={{
-                    background: "linear-gradient(135deg, #ff0033 0%, #ff5f5f 100%)",
-                    boxShadow: "0 12px 28px -12px rgba(255, 0, 51, 0.6)",
+                    background: "linear-gradient(135deg, #4169E1 0%, #3158ce 100%)",
+                    boxShadow: "0 12px 28px -12px rgba(65, 105, 225, 0.6)",
                   }}
                 >
                   Watch on YouTube
@@ -199,11 +199,11 @@ const VideoEditing = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-lg border border-white/10">
+              <div className="mx-auto aspect-[4/3] w-full max-w-[540px] rounded-2xl overflow-hidden shadow-lg border border-white/10 bg-black/10">
                 <img
                   src={youtubeImg}
                   alt="Video editing and YouTube production"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </motion.div>
@@ -245,8 +245,8 @@ const VideoEditing = () => {
                   className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
                   style={{
                     background:
-                      "linear-gradient(135deg, #ff0033 0%, hsl(200 90% 60%) 100%)",
-                    boxShadow: "0 12px 28px -16px rgba(255, 0, 51, 0.6)",
+                      "linear-gradient(135deg, #4169E1 0%, #3158ce 100%)",
+                    boxShadow: "0 12px 28px -16px rgba(65, 105, 225, 0.6)",
                   }}
                 >
                   <service.icon className="w-7 h-7 text-white" />
@@ -299,7 +299,7 @@ const VideoEditing = () => {
                 <ul className="space-y-2">
                   {pillar.points.map((point) => (
                     <li key={point} className="flex items-start gap-2 text-sm text-foreground/80">
-                      <CheckCircle className="w-4 h-4 text-[#ff0033] mt-0.5" />
+                      <CheckCircle className="w-4 h-4 text-accent mt-0.5" />
                       {point}
                     </li>
                   ))}
@@ -339,7 +339,7 @@ const VideoEditing = () => {
                 viewport={{ once: true }}
                 className="card-premium p-6"
               >
-                <div className="text-sm font-semibold text-[#ff0033] mb-2">
+                <div className="text-sm font-semibold text-accent mb-2">
                   Step {index + 1}
                 </div>
                 <h3 className="font-display text-lg font-semibold text-foreground mb-2">
@@ -382,8 +382,8 @@ const VideoEditing = () => {
                 className="card-premium p-6 flex flex-col gap-4"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-[#ff0033]/10 flex items-center justify-center">
-                    <Film className="w-6 h-6 text-[#ff0033]" />
+                  <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <Film className="w-6 h-6 text-accent" />
                   </div>
                   <div>
                     <h3 className="font-display text-xl font-semibold text-foreground">
@@ -408,7 +408,7 @@ const VideoEditing = () => {
                   href={channel.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-[#ff0033] font-semibold hover:gap-3 transition-all"
+                  className="inline-flex items-center gap-2 text-accent font-semibold hover:gap-3 transition-all"
                 >
                   Visit Channel
                   <ArrowRight className="w-4 h-4" />
@@ -444,7 +444,7 @@ const VideoEditing = () => {
                   "Consistent branding across every upload",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2 text-foreground/80">
-                    <ThumbsUp className="w-5 h-5 text-[#ff0033] mt-0.5" />
+                    <ThumbsUp className="w-5 h-5 text-accent mt-0.5" />
                     {item}
                   </li>
                 ))}
@@ -477,7 +477,7 @@ const VideoEditing = () => {
                   "Short-form highlights optimized for social.",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-[#ff0033] mt-0.5" />
+                    <CheckCircle className="w-5 h-5 text-accent mt-0.5" />
                     <span className="text-foreground/80">{item}</span>
                   </div>
                 ))}

@@ -104,11 +104,11 @@ export function LampContainer({
   return (
     <div
       className={cn(
-        "relative flex min-h-[600px] flex-col items-center justify-center overflow-hidden bg-primary w-full z-0",
+        "relative flex min-h-[500px] md:min-h-[520px] items-center justify-center overflow-hidden bg-primary w-full z-0 px-5 py-14 md:py-16",
         className
       )}
     >
-      <div className="relative flex w-full flex-1 scale-y-125 items-center justify-center isolate z-0">
+      <div className="pointer-events-none absolute inset-0 flex w-full scale-y-125 items-center justify-center isolate z-0">
         {/* Left beam */}
         <motion.div
           initial={{ opacity: 0.5, width: "15rem" }}
@@ -179,7 +179,7 @@ export function LampContainer({
       </div>
 
       {/* Content area */}
-      <div className="relative z-50 flex -translate-y-80 flex-col items-center px-5">
+      <div className="relative z-50 flex flex-col items-center">
         {children}
       </div>
     </div>

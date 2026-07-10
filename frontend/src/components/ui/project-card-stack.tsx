@@ -103,7 +103,7 @@ export default function ProjectCardStack({ projects }: ProjectCardStackProps) {
                     className="relative rounded-2xl overflow-hidden border border-border bg-card shadow-2xl"
                     style={{
                       boxShadow: stackIndex === 0 
-                        ? "0 25px 60px -15px hsl(210 100% 45% / 0.3), 0 10px 20px -10px rgba(0,0,0,0.2)"
+                        ? "0 25px 60px -15px hsl(225 73% 57% / 0.3), 0 10px 20px -10px rgba(0,0,0,0.2)"
                         : "0 10px 30px -10px rgba(0,0,0,0.3)",
                     }}
                   >
@@ -129,7 +129,7 @@ export default function ProjectCardStack({ projects }: ProjectCardStackProps) {
                           ease: "easeInOut",
                         }}
                         style={{
-                          boxShadow: "0 10px 30px -10px hsl(210 100% 45% / 0.5)",
+                          boxShadow: "0 10px 30px -10px hsl(225 73% 57% / 0.5)",
                         }}
                       >
                         <Icon className="w-6 h-6 text-accent-foreground" />

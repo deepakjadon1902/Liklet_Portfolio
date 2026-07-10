@@ -194,7 +194,7 @@ export default function Checkout() {
             setIsPaying(false);
           },
         },
-        theme: { color: "#ef4444" },
+        theme: { color: "#4169E1" },
       };
 
       const rp = new window.Razorpay(opts);

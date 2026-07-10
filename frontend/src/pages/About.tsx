@@ -40,7 +40,7 @@ const About = () => {
   return (
     <div className="overflow-hidden">
       {/* Hero Section with Lamp Effect */}
-      <LampContainer className="pt-20">
+      <LampContainer>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -54,11 +54,11 @@ const About = () => {
           <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent-foreground text-sm font-medium mb-6">
             Our Story
           </span>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-primary-foreground mb-6 bg-gradient-to-b from-primary-foreground to-primary-foreground/60 bg-clip-text text-transparent">
+          <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6">
             We Help Small Businesses
-            <span className="block text-highlight mt-2">Win Big Online</span>
+            <span className="block text-white mt-2">Win Big Online</span>
           </h1>
-          <p className="text-lg md:text-xl text-primary-foreground/80 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-white max-w-3xl mx-auto">
             Too many small businesses struggle to be seen online while big companies dominate. We believe that's not fair — and we're here to change it. At Liklet, we give growing businesses the same digital tools and strategies that big brands use.
           </p>
         </motion.div>

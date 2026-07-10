@@ -172,7 +172,7 @@ ${formData.message}`;
   return (
     <div className="overflow-hidden">
       {/* Hero Section with Lamp Effect */}
-      <LampContainer className="pt-20">
+      <LampContainer>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -186,11 +186,11 @@ ${formData.message}`;
           <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent-foreground text-sm font-medium mb-6">
             Let's Talk
           </span>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-primary-foreground mb-6 bg-gradient-to-b from-primary-foreground to-primary-foreground/60 bg-clip-text text-transparent">
+          <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6">
             Have a Question?
-            <span className="block text-highlight mt-2">We're Here to Help</span>
+            <span className="block text-white mt-2">We're Here to Help</span>
           </h1>
-          <p className="text-lg md:text-xl text-primary-foreground/80 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-white max-w-3xl mx-auto">
             Not sure what you need? That's okay. Tell us about your business and what you're trying to achieve — we'll help you figure out the best path forward. No pressure, just honest advice.
           </p>
         </motion.div>

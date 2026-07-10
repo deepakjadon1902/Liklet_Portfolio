@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { AdminEmptyState, AdminPageHeader, AdminStatusPill } from "../AdminUi";
 import { adminApiFetch } from "../adminApi";
 
 type PaymentRow = {
@@ -25,51 +26,52 @@ export default function AdminPayments() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-foreground mb-2">Payments</h1>
-      <p className="text-muted-foreground mb-6">Payment records.</p>
+      <AdminPageHeader eyebrow="Revenue" title="Payments" description="Track payment records and Razorpay references." />
 
-      {isLoading ? <div className="text-muted-foreground">Loading…</div> : null}
-      {error ? <div className="text-muted-foreground">Unable to load payments.</div> : null}
+      {isLoading ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Loading...</div> : null}
+      {error ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Unable to load payments.</div> : null}
 
-      <div className="card-premium p-0 overflow-hidden">
+      <div className="admin-card overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="min-w-[720px] w-full text-sm">
-          <thead className="bg-muted/40">
-            <tr className="text-left">
-              <th className="p-3">Date</th>
-              <th className="p-3">User</th>
-              <th className="p-3">Amount</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Razorpay</th>
-            </tr>
-          </thead>
-          <tbody>
-            {payments.map((p) => (
-              <tr key={p._id} className="border-t border-border">
-                <td className="p-3">{p.createdAt ? new Date(p.createdAt).toLocaleString() : "-"}</td>
-                <td className="p-3">{p.userId?.email || "-"}</td>
-                <td className="p-3">
-                  {p.currency || "INR"}{" "}
-                  {Number((p.amount != null ? p.amount : p.amountInr) || 0).toLocaleString("en-IN")}
-                </td>
-                <td className="p-3">{p.status}</td>
-                <td className="p-3 text-xs text-muted-foreground whitespace-nowrap">
-                  {p.razorpayOrderId || "-"}
-                  {p.razorpayPaymentId ? ` / ${p.razorpayPaymentId}` : ""}
-                </td>
-              </tr>
-            ))}
-            {!payments.length && !isLoading ? (
+          <table className="admin-table min-w-[760px]">
+            <thead>
               <tr>
-                <td className="p-3 text-muted-foreground" colSpan={5}>
-                  No payments.
-                </td>
+                <th>Date</th>
+                <th>User</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Razorpay</th>
               </tr>
-            ) : null}
-          </tbody>
+            </thead>
+            <tbody>
+              {payments.map((p) => (
+                <tr key={p._id}>
+                  <td>{p.createdAt ? new Date(p.createdAt).toLocaleString() : "-"}</td>
+                  <td className="font-medium">{p.userId?.email || "-"}</td>
+                  <td className="font-semibold">
+                    {p.currency || "INR"} {Number((p.amount != null ? p.amount : p.amountInr) || 0).toLocaleString("en-IN")}
+                  </td>
+                  <td>
+                    <AdminStatusPill tone={p.status === "paid" || p.status === "captured" ? "blue" : "neutral"}>
+                      {p.status}
+                    </AdminStatusPill>
+                  </td>
+                  <td className="whitespace-nowrap text-xs text-black/55">
+                    {p.razorpayOrderId || "-"}
+                    {p.razorpayPaymentId ? ` / ${p.razorpayPaymentId}` : ""}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
+
+      {!payments.length && !isLoading ? (
+        <div className="mt-4">
+          <AdminEmptyState>No payments.</AdminEmptyState>
+        </div>
+      ) : null}
     </div>
   );
 }

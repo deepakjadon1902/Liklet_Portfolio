@@ -1,5 +1,6 @@
 import { Fragment, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { AdminEmptyState, AdminPageHeader, AdminStatusPill } from "../AdminUi";
 import { adminApiFetch } from "../adminApi";
 import { formatMoney, type Currency } from "@/lib/currency";
 
@@ -28,11 +29,9 @@ export default function AdminOrders() {
     staleTime: 2_000,
   });
 
-  const orders = data?.orders ?? [];
-
   const rows = useMemo(() => {
-    return orders.map(
-      (o): OrderRow & { serviceLabel: string; packageLabel: string; userLabel: string; amountLabel: string } => {
+    const orders = data?.orders ?? [];
+    return orders.map((o): OrderRow & { serviceLabel: string; packageLabel: string; userLabel: string; amountLabel: string } => {
       const serviceLabel = o.serviceId?.name || o.serviceName || "-";
       const packageLabel = o.packageId?.name || o.packageName || "-";
       const userLabel = o.userId?.email || o.customerEmail || "-";
@@ -44,138 +43,117 @@ export default function AdminOrders() {
             : "-";
 
       return { ...o, serviceLabel, packageLabel, userLabel, amountLabel };
-      }
-    );
-  }, [orders]);
+    });
+  }, [data?.orders]);
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-foreground mb-2">Orders</h1>
-      <p className="text-muted-foreground mb-6">All customer orders.</p>
+      <AdminPageHeader eyebrow="Bookings" title="Orders" description="Review customer orders and expand rows for booking details." />
 
-      {isLoading ? <div className="text-muted-foreground">Loading…</div> : null}
-      {error ? <div className="text-muted-foreground">Unable to load orders.</div> : null}
+      {isLoading ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Loading...</div> : null}
+      {error ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Unable to load orders.</div> : null}
 
-      <div className="card-premium p-0 overflow-hidden">
+      <div className="admin-card overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="min-w-[1000px] w-full text-sm">
-          <thead className="bg-muted/40">
-            <tr className="text-left">
-              <th className="p-3">Date</th>
-              <th className="p-3">User</th>
-              <th className="p-3">Service</th>
-              <th className="p-3">Package</th>
-              <th className="p-3">Booking Info</th>
-              <th className="p-3">Amount</th>
-              <th className="p-3">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((o) => (
-              <Fragment key={o._id}>
-                <tr
-                  className="border-t border-border cursor-pointer hover:bg-muted/20"
-                  onClick={() => setOpenId((p) => (p === o._id ? null : o._id))}
-                  title="Click to view booking details"
-                >
-                  <td className="p-3">{o.createdAt ? new Date(o.createdAt).toLocaleString() : "-"}</td>
-                  <td className="p-3">{o.userLabel}</td>
-                  <td className="p-3">{o.serviceLabel}</td>
-                  <td className="p-3">{o.packageLabel}</td>
-                  <td className="p-3">
-                    <div className="text-sm text-foreground">{o.customerName || "-"}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {o.customerPhone || "-"}
-                      {o.customerEmail ? ` · ${o.customerEmail}` : ""}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {(o.platformDetails as { accountUsername?: string } | undefined)?.accountUsername
-                        ? `@${(o.platformDetails as { accountUsername?: string }).accountUsername}`
-                        : ""}
-                    </div>
-                  </td>
-                  <td className="p-3">{o.amountLabel}</td>
-                  <td className="p-3 capitalize">{o.status}</td>
-                </tr>
-                {openId === o._id ? (
-                  <tr className="border-t border-border bg-muted/10">
-                    <td className="p-3" colSpan={7}>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <div className="text-xs text-muted-foreground">Order ID</div>
-                          <div className="font-mono text-xs break-all">{o._id}</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">User</div>
-                          <div className="text-sm">
-                            {o.userId?.name ? `${o.userId.name} · ` : ""}
-                            {o.userId?.email || "-"}
-                            {o.userId?.phone ? ` · ${o.userId.phone}` : ""}
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-muted-foreground">Customer (booking form)</div>
-                          <div className="text-sm">
-                            {o.customerName || "-"}
-                            {o.customerEmail ? ` · ${o.customerEmail}` : ""}
-                            {o.customerPhone ? ` · ${o.customerPhone}` : ""}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Service / Package</div>
-                          <div className="text-sm">
-                            {o.serviceLabel} · {o.packageLabel}
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-muted-foreground">Amount</div>
-                          <div className="text-sm">
-                            {o.amount != null && o.currency ? formatMoney(Number(o.amount || 0), o.currency) : "-"}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Status</div>
-                          <div className="text-sm capitalize">{o.status}</div>
-                        </div>
-
-                        <div>
-                          <div className="text-xs text-muted-foreground">Account Link</div>
-                          <div className="text-sm break-all">
-                            {(o.platformDetails as { accountLink?: string } | undefined)?.accountLink || "-"}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-muted-foreground">Account Username</div>
-                          <div className="text-sm">
-                            {(o.platformDetails as { accountUsername?: string } | undefined)?.accountUsername || "-"}
-                          </div>
-                        </div>
-
-                        <div className="md:col-span-2">
-                          <div className="text-xs text-muted-foreground">Notes</div>
-                          <div className="text-sm whitespace-pre-wrap">
-                            {(o.platformDetails as { notes?: string } | undefined)?.notes || "-"}
-                          </div>
-                        </div>
+          <table className="admin-table min-w-[1000px]">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>User</th>
+                <th>Service</th>
+                <th>Package</th>
+                <th>Booking Info</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((o) => (
+                <Fragment key={o._id}>
+                  <tr
+                    className="cursor-pointer"
+                    onClick={() => setOpenId((p) => (p === o._id ? null : o._id))}
+                    title="Click to view booking details"
+                  >
+                    <td>{o.createdAt ? new Date(o.createdAt).toLocaleString() : "-"}</td>
+                    <td className="font-medium">{o.userLabel}</td>
+                    <td>{o.serviceLabel}</td>
+                    <td>{o.packageLabel}</td>
+                    <td>
+                      <div className="font-medium text-black">{o.customerName || "-"}</div>
+                      <div className="text-xs text-black/55">
+                        {o.customerPhone || "-"}
+                        {o.customerEmail ? ` / ${o.customerEmail}` : ""}
+                      </div>
+                      <div className="text-xs text-black/55">
+                        {(o.platformDetails as { accountUsername?: string } | undefined)?.accountUsername
+                          ? `@${(o.platformDetails as { accountUsername?: string }).accountUsername}`
+                          : ""}
                       </div>
                     </td>
+                    <td className="font-semibold">{o.amountLabel}</td>
+                    <td>
+                      <AdminStatusPill tone={o.status === "paid" || o.status === "completed" ? "blue" : "neutral"}>
+                        {o.status}
+                      </AdminStatusPill>
+                    </td>
                   </tr>
-                ) : null}
-              </Fragment>
-            ))}
-            {!rows.length && !isLoading ? (
-              <tr>
-                <td className="p-3 text-muted-foreground" colSpan={7}>
-                  No orders.
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
+                  {openId === o._id ? (
+                    <tr className="bg-[#4169E1]/5 hover:bg-[#4169E1]/5">
+                      <td colSpan={7}>
+                        <div className="grid gap-4 rounded-lg border border-[#c5c5c5] bg-white p-4 md:grid-cols-2">
+                          <Detail label="Order ID" value={o._id} mono />
+                          <Detail
+                            label="User"
+                            value={`${o.userId?.name ? `${o.userId.name} / ` : ""}${o.userId?.email || "-"}${
+                              o.userId?.phone ? ` / ${o.userId.phone}` : ""
+                            }`}
+                          />
+                          <Detail
+                            label="Customer"
+                            value={`${o.customerName || "-"}${o.customerEmail ? ` / ${o.customerEmail}` : ""}${
+                              o.customerPhone ? ` / ${o.customerPhone}` : ""
+                            }`}
+                          />
+                          <Detail label="Service / Package" value={`${o.serviceLabel} / ${o.packageLabel}`} />
+                          <Detail
+                            label="Amount"
+                            value={o.amount != null && o.currency ? formatMoney(Number(o.amount || 0), o.currency) : "-"}
+                          />
+                          <Detail label="Status" value={o.status} />
+                          <Detail label="Account Link" value={(o.platformDetails as { accountLink?: string } | undefined)?.accountLink || "-"} />
+                          <Detail
+                            label="Account Username"
+                            value={(o.platformDetails as { accountUsername?: string } | undefined)?.accountUsername || "-"}
+                          />
+                          <div className="md:col-span-2">
+                            <Detail label="Notes" value={(o.platformDetails as { notes?: string } | undefined)?.notes || "-"} />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : null}
+                </Fragment>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
+
+      {!rows.length && !isLoading ? (
+        <div className="mt-4">
+          <AdminEmptyState>No orders.</AdminEmptyState>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function Detail({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div>
+      <div className="text-xs font-semibold uppercase tracking-wider text-black/45">{label}</div>
+      <div className={`mt-1 break-all text-sm text-black ${mono ? "font-mono" : ""}`}>{value}</div>
     </div>
   );
 }

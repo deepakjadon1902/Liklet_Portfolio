@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus, Save } from "lucide-react";
+import { AdminPageHeader, AdminStatusPill } from "../AdminUi";
 import { adminApiFetch } from "../adminApi";
 
 type Service = { _id: string; name: string; slug: string; type: string };
@@ -93,37 +95,40 @@ export default function AdminPackages() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-foreground mb-2">Packages</h1>
-      <p className="text-muted-foreground mb-6">Manage Basic / Premium / Elite packages for each service.</p>
-
-      <div className="card-premium p-4 mb-6 flex flex-wrap gap-3 items-center justify-between">
-        <div className="flex items-center gap-3">
-          <label className="text-sm font-medium text-foreground">Service</label>
-          <select
-            value={serviceId}
-            onChange={(e) => setServiceId(e.target.value)}
-            className="rounded-lg border border-border bg-background px-3 py-2"
+      <AdminPageHeader
+        eyebrow="Pricing"
+        title="Packages"
+        description="Manage Basic, Premium, and Elite plans for each service with clean pricing and feature controls."
+        actions={
+          <button
+            onClick={() => createMutation.mutate()}
+            disabled={createMutation.isPending || !serviceId}
+            className="admin-btn-primary gap-2"
           >
-            {services.map((s) => (
-              <option key={s._id} value={s._id}>
-                {s.name} ({s.slug})
-              </option>
-            ))}
-          </select>
+            <Plus className="h-4 w-4" />
+            {createMutation.isPending ? "Adding..." : "Add Package"}
+          </button>
+        }
+      />
+
+      <div className="admin-card mb-6 flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="admin-kicker">Service scope</div>
+          <label className="mt-1 block text-sm font-semibold text-black">Choose service</label>
         </div>
-        <button
-          onClick={() => createMutation.mutate()}
-          disabled={createMutation.isPending || !serviceId}
-          className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-sm"
-        >
-          {createMutation.isPending ? "Adding…" : "Add Package"}
-        </button>
+        <select value={serviceId} onChange={(e) => setServiceId(e.target.value)} className="admin-input sm:max-w-md">
+          {services.map((s) => (
+            <option key={s._id} value={s._id}>
+              {s.name} ({s.slug})
+            </option>
+          ))}
+        </select>
       </div>
 
-      {isLoading ? <div className="text-muted-foreground">Loading…</div> : null}
-      {error ? <div className="text-muted-foreground">Unable to load packages.</div> : null}
+      {isLoading ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Loading...</div> : null}
+      {error ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Unable to load packages.</div> : null}
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {packages.map((pkg) => (
           <PackageCard
             key={pkg._id}
@@ -168,74 +173,54 @@ function PackageCard({
     setFeaturesText(featuresKey);
     setIsPopular(Boolean(pkg.isPopular));
     setIsActive(pkg.isActive !== false);
-  }, [
-    pkg._id,
-    pkg.name,
-    pkg.priceInr,
-    pkg.interval,
-    pkg.description,
-    featuresKey,
-    pkg.isPopular,
-    pkg.isActive,
-  ]);
+  }, [pkg._id, pkg.name, pkg.priceInr, pkg.interval, pkg.description, featuresKey, pkg.isPopular, pkg.isActive]);
 
   return (
-    <div className={`card-premium p-5 ${isPopular ? "ring-2 ring-accent" : ""}`}>
-      <div className="flex items-center justify-between gap-3">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg border border-border bg-background px-3 py-2 font-semibold"
-        />
-        <label className="text-xs inline-flex items-center gap-2">
-          <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
-          Active
-        </label>
+    <div className={`admin-card p-5 ${isPopular ? "ring-2 ring-[#4169E1]" : ""}`}>
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <div className="admin-kicker">Plan</div>
+          <input value={name} onChange={(e) => setName(e.target.value)} className="admin-input mt-2 font-semibold" />
+        </div>
+        <AdminStatusPill tone={isActive ? "blue" : "neutral"}>{isActive ? "Active" : "Hidden"}</AdminStatusPill>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mt-3">
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs text-muted-foreground">Price (INR)</label>
-          <input
-            value={priceInr}
-            onChange={(e) => setPriceInr(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2"
-          />
+          <label className="text-xs font-semibold text-black/60">Price (INR)</label>
+          <input value={priceInr} onChange={(e) => setPriceInr(e.target.value)} className="admin-input mt-1" />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">Interval</label>
-          <input
-            value={interval}
-            onChange={(e) => setInterval(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2"
-            placeholder="mo"
-          />
+          <label className="text-xs font-semibold text-black/60">Interval</label>
+          <input value={interval} onChange={(e) => setInterval(e.target.value)} className="admin-input mt-1" placeholder="mo" />
         </div>
       </div>
 
       <div className="mt-3">
-        <label className="text-xs text-muted-foreground">Description</label>
-        <input
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2"
-        />
+        <label className="text-xs font-semibold text-black/60">Description</label>
+        <input value={description} onChange={(e) => setDescription(e.target.value)} className="admin-input mt-1" />
       </div>
 
       <div className="mt-3">
-        <label className="text-xs text-muted-foreground">Features (one per line)</label>
+        <label className="text-xs font-semibold text-black/60">Features (one per line)</label>
         <textarea
           value={featuresText}
           onChange={(e) => setFeaturesText(e.target.value)}
-          className="mt-1 w-full min-h-[110px] rounded-lg border border-border bg-background px-3 py-2"
+          className="admin-input mt-1 min-h-[120px]"
         />
       </div>
 
-      <div className="mt-3 flex items-center justify-between">
-        <label className="text-xs inline-flex items-center gap-2">
-          <input type="checkbox" checked={isPopular} onChange={(e) => setIsPopular(e.target.checked)} />
-          Popular
-        </label>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-4">
+          <label className="inline-flex items-center gap-2 text-xs font-semibold text-black">
+            <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+            Active
+          </label>
+          <label className="inline-flex items-center gap-2 text-xs font-semibold text-black">
+            <input type="checkbox" checked={isPopular} onChange={(e) => setIsPopular(e.target.checked)} />
+            Popular
+          </label>
+        </div>
         <button
           disabled={isSaving}
           onClick={() =>
@@ -249,9 +234,10 @@ function PackageCard({
               isActive,
             })
           }
-          className="px-3 py-2 rounded-lg bg-accent text-accent-foreground text-sm hover:bg-accent/90"
+          className="admin-btn-primary gap-2"
         >
-          {isSaving ? "Saving…" : "Save"}
+          <Save className="h-4 w-4" />
+          {isSaving ? "Saving..." : "Save"}
         </button>
       </div>
     </div>

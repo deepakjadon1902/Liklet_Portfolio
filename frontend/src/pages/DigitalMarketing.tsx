@@ -171,22 +171,22 @@ const DigitalMarketing = () => {
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="hero-gradient section-padding pt-32">
+      <section className="hero-gradient px-4 py-10 sm:px-6 md:py-12 lg:px-8 lg:py-14">
         <div className="container-max">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid min-h-[calc(100vh-9rem)] items-center gap-8 lg:grid-cols-2 lg:gap-10">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent-foreground text-sm font-medium mb-6">
+              <span className="inline-block px-4 py-2 rounded-full bg-white/15 text-white text-sm font-medium mb-6">
                 For Growing Businesses
               </span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 leading-tight">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 Stop Guessing.
-                <span className="block text-highlight">Start Growing.</span>
+                <span className="block text-white">Start Growing.</span>
               </h1>
-              <p className="text-lg md:text-xl text-primary-foreground/80 mb-8">
+              <p className="text-lg md:text-xl text-white mb-8">
                 Tired of spending money on marketing that doesn't work? We create clear, trackable campaigns that show you exactly where your customers come from — and bring you more of them.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
@@ -198,8 +198,8 @@ const DigitalMarketing = () => {
                     transition={{ delay: 0.3 + index * 0.1 }}
                     className="text-center"
                   >
-                    <div className="text-2xl md:text-3xl font-bold text-highlight">{stat.value}</div>
-                    <div className="text-sm text-primary-foreground/70">{stat.label}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
+                    <div className="text-sm text-white">{stat.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -213,11 +213,11 @@ const DigitalMarketing = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-lg">
+              <div className="mx-auto aspect-[4/3] w-full max-w-[540px] rounded-2xl overflow-hidden shadow-lg bg-black/10">
                 <img
                   src={digitalMarketingImg}
                   alt="Digital marketing analytics"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </motion.div>

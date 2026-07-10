@@ -5,131 +5,120 @@
 @tailwind utilities;
 
 /* Liklet Premium Design System
-   60% Primary (White/Light) - Background, cards
-   30% Secondary (Light Blue/Navy) - Headers, sections
-   10% Accent (Royal Navy Blue) - CTAs, highlights
+   Public app: 60% royal blue, 30% white, 10% pure black.
+   Admin app: 60% white, 30% #c5c5c5, 10% #4169E1 with pure black/white contrast.
 */
 
 @layer base {
   :root {
-    /* Primary - 60% (White/Light backgrounds) */
-    --background: 210 40% 98%;
-    --foreground: 215 25% 15%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
 
-    /* Cards and surfaces */
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 0 0% 0%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 0 0% 0%;
 
-    /* Secondary - 30% (Navy Blue tones) */
-    --primary: 215 50% 23%;
+    --primary: 225 73% 57%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 35% 92%;
-    --secondary-foreground: 215 50% 23%;
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 0 0% 0%;
 
-    /* Muted tones */
-    --muted: 210 30% 95%;
-    --muted-foreground: 215 20% 45%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 26%;
 
-    /* Accent - 10% (Royal Navy Blue) */
-    --accent: 210 100% 45%;
+    --accent: 225 73% 57%;
     --accent-foreground: 0 0% 100%;
 
-    /* Light blue for highlights */
-    --highlight: 200 90% 60%;
+    --highlight: 225 73% 57%;
     --highlight-foreground: 0 0% 100%;
 
-    /* Navy gradient tones */
-    --navy-dark: 215 50% 15%;
-    --navy-medium: 215 50% 23%;
-    --navy-light: 210 45% 35%;
+    --navy-dark: 0 0% 0%;
+    --navy-medium: 225 73% 57%;
+    --navy-light: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 30% 88%;
-    --input: 210 30% 88%;
-    --ring: 210 100% 45%;
+    --border: 0 0% 77%;
+    --input: 0 0% 77%;
+    --ring: 225 73% 57%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 215 25% 15%;
-    --sidebar-primary: 215 50% 23%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 225 73% 57%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 35% 92%;
-    --sidebar-accent-foreground: 215 50% 23%;
-    --sidebar-border: 210 30% 88%;
-    --sidebar-ring: 210 100% 45%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 77%;
+    --sidebar-ring: 225 73% 57%;
 
-    /* Custom gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(215 50% 15%) 0%, hsl(210 45% 25%) 50%, hsl(200 60% 35%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(210 100% 45%) 0%, hsl(200 90% 55%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
-    --gradient-section: linear-gradient(180deg, hsl(210 40% 98%) 0%, hsl(210 35% 95%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(225 73% 57%) 0%, hsl(225 73% 49%) 72%, hsl(0 0% 0%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(225 73% 57%) 0%, hsl(225 73% 47%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
+    --gradient-section: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(225 73% 97%) 100%);
 
-    /* Shadows */
-    --shadow-sm: 0 2px 8px -2px hsl(215 50% 23% / 0.08);
-    --shadow-md: 0 8px 24px -4px hsl(215 50% 23% / 0.12);
-    --shadow-lg: 0 16px 48px -8px hsl(215 50% 23% / 0.16);
-    --shadow-glow: 0 0 40px hsl(210 100% 45% / 0.25);
+    --shadow-sm: 0 2px 10px -4px hsl(0 0% 0% / 0.16);
+    --shadow-md: 0 14px 36px -18px hsl(0 0% 0% / 0.32);
+    --shadow-lg: 0 24px 70px -30px hsl(0 0% 0% / 0.42);
+    --shadow-glow: 0 0 36px hsl(225 73% 57% / 0.28);
   }
 
   .dark {
-    --background: 215 50% 8%;
-    --foreground: 210 40% 95%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 215 45% 12%;
-    --card-foreground: 210 40% 95%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 215 45% 12%;
-    --popover-foreground: 210 40% 95%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 210 100% 55%;
-    --primary-foreground: 215 50% 8%;
+    --primary: 225 73% 57%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 40% 18%;
-    --secondary-foreground: 210 40% 95%;
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 215 40% 18%;
-    --muted-foreground: 210 25% 60%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 77%;
 
-    --accent: 200 90% 55%;
-    --accent-foreground: 215 50% 8%;
+    --accent: 225 73% 57%;
+    --accent-foreground: 0 0% 100%;
 
-    --highlight: 200 95% 65%;
-    --highlight-foreground: 215 50% 8%;
+    --highlight: 225 73% 57%;
+    --highlight-foreground: 0 0% 100%;
 
-    --navy-dark: 215 50% 5%;
-    --navy-medium: 215 50% 12%;
-    --navy-light: 210 45% 20%;
+    --navy-dark: 0 0% 0%;
+    --navy-medium: 225 73% 57%;
+    --navy-light: 0 0% 100%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 40% 20%;
-    --input: 215 40% 20%;
-    --ring: 200 90% 55%;
+    --border: 0 0% 77%;
+    --input: 0 0% 77%;
+    --ring: 225 73% 57%;
 
-    --sidebar-background: 215 45% 10%;
-    --sidebar-foreground: 210 40% 95%;
-    --sidebar-primary: 210 100% 55%;
-    --sidebar-primary-foreground: 215 50% 8%;
-    --sidebar-accent: 215 40% 18%;
-    --sidebar-accent-foreground: 210 40% 95%;
-    --sidebar-border: 215 40% 20%;
-    --sidebar-ring: 200 90% 55%;
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 225 73% 57%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 77%;
+    --sidebar-ring: 225 73% 57%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(215 50% 5%) 0%, hsl(215 50% 12%) 50%, hsl(210 45% 20%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(210 100% 50%) 0%, hsl(200 90% 60%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(215 45% 14%) 0%, hsl(215 45% 10%) 100%);
-    --gradient-section: linear-gradient(180deg, hsl(215 50% 8%) 0%, hsl(215 50% 10%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(225 73% 57%) 0%, hsl(225 73% 48%) 68%, hsl(0 0% 0%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(225 73% 57%) 0%, hsl(225 73% 47%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(0 0% 6%) 100%);
+    --gradient-section: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(0 0% 5%) 100%);
 
-    --shadow-glow: 0 0 60px hsl(200 90% 55% / 0.3);
+    --shadow-glow: 0 0 60px hsl(225 73% 57% / 0.3);
   }
 }
 
@@ -141,6 +130,12 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  *::selection {
+    background: #4169E1;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -199,6 +194,87 @@
 
   .glass-card {
     @apply backdrop-blur-md bg-card/80 border border-border/50 rounded-xl;
+  }
+
+  .admin-shell {
+    background:
+      linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 58%, hsl(0 0% 96%) 100%);
+  }
+
+  .admin-card {
+    @apply rounded-lg border bg-white text-black shadow-md transition-all duration-300;
+    border-color: #c5c5c5;
+    box-shadow: 0 18px 54px -34px rgb(0 0 0 / 0.45);
+  }
+
+  .admin-card:hover {
+    box-shadow: 0 22px 70px -38px rgb(65 105 225 / 0.44);
+  }
+
+  .admin-panel {
+    @apply rounded-lg border bg-white text-black;
+    border-color: #c5c5c5;
+  }
+
+  .admin-input {
+    @apply w-full rounded-lg border bg-white px-4 py-3 text-sm text-black outline-none transition;
+    border-color: #c5c5c5;
+  }
+
+  .admin-input:focus {
+    border-color: #4169E1;
+    box-shadow: 0 0 0 3px rgb(65 105 225 / 0.14);
+  }
+
+  .admin-btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60;
+    background: #4169E1;
+  }
+
+  .admin-btn-primary:hover {
+    background: #3158ce;
+    box-shadow: 0 14px 30px -18px rgb(65 105 225 / 0.85);
+  }
+
+  .admin-btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border bg-white px-4 py-2.5 text-sm font-semibold text-black transition disabled:cursor-not-allowed disabled:opacity-60;
+    border-color: #c5c5c5;
+  }
+
+  .admin-btn-secondary:hover {
+    border-color: #4169E1;
+    color: #4169E1;
+  }
+
+  .admin-table {
+    @apply min-w-full text-sm text-black;
+  }
+
+  .admin-table thead {
+    background: #000;
+    color: #fff;
+  }
+
+  .admin-table th {
+    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider;
+  }
+
+  .admin-table td {
+    @apply px-4 py-4 align-top;
+  }
+
+  .admin-table tbody tr {
+    @apply border-t transition-colors;
+    border-color: #c5c5c5;
+  }
+
+  .admin-table tbody tr:hover {
+    background: rgb(65 105 225 / 0.06);
+  }
+
+  .admin-kicker {
+    @apply text-xs font-semibold uppercase tracking-wider;
+    color: #4169E1;
   }
 }
 

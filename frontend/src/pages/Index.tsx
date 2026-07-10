@@ -104,11 +104,11 @@ const Index = () => {
             <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent-foreground text-sm font-medium mb-6">
               For Growing Businesses
             </span>
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               Your Business Deserves
-              <span className="block text-highlight">To Be Found Online</span>
+              <span className="block text-white">To Be Found Online</span>
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white mb-8 max-w-2xl mx-auto">
               We help startups, small businesses, and entrepreneurs get more customers through websites that convert, social media that engages, and marketing that actually works.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

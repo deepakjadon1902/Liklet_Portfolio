@@ -1,122 +1,104 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+
+const quickLinks = [
+  ["Home", "/"],
+  ["About Us", "/about"],
+  ["IT Services", "/it-services"],
+  ["Social Media Marketing", "/social-media-marketing"],
+  ["Digital Marketing", "/digital-marketing"],
+  ["Video Editing & Reviews", "/video-editing"],
+];
+
+const legalLinks = [
+  ["Terms of Service", "/terms-of-service"],
+  ["Privacy Policy", "/privacy-policy"],
+  ["Contact Us", "/contact"],
+];
+
+const socialLinks = [
+  { name: "Facebook", icon: "https://cdn.simpleicons.org/facebook/1877F2" },
+  { name: "X", icon: "https://cdn.simpleicons.org/x/000000" },
+  { name: "Instagram", icon: "https://cdn.simpleicons.org/instagram/E4405F" },
+  { name: "WhatsApp", icon: "https://cdn.simpleicons.org/whatsapp/25D366" },
+];
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-primary-foreground">
-      <div className="container-max section-padding !pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Company Info */}
-         <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-white">
-                <img 
-                  src="/images/logo.jpg" 
-                  alt="Liklet Logo" 
-                  className="w-full h-full object-cover"
-                />
+    <footer className="border-t border-[#c5c5c5] bg-white text-black">
+      <div className="container-max px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-[1.15fr_1fr_0.85fr_1.1fr] lg:gap-10">
+          <div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-[#c5c5c5] bg-white shadow-sm">
+                <img src="/images/logo.jpg" alt="Liklet Logo" className="h-full w-full object-cover" />
               </div>
-              <span className="font-display text-2xl font-bold">Liklet</span>
+              <span className="font-display text-3xl font-bold leading-none text-black">Liklet</span>
             </div>
-            <p className="text-primary-foreground/80 leading-relaxed">
+            <p className="mt-4 max-w-xs text-sm leading-6 text-black/70">
               Empowering businesses with innovative digital solutions. We transform ideas into impactful digital experiences.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="p-2 rounded-lg bg-primary-foreground/10 hover:bg-accent transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-primary-foreground/10 hover:bg-accent transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-primary-foreground/10 hover:bg-accent transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="p-2 rounded-lg bg-primary-foreground/10 hover:bg-accent transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
+            <div className="mt-5 flex gap-3">
+              {socialLinks.map((item) => (
+                <a
+                  href="#"
+                  key={item.name}
+                  aria-label={item.name}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#c5c5c5] bg-white transition hover:border-[#4169E1] hover:shadow-sm"
+                >
+                  <img src={item.icon} alt="" className="h-[18px] w-[18px] object-contain" />
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="font-display text-lg font-semibold">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/it-services" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  IT Services
-                </Link>
-              </li>
-              <li>
-                <Link to="/social-media-marketing" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  Social Media Marketing
-                </Link>
-              </li>
-              <li>
-                <Link to="/digital-marketing" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  Digital Marketing
-                </Link>
-              </li>
-              <li>
-                <Link to="/video-editing" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  Video Editing & Reviews
-                </Link>
-              </li>
+          <div>
+            <h3 className="font-display text-lg font-semibold leading-none text-black">Quick Links</h3>
+            <ul className="mt-4 grid gap-2">
+              {quickLinks.map(([label, to]) => (
+                <li key={to}>
+                  <Link to={to} className="text-sm text-black/70 transition-colors hover:text-accent">
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Legal */}
-          <div className="space-y-4">
-            <h3 className="font-display text-lg font-semibold">Legal</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/terms-of-service" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacy-policy" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-primary-foreground/80 hover:text-accent transition-colors">
-                  Contact Us
-                </Link>
-              </li>
+          <div>
+            <h3 className="font-display text-lg font-semibold leading-none text-black">Legal</h3>
+            <ul className="mt-4 grid gap-2">
+              {legalLinks.map(([label, to]) => (
+                <li key={to}>
+                  <Link to={to} className="text-sm text-black/70 transition-colors hover:text-accent">
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact Info */}
-          <div className="space-y-4">
-            <h3 className="font-display text-lg font-semibold">Contact Us</h3>
-            <ul className="space-y-3">
+          <div>
+            <h3 className="font-display text-lg font-semibold leading-none text-black">Contact Us</h3>
+            <ul className="mt-4 grid gap-3">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 mt-0.5 text-accent" />
-                <span className="text-primary-foreground/80">
-                 Virndavan, Uttar Pradesh, India
-                </span>
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <span className="text-sm leading-6 text-black/70">Virndavan, Uttar Pradesh, India</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-accent" />
-                <a href="tel:+911234567890" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <Phone className="h-4 w-4 shrink-0 text-accent" />
+                <a href="tel:+911234567890" className="text-sm text-black/70 transition-colors hover:text-accent">
                   +91 9634359003
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-accent" />
-                <a href="mailto:supportliklet@gmail.com" className="text-primary-foreground/80 hover:text-accent transition-colors">
+                <Mail className="h-4 w-4 shrink-0 text-accent" />
+                <a
+                  href="mailto:supportliklet@gmail.com"
+                  className="text-sm text-black/70 transition-colors hover:text-accent"
+                >
                   supportliklet@gmail.com
                 </a>
               </li>
@@ -124,15 +106,10 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-primary-foreground/20">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-primary-foreground/60 text-sm">
-              © {currentYear} Liklet. All rights reserved.
-            </p>
-            <p className="text-primary-foreground/60 text-sm">
-              Crafted with passion for digital excellence
-            </p>
+        <div className="mt-8 border-t border-[#c5c5c5] pt-5">
+          <div className="flex flex-col items-center justify-between gap-3 md:flex-row">
+            <p className="text-xs text-black/60">© {currentYear} Liklet. All rights reserved.</p>
+            <p className="text-xs text-black/60">Crafted with passion for digital excellence</p>
           </div>
         </div>
       </div>

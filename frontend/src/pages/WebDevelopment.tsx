@@ -242,22 +242,22 @@ const WebDevelopment = () => {
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="hero-gradient section-padding pt-32">
+      <section className="hero-gradient px-4 py-10 sm:px-6 md:py-12 lg:px-8 lg:py-14">
         <div className="container-max">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid min-h-[calc(100vh-9rem)] items-center gap-8 lg:grid-cols-2 lg:gap-10">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent-foreground text-sm font-medium mb-6">
+              <span className="inline-block px-4 py-2 rounded-full bg-white/15 text-white text-sm font-medium mb-6">
                 For Businesses That Want Results
               </span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 leading-tight">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 Websites That
-                <span className="block text-highlight">Bring You Customers</span>
+                <span className="block text-white">Bring You Customers</span>
               </h1>
-              <p className="text-lg md:text-xl text-primary-foreground/80 mb-8">
+              <p className="text-lg md:text-xl text-white mb-8">
                 A pretty website is nice, but what you really need is a website that works — one that shows up on Google, loads fast on phones, and convinces visitors to contact you.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
@@ -269,8 +269,8 @@ const WebDevelopment = () => {
                     transition={{ delay: 0.3 + index * 0.1 }}
                     className="text-center"
                   >
-                    <div className="text-2xl md:text-3xl font-bold text-highlight">{stat.value}</div>
-                    <div className="text-sm text-primary-foreground/70">{stat.label}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-white">{stat.value}</div>
+                    <div className="text-sm text-white">{stat.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -284,11 +284,11 @@ const WebDevelopment = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-lg">
+              <div className="mx-auto aspect-[4/3] w-full max-w-[540px] rounded-2xl overflow-hidden shadow-lg bg-black/10">
                 <img
                   src={webDevImg}
                   alt="Web development workspace"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </motion.div>
@@ -330,7 +330,7 @@ const WebDevelopment = () => {
                   className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent to-highlight flex items-center justify-center mb-4"
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.6 }}
-                  style={{ boxShadow: "0 10px 30px -10px hsl(210 100% 45% / 0.4)" }}
+                  style={{ boxShadow: "0 10px 30px -10px hsl(225 73% 57% / 0.4)" }}
                 >
                   <type.icon className="w-7 h-7 text-accent-foreground" />
                 </motion.div>
@@ -395,7 +395,7 @@ const WebDevelopment = () => {
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.6 }}
                   style={{
-                    boxShadow: "0 10px 30px -10px hsl(210 100% 45% / 0.4)",
+                    boxShadow: "0 10px 30px -10px hsl(225 73% 57% / 0.4)",
                   }}
                 >
                   <service.icon className="w-7 h-7 text-accent-foreground" />
