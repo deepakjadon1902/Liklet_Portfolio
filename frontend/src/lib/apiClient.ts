@@ -3,15 +3,22 @@ const PRODUCTION_API_BASE_URL = "https://liklet-portfolio-2.onrender.com/api";
 
 function getApiBaseUrl() {
   const configured = RAW_API_BASE_URL && RAW_API_BASE_URL.trim() ? RAW_API_BASE_URL.trim() : "/api";
-  if (configured !== "/api") return configured.replace(/\/+$/, "");
 
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
     const isLocalhost = host === "localhost" || host === "127.0.0.1" || host === "::1";
-    if (!isLocalhost) return PRODUCTION_API_BASE_URL;
+    const normalized = configured.replace(/\/+$/, "");
+
+    if (isLocalhost) return normalized || "/api";
+
+    const frontendOrigins = [`https://${host}`, `http://${host}`];
+    const pointsToFrontend = frontendOrigins.some((origin) => normalized === `${origin}/api`);
+    if (!normalized || normalized === "/api" || pointsToFrontend) return PRODUCTION_API_BASE_URL;
+
+    return normalized;
   }
 
-  return "/api";
+  return configured.replace(/\/+$/, "") || "/api";
 }
 
 export const API_BASE_URL = getApiBaseUrl();
