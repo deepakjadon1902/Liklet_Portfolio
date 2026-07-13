@@ -1,5 +1,20 @@
 const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
-export const API_BASE_URL = RAW_API_BASE_URL && RAW_API_BASE_URL.trim() ? RAW_API_BASE_URL : "/api";
+const PRODUCTION_API_BASE_URL = "https://liklet-portfolio-2.onrender.com/api";
+
+function getApiBaseUrl() {
+  const configured = RAW_API_BASE_URL && RAW_API_BASE_URL.trim() ? RAW_API_BASE_URL.trim() : "/api";
+  if (configured !== "/api") return configured.replace(/\/+$/, "");
+
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    const isLocalhost = host === "localhost" || host === "127.0.0.1" || host === "::1";
+    if (!isLocalhost) return PRODUCTION_API_BASE_URL;
+  }
+
+  return "/api";
+}
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export class ApiError extends Error {
   status: number;
