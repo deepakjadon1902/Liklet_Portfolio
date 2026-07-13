@@ -20,6 +20,7 @@ import ServicePackages from "./pages/ServicePackages";
 import Auth from "./pages/Auth";
 import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
+import Profile from "./pages/Profile";
 import AdminRoutes from "./admin/AdminRoutes";
 import RequireUser from "./components/auth/RequireUser";
 
@@ -76,6 +77,14 @@ const App = () => (
               }
             />
             <Route path="/my-orders" element={<MyOrders />} />
+            <Route
+              path="/profile"
+              element={
+                <RequireUser>
+                  <Profile />
+                </RequireUser>
+              }
+            />
             <Route path="/digital-marketing" element={<DigitalMarketing />} />
             <Route
               path="/digital-marketing/contact"

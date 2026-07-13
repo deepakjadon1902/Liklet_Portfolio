@@ -35,9 +35,49 @@ type CreatePaymentResponse = {
 
 type VerifyPaymentResponse = { ok: true };
 
+type RazorpaySuccessResponse = {
+  razorpay_payment_id?: string;
+  razorpay_order_id?: string;
+  razorpay_signature?: string;
+};
+
+type RazorpayFailedResponse = {
+  error?: {
+    code?: string;
+    description?: string;
+    reason?: string;
+    metadata?: {
+      order_id?: string;
+      payment_id?: string;
+    };
+  };
+};
+
+type RazorpayInstance = {
+  open: () => void;
+  on?: (event: "payment.failed", handler: (response: RazorpayFailedResponse) => void) => void;
+};
+
+type RazorpayCheckoutOptions = {
+  key: string;
+  amount: number;
+  currency: Currency;
+  name: string;
+  description: string;
+  order_id: string;
+  prefill: { name: string; email: string; contact: string };
+  notes: { orderId: string; service?: string; package?: string };
+  handler: (response: RazorpaySuccessResponse) => Promise<void>;
+  modal: {
+    confirm_close: boolean;
+    ondismiss: () => void;
+  };
+  theme: { color: string };
+};
+
 declare global {
   interface Window {
-    Razorpay?: new (options: Record<string, unknown>) => { open: () => void };
+    Razorpay?: new (options: RazorpayCheckoutOptions) => RazorpayInstance;
   }
 }
 
@@ -153,7 +193,7 @@ export default function Checkout() {
         }),
       });
 
-      const opts: Record<string, unknown> = {
+      const opts: RazorpayCheckoutOptions = {
         key: create.keyId,
         amount: create.amountMinor,
         currency: create.currency,
@@ -161,13 +201,12 @@ export default function Checkout() {
         description: `${data?.service?.name || "Service"} - ${data?.package?.name || "Package"}`,
         order_id: create.razorpayOrderId,
         prefill: { name: formData.fullName, email: formData.email, contact: customerPhone },
-        notes: { orderId: create.orderId },
-        handler: async (resp: unknown) => {
-          const r = resp as {
-            razorpay_payment_id?: string;
-            razorpay_order_id?: string;
-            razorpay_signature?: string;
-          };
+        notes: {
+          orderId: create.orderId,
+          service: data?.service?.name,
+          package: data?.package?.name,
+        },
+        handler: async (r) => {
           try {
             await apiFetch<VerifyPaymentResponse>("/payments/verify", {
               method: "POST",
@@ -183,6 +222,7 @@ export default function Checkout() {
             addSavedOrder({ id: create.orderId, token: create.orderToken });
             navigate("/my-orders", { replace: true });
           } catch (err: unknown) {
+            setIsPaying(false);
             toast({
               title: "Payment captured, verification failed",
               description: err instanceof Error ? err.message : "Please contact support with your payment reference.",
@@ -190,6 +230,7 @@ export default function Checkout() {
           }
         },
         modal: {
+          confirm_close: true,
           ondismiss: () => {
             setIsPaying(false);
           },
@@ -198,6 +239,13 @@ export default function Checkout() {
       };
 
       const rp = new window.Razorpay(opts);
+      rp.on?.("payment.failed", (response) => {
+        setIsPaying(false);
+        toast({
+          title: "Payment failed",
+          description: response.error?.description || response.error?.reason || "Please try again or use another payment method.",
+        });
+      });
       rp.open();
     } catch (err: unknown) {
       toast({ title: "Unable to start payment", description: err instanceof Error ? err.message : "Try again." });
@@ -384,6 +432,9 @@ export default function Checkout() {
                   {isPaying ? "Opening Razorpay..." : `Pay ${formatMoney(displayAmount, currency)}`}
                   <CreditCard className="w-4 h-4" />
                 </button>
+                <p className="text-center text-xs text-muted-foreground">
+                  Secure checkout opens in Razorpay.
+                </p>
               </form>
             </div>
           ) : null}

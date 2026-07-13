@@ -44,6 +44,16 @@ adminRouter.post("/login", async (req, res) => {
 adminRouter.use(requireDb());
 adminRouter.use(requireAdmin());
 
+async function reconcilePaidOrders() {
+  const paidOrderIds = await Payment.distinct("orderId", { status: "paid" });
+  if (!paidOrderIds.length) return;
+
+  await Order.updateMany(
+    { _id: { $in: paidOrderIds }, status: { $ne: "completed" } },
+    { $set: { status: "completed" } }
+  );
+}
+
 adminRouter.get("/dashboard", async (_req, res) => {
   const [users, services, orders, payments] = await Promise.all([
     User.countDocuments({}),
@@ -134,6 +144,8 @@ adminRouter.delete("/packages/:id", async (req, res) => {
 });
 
 adminRouter.get("/orders", async (_req, res) => {
+  await reconcilePaidOrders();
+
   const orders = await Order.find({})
     .sort({ createdAt: -1 })
     .populate("userId", "name email phone")

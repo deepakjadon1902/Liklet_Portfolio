@@ -4,7 +4,8 @@ const cors = require("cors");
 const { authRouter } = require("./routes/auth");
 const { publicRouter } = require("./routes/public");
 const { publicContactRouter } = require("./routes/publicContact");
-const { paymentsRouter } = require("./routes/payments");
+const { paymentsRouter, razorpayWebhookHandler } = require("./routes/payments");
+const { accountRouter } = require("./routes/account");
 const { adminRouter } = require("./routes/admin");
 const { requireDb } = require("./middleware/requireDb");
 const { requireAuth } = require("./middleware/auth");
@@ -19,6 +20,14 @@ function createApp({ dbReady = false } = {}) {
       credentials: true,
     })
   );
+
+  app.post(
+    "/api/payment/razorpay/webhook",
+    express.raw({ type: "application/json", limit: "1mb" }),
+    requireDb(),
+    razorpayWebhookHandler
+  );
+
   app.use(express.json({ limit: "1mb" }));
 
   app.get("/health", (_req, res) => {
@@ -35,6 +44,7 @@ function createApp({ dbReady = false } = {}) {
 
   app.use("/api/public", requireDb(), publicRouter);
   app.use("/api/auth", requireDb(), authRouter);
+  app.use("/api/account", requireDb(), requireAuth(), accountRouter);
   app.use("/api/payments", requireDb(), requireAuth(), paymentsRouter);
   app.use("/api/admin", adminRouter);
 

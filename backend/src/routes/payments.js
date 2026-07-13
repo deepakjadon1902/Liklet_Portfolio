@@ -10,6 +10,10 @@ const { User } = require("../models/User");
 
 const paymentsRouter = express.Router();
 
+function getWebhookSecret() {
+  return process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_WEBHOOK_SECRET_KEY || "";
+}
+
 function getRazorpayClient() {
   const keyId = process.env.RAZORPAY_KEY_ID;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -25,6 +29,97 @@ function getFxInrToUsd() {
 
 function sha256Hex(input) {
   return crypto.createHash("sha256").update(String(input)).digest("hex");
+}
+
+function signaturesMatch(expected, received) {
+  const expectedBuffer = Buffer.from(String(expected), "hex");
+  const receivedBuffer = Buffer.from(String(received), "hex");
+  return expectedBuffer.length === receivedBuffer.length && crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+}
+
+async function markPaymentCaptured(paymentEntity) {
+  const razorpayOrderId = paymentEntity?.order_id ? String(paymentEntity.order_id) : "";
+  const razorpayPaymentId = paymentEntity?.id ? String(paymentEntity.id) : "";
+  const orderIdFromNotes = paymentEntity?.notes?.orderId ? String(paymentEntity.notes.orderId) : "";
+
+  if (!razorpayOrderId && !orderIdFromNotes) return false;
+
+  const payment =
+    (razorpayOrderId ? await Payment.findOne({ razorpayOrderId }) : null) ||
+    (orderIdFromNotes ? await Payment.findOne({ orderId: orderIdFromNotes }) : null);
+
+  if (!payment) return false;
+
+  payment.status = "paid";
+  if (razorpayOrderId) payment.razorpayOrderId = razorpayOrderId;
+  if (razorpayPaymentId) payment.razorpayPaymentId = razorpayPaymentId;
+  await payment.save();
+
+  await Order.updateOne(
+    { _id: payment.orderId, status: { $ne: "completed" } },
+    { $set: { status: "completed" } }
+  );
+
+  return true;
+}
+
+async function markPaymentFailed(paymentEntity) {
+  const razorpayOrderId = paymentEntity?.order_id ? String(paymentEntity.order_id) : "";
+  const razorpayPaymentId = paymentEntity?.id ? String(paymentEntity.id) : "";
+  const orderIdFromNotes = paymentEntity?.notes?.orderId ? String(paymentEntity.notes.orderId) : "";
+
+  if (!razorpayOrderId && !orderIdFromNotes) return false;
+
+  const payment =
+    (razorpayOrderId ? await Payment.findOne({ razorpayOrderId }) : null) ||
+    (orderIdFromNotes ? await Payment.findOne({ orderId: orderIdFromNotes }) : null);
+
+  if (!payment || payment.status === "paid") return Boolean(payment);
+
+  payment.status = "failed";
+  if (razorpayOrderId) payment.razorpayOrderId = razorpayOrderId;
+  if (razorpayPaymentId) payment.razorpayPaymentId = razorpayPaymentId;
+  await payment.save();
+
+  await Order.updateOne(
+    { _id: payment.orderId, status: { $nin: ["processing", "completed"] } },
+    { $set: { status: "cancelled" } }
+  );
+
+  return true;
+}
+
+async function razorpayWebhookHandler(req, res) {
+  const webhookSecret = getWebhookSecret();
+  if (!webhookSecret) return res.status(500).json({ error: "Missing Razorpay webhook secret" });
+
+  const signature = req.get("x-razorpay-signature") || "";
+  if (!signature) return res.status(400).json({ error: "Missing Razorpay signature" });
+
+  const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from("");
+  const expected = crypto.createHmac("sha256", webhookSecret).update(rawBody).digest("hex");
+
+  if (!signaturesMatch(expected, signature)) {
+    return res.status(400).json({ error: "Invalid webhook signature" });
+  }
+
+  let event;
+  try {
+    event = JSON.parse(rawBody.toString("utf8"));
+  } catch {
+    return res.status(400).json({ error: "Invalid webhook payload" });
+  }
+
+  const eventName = String(event.event || "");
+  const paymentEntity = event.payload?.payment?.entity;
+
+  if (eventName === "payment.captured") {
+    await markPaymentCaptured(paymentEntity);
+  } else if (eventName === "payment.failed") {
+    await markPaymentFailed(paymentEntity);
+  }
+
+  return res.json({ ok: true });
 }
 
 paymentsRouter.post("/create", async (req, res) => {
@@ -95,6 +190,8 @@ paymentsRouter.post("/create", async (req, res) => {
       },
     });
   } catch (err) {
+    await Order.deleteOne({ _id: order._id });
+
     const msg = err instanceof Error ? err.message : "Payment gateway error";
     if (msg.toLowerCase().includes("missing razorpay keys")) {
       return res.status(503).json({ error: "Payment gateway is not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET." });
@@ -143,7 +240,7 @@ paymentsRouter.post("/verify", async (req, res) => {
     .update(`${razorpayOrderId}|${razorpayPaymentId}`)
     .digest("hex");
 
-  if (expected !== razorpaySignature) {
+  if (!signaturesMatch(expected, razorpaySignature)) {
     return res.status(400).json({ error: "Invalid signature" });
   }
 
@@ -161,11 +258,11 @@ paymentsRouter.post("/verify", async (req, res) => {
 
   const order = await Order.findOne({ _id: orderId, userId });
   if (order) {
-    order.status = "processing";
+    order.status = "completed";
     await order.save();
   }
 
   res.json({ ok: true });
 });
 
-module.exports = { paymentsRouter };
+module.exports = { paymentsRouter, razorpayWebhookHandler };

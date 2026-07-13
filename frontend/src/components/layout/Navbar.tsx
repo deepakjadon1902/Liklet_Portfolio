@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, ChevronDown, Sparkles } from "lucide-react";
+import { Menu, X, ChevronDown, Sparkles, UserRound } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { USER_AUTH_EVENT, clearUserToken, getUserToken } from "@/lib/userAuth";
 
@@ -275,21 +275,38 @@ const Navbar = () => {
             )}
 
             {isLoggedIn ? (
-              <motion.button
-                type="button"
-                onClick={onLogout}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: navLinks.length * 0.1 }}
-                whileHover={{ scale: 1.05, y: -2 }}
-                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                  scrolled
-                    ? "text-white hover:text-white hover:bg-white/10"
-                    : "text-white hover:text-white hover:bg-white/10"
-                }`}
-              >
-                Logout
-              </motion.button>
+              <>
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: navLinks.length * 0.1 }}
+                >
+                  <Link
+                    to="/profile"
+                    className={`relative inline-flex items-center gap-2 rounded-xl px-4 py-2 font-medium transition-all duration-300 ${
+                      isActive("/profile") ? "bg-white/15 text-white" : "text-white hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    <UserRound className="h-4 w-4" />
+                    Profile
+                  </Link>
+                </motion.div>
+                <motion.button
+                  type="button"
+                  onClick={onLogout}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: (navLinks.length + 1) * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                    scrolled
+                      ? "text-white hover:text-white hover:bg-white/10"
+                      : "text-white hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  Logout
+                </motion.button>
+              </>
             ) : (
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -428,16 +445,30 @@ const Navbar = () => {
 
               <div className="pt-2 border-t border-border/60" />
               {isLoggedIn ? (
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-white transition-all duration-300 hover:bg-white/10"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">L</span>
-                  </div>
-                  Logout
-                </button>
+                <>
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-white transition-all duration-300 ${
+                      isActive("/profile") ? "bg-white/15" : "hover:bg-white/10"
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                      <UserRound className="h-4 w-4 text-white" />
+                    </div>
+                    Profile
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={onLogout}
+                    className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-white transition-all duration-300 hover:bg-white/10"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">L</span>
+                    </div>
+                    Logout
+                  </button>
+                </>
               ) : (
                 <Link
                   to={`/auth?redirect=${encodeURIComponent(location.pathname || "/")}`}
