@@ -23,6 +23,7 @@ import MyOrders from "./pages/MyOrders";
 import Profile from "./pages/Profile";
 import AdminRoutes from "./admin/AdminRoutes";
 import RequireUser from "./components/auth/RequireUser";
+import SeoManager from "./components/SeoManager";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <SeoManager />
         <ScrollToTop />
         <Routes>
           <Route path="/admin/*" element={<AdminRoutes />} />
