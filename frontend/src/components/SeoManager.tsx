@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 
 const SITE_URL = "https://liklet.com";
 const SITE_NAME = "Liklet";
-const LOGO_URL = `${SITE_URL}/images/logo.jpg`;
+const LOGO_URL = `${SITE_URL}/android-chrome-192x192.png`;
 
 type SeoConfig = {
   title: string;
