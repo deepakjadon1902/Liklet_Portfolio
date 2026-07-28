@@ -1,5 +1,5 @@
 const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
-const PRODUCTION_API_BASE_URL = "https://liklet-portfolio-2.onrender.com/api";
+const PRODUCTION_API_BASE_URL = "https://liklet-portfolio-2-0shc.onrender.com/api";
 
 function getApiBaseUrl() {
   const configured = RAW_API_BASE_URL && RAW_API_BASE_URL.trim() ? RAW_API_BASE_URL.trim() : "/api";

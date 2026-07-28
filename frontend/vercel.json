@@ -43,7 +43,7 @@
     },
     {
       "source": "/api/(.*)",
-      "destination": "https://liklet-portfolio-2.onrender.com/api/$1"
+      "destination": "https://liklet-portfolio-2-0shc.onrender.com/api/$1"
     },
     {
       "source": "/(.*)",
