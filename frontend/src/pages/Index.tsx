@@ -1,18 +1,26 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Code, TrendingUp, Users, CheckCircle, Star, PlayCircle } from "lucide-react";
-import { SparklesCore } from "@/components/ui/sparkles";
-import heroBg from "@/assets/hero-bg.jpg";
+import FlipFadeText from "@/components/ui/flip-fade-text";
+import TestimonialMarquee from "@/components/ui/marquee-01";
+import ServicesMarquee from "@/components/ui/services-marquee";
 import webDevImg from "@/assets/web-dev.jpg";
 import socialMediaImg from "@/assets/social-media.jpg";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
 import youtubeImg from "@/assets/youtube.jpg";
 
+const heroVideos = [
+  "/hero%20section/development.mp4",
+  "/hero%20section/Socialmedia.mp4",
+  "/hero%20section/digitalmarketing.mp4",
+];
+
 const services = [
   {
     icon: Code,
     title: "IT Services",
-    description: "Get a website that actually brings you customers — fast, mobile-friendly, and built to convert visitors into leads.",
+    description: "Get a website that actually brings you customers - fast, mobile-friendly, and built to convert visitors into leads.",
     link: "/it-services",
     image: webDevImg,
   },
@@ -67,48 +75,84 @@ const testimonials = [
   },
 ];
 
+const HeroVideoBackground = () => {
+  const videoRefs = [useRef<HTMLVideoElement | null>(null), useRef<HTMLVideoElement | null>(null)];
+  const [activeSlot, setActiveSlot] = useState(0);
+  const [slotIndexes, setSlotIndexes] = useState<[number, number]>([0, 1]);
+
+  useEffect(() => {
+    videoRefs[activeSlot].current?.play().catch(() => undefined);
+  }, [activeSlot, slotIndexes]);
+
+  const handleEnded = () => {
+    const nextSlot = activeSlot === 0 ? 1 : 0;
+
+    setActiveSlot(nextSlot);
+    setSlotIndexes((current) => {
+      const updated: [number, number] = [...current];
+      updated[activeSlot] = (current[nextSlot] + 1) % heroVideos.length;
+      return updated;
+    });
+
+    requestAnimationFrame(() => {
+      const nextVideo = videoRefs[nextSlot].current;
+      if (nextVideo) {
+        nextVideo.currentTime = 0;
+        nextVideo.play().catch(() => undefined);
+      }
+    });
+  };
+
+  return (
+    <div className="absolute inset-0 h-full w-full overflow-hidden bg-black">
+      {slotIndexes.map((videoIndex, slot) => (
+        <video
+          key={`${slot}-${videoIndex}`}
+          ref={videoRefs[slot]}
+          src={heroVideos[videoIndex]}
+          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-150 ${
+            slot === activeSlot ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ filter: "brightness(1.38) saturate(1.08) contrast(1.02)" }}
+          muted
+          playsInline
+          preload="auto"
+          autoPlay={slot === activeSlot}
+          onEnded={slot === activeSlot ? handleEnded : undefined}
+        />
+      ))}
+      <div className="absolute inset-0 bg-white/38" />
+    </div>
+  );
+};
+
 const Index = () => {
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center hero-gradient overflow-hidden">
-        <div className="absolute inset-0 w-full h-full">
-          <img
-            src={heroBg}
-            alt="Digital technology background"
-            className="w-full h-full object-cover opacity-30 mix-blend-overlay"
-          />
-          <SparklesCore
-            id="heroSparkles"
-            background="transparent"
-            minSize={0.6}
-            maxSize={1.4}
-            particleDensity={100}
-            className="absolute inset-0 w-full h-full"
-            particleColor="#FFFFFF"
-            speed={1}
-          />
-        </div>
+      <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-black">
+        <HeroVideoBackground />
         
-        {/* Gradient overlays */}
-        <div className="absolute inset-x-20 top-1/2 bg-gradient-to-r from-transparent via-highlight/30 to-transparent h-[2px] w-3/4 blur-sm" />
-        <div className="absolute inset-x-60 top-1/2 bg-gradient-to-r from-transparent via-accent to-transparent h-[5px] w-1/4 blur-sm" />
-        
-        <div className="container-max section-padding relative z-10 text-center">
+        <div className="container-max relative z-10 px-4 pb-14 pt-28 text-center sm:px-6 md:pb-20 md:pt-32 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="max-w-4xl mx-auto"
           >
-            <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent-foreground text-sm font-medium mb-6">
+            <span className="inline-block rounded-full border border-black/15 bg-white/80 px-4 py-2 text-sm font-extrabold text-black shadow-sm backdrop-blur-md mb-6">
               For Growing Businesses
             </span>
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-              Your Business Deserves
-              <span className="block text-white">To Be Found Online</span>
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-black mb-6 leading-tight">
+              Your Business{" "}
+              <FlipFadeText
+                words={["Deserves", "Needs", "Is Ready"]}
+                interval={2600}
+                className="align-baseline"
+              />
+              <span className="block text-black">To Be Found Online</span>
             </h1>
-            <p className="text-lg md:text-xl text-white mb-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl font-semibold text-black/82 mb-8 max-w-2xl mx-auto">
               We help startups, small businesses, and entrepreneurs get more customers through websites that convert, social media that engages, and marketing that actually works.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -118,7 +162,7 @@ const Index = () => {
               </Link>
               <Link
                 to="/about"
-                className="inline-flex items-center justify-center px-6 py-3 rounded-lg border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 transition-all duration-300"
+                className="inline-flex items-center justify-center rounded-lg border border-foreground/15 bg-white/70 px-6 py-3 font-semibold text-foreground shadow-sm backdrop-blur-md transition-all duration-300 hover:bg-white"
               >
                 See How We Work
               </Link>
@@ -161,50 +205,17 @@ const Index = () => {
             >
               <span className="text-accent font-medium">How We Help</span>
               <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-2">
-                Grow Your Business Online
+                Grow Your{" "}
+                <FlipFadeText words={["Business", "Brand", "Revenue"]} interval={2400} />{" "}
+                Online
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
-                Whether you're just starting out or ready to scale, we have the tools and expertise to help you succeed. No complicated tech talk — just real results.
+                Whether you're just starting out or ready to scale, we have the tools and expertise to help you succeed. No complicated tech talk - just real results.
               </p>
             </motion.div>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service, index) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Link
-                  to={service.link}
-                  className="card-premium block h-full group overflow-hidden"
-                >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                      <service.icon className="w-6 h-6 text-accent" />
-                    </div>
-                    <h3 className="font-display text-xl font-semibold text-foreground mb-2">
-                      {service.title}
-                    </h3>
-                    <p className="text-muted-foreground mb-4">{service.description}</p>
-                    <span className="inline-flex items-center text-accent font-medium group-hover:gap-2 transition-all">
-                      Learn More <ArrowRight className="w-4 h-4 ml-1" />
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
+          <ServicesMarquee services={services} />
         </div>
       </section>
 
@@ -219,10 +230,12 @@ const Index = () => {
             >
               <span className="text-accent font-medium">Who We Help</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-6">
-                Built for Business Owners Like You
+                Built for{" "}
+                <FlipFadeText words={["Business Owners", "Founders", "Creators"]} interval={2600} />{" "}
+                Like You
               </h2>
               <p className="text-muted-foreground mb-8">
-                You're busy running your business. You don't have time to figure out websites, social media algorithms, or Google Ads. That's where we come in — we handle your entire online presence so you can focus on what you do best.
+                You're busy running your business. You don't have time to figure out websites, social media algorithms, or Google Ads. That's where we come in - we handle your entire online presence so you can focus on what you do best.
               </p>
               <ul className="space-y-4">
                 {[
@@ -283,13 +296,14 @@ const Index = () => {
             >
               <span className="text-highlight font-medium">Our Promise</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mt-2 mb-6">
-                What Makes Us Different
+                What Makes Us{" "}
+                <FlipFadeText words={["Different", "Clearer", "Better"]} interval={2400} />
               </h2>
               <div className="grid md:grid-cols-3 gap-8 mt-12">
                 {[
                   { title: "No Jargon", desc: "We explain everything in plain language. If you don't understand it, we'll make it clearer." },
                   { title: "Real Results", desc: "We focus on what matters: more visitors, more leads, more customers. Not vanity metrics." },
-                  { title: "Your Partner", desc: "We're not a vendor — we're an extension of your team. Your success is our success." },
+                  { title: "Your Partner", desc: "We're not a vendor - we're an extension of your team. Your success is our success." },
                 ].map((item, index) => (
                   <motion.div
                     key={index}
@@ -320,37 +334,16 @@ const Index = () => {
             >
               <span className="text-accent font-medium">Real Stories</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Business Owners Like You
+                Business Owners{" "}
+                <FlipFadeText words={["Like You", "Who Grow", "Who Lead"]} interval={2600} />
               </h2>
               <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-                Don't just take our word for it — hear from real clients who grew their businesses with our help.
+                Don't just take our word for it - hear from real clients who grew their businesses with our help.
               </p>
             </motion.div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="card-premium p-6"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-highlight text-highlight" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground mb-6 italic">"{testimonial.content}"</p>
-                <div>
-                  <div className="font-semibold text-foreground">{testimonial.name}</div>
-                  <div className="text-sm text-muted-foreground">{testimonial.company}</div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <TestimonialMarquee />
         </div>
       </section>
 
@@ -363,10 +356,11 @@ const Index = () => {
             viewport={{ once: true }}
           >
             <h2 className="font-display text-3xl md:text-4xl font-bold text-accent-foreground mb-4">
-              Ready to Get More Customers?
+              Ready to Get More{" "}
+              <FlipFadeText words={["Customers?", "Leads?", "Growth?"]} interval={2400} />
             </h2>
             <p className="text-accent-foreground/80 max-w-2xl mx-auto mb-8">
-              Let's have a conversation about your business goals. No pressure, no sales pitch — just honest advice on how we can help you grow.
+              Let's have a conversation about your business goals. No pressure, no sales pitch - just honest advice on how we can help you grow.
             </p>
             <Link
               to="/contact"

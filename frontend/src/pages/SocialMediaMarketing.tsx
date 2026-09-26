@@ -7,7 +7,7 @@
 //   {
 //     icon: Users,
 //     title: "Social Media Management",
-//     description: "We handle everything — posting, replying to comments, and keeping your profiles active so you don't have to.",
+//     description: "We handle everything - posting, replying to comments, and keeping your profiles active so you don't have to.",
 //   },
 //   {
 //     icon: Heart,
@@ -27,7 +27,7 @@
 //   {
 //     icon: TrendingUp,
 //     title: "Performance Tracking",
-//     description: "See exactly what's working with clear reports — not vanity metrics, but real business results.",
+//     description: "See exactly what's working with clear reports - not vanity metrics, but real business results.",
 //   },
 //   {
 //     icon: Camera,
@@ -144,7 +144,7 @@
 //                 <span className="block text-highlight">Actually Sells</span>
 //               </h1>
 //               <p className="text-lg md:text-xl text-primary-foreground/80 mb-8">
-//                 You know you should be posting more, but who has the time? We take social media off your plate completely — creating content, growing your following, and turning followers into paying customers.
+//                 You know you should be posting more, but who has the time? We take social media off your plate completely - creating content, growing your following, and turning followers into paying customers.
 //               </p>
 //               <div className="flex flex-wrap gap-4 mb-8">
 //                 {stats.map((stat, index) => (
@@ -448,12 +448,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Users, Heart, Share2, MessageCircle, TrendingUp, Camera, ArrowRight, CheckCircle, Star, Quote, Zap, Target, BarChart3 } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
+import FlipFadeText from "@/components/ui/flip-fade-text";
+import TestimonialMarquee from "@/components/ui/marquee-01";
 
 const services = [
   {
     icon: Users,
     title: "Social Media Management",
-    description: "We handle everything — posting, replying to comments, and keeping your profiles active so you don't have to.",
+    description: "We handle everything - posting, replying to comments, and keeping your profiles active so you don't have to.",
   },
   {
     icon: Heart,
@@ -473,7 +475,7 @@ const services = [
   {
     icon: TrendingUp,
     title: "Performance Tracking",
-    description: "See exactly what's working with clear reports — not vanity metrics, but real business results.",
+    description: "See exactly what's working with clear reports - not vanity metrics, but real business results.",
   },
   {
     icon: Camera,
@@ -737,7 +739,7 @@ const SocialMediaMarketing = () => {
     ? publicServicesData.services.map((s) => ({
         slug: s.slug,
         name: s.name,
-        emoji: platformEmojiBySlugFixed[s.slug] || "✨",
+        emoji: platformEmojiBySlugFixed[s.slug] || "*",
         tagline: s.tagline || "",
         logo: s.logoUrl || "",
         features: Array.isArray(s.features) ? s.features : [],
@@ -745,7 +747,7 @@ const SocialMediaMarketing = () => {
     : (platformServices as LegacyPlatformService[]).map((p) => ({
         slug: platformSlugByName[p.name] || String(p.name || "").toLowerCase().replace(/\s+/g, "-"),
         name: p.name,
-        emoji: platformEmojiBySlugFixed[platformSlugByName[p.name]] || p.emoji || "✨",
+        emoji: platformEmojiBySlugFixed[platformSlugByName[p.name]] || p.emoji || "*",
         tagline: p.tagline || "",
         logo: p.logo || "",
         features: Array.isArray(p.features) ? p.features : [],
@@ -774,10 +776,12 @@ const SocialMediaMarketing = () => {
               </span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 Social Media That
-                <span className="block text-white">Actually Sells</span>
+                <span className="block text-white">
+                  <FlipFadeText words={["Actually Sells", "Builds Trust", "Grows Daily"]} interval={2600} />
+                </span>
               </h1>
               <p className="text-lg md:text-xl text-white mb-8">
-                You know you should be posting more, but who has the time? We take social media off your plate completely — creating content, growing your following, and turning followers into paying customers.
+                You know you should be posting more, but who has the time? We take social media off your plate completely - creating content, growing your following, and turning followers into paying customers.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
                 {stats.map((stat, index) => (
@@ -826,7 +830,8 @@ const SocialMediaMarketing = () => {
             >
               <span className="text-accent font-medium">What We Do</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Types of Campaigns We Run
+                Types of Campaigns{" "}
+                <FlipFadeText words={["We Run", "That Work", "That Convert"]} interval={2600} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 From brand awareness to lead generation, we've got you covered.
@@ -881,7 +886,8 @@ const SocialMediaMarketing = () => {
             >
               <span className="text-accent font-medium">Our Services</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Social Media Services
+                Social Media{" "}
+                <FlipFadeText words={["Services", "Growth", "Systems"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 End-to-end social media solutions to elevate your brand presence.
@@ -924,7 +930,8 @@ const SocialMediaMarketing = () => {
             >
               <span className="text-accent font-medium">Platforms</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Platforms We Manage
+                Platforms We{" "}
+                <FlipFadeText words={["Manage", "Grow", "Optimize"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 Premium growth services across all major social media platforms
@@ -1008,7 +1015,8 @@ const SocialMediaMarketing = () => {
             >
               <span className="text-accent font-medium">Testimonials</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Client Reviews & Ratings
+                Client Reviews &{" "}
+                <FlipFadeText words={["Ratings", "Results", "Trust"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 See what our clients say about our social media marketing services.
@@ -1016,37 +1024,7 @@ const SocialMediaMarketing = () => {
             </motion.div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {customerReviews.map((review, index) => (
-              <motion.div
-                key={review.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="card-premium p-5 relative"
-              >
-                <Quote className="absolute top-3 right-3 w-6 h-6 text-accent/20" />
-                <div className="flex items-center gap-3 mb-3">
-                  <img
-                    src={review.image}
-                    alt={review.name}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-accent"
-                  />
-                  <div>
-                    <h4 className="font-semibold text-foreground text-sm">{review.name}</h4>
-                    <p className="text-xs text-muted-foreground">{review.company}</p>
-                  </div>
-                </div>
-                <div className="flex gap-0.5 mb-2">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-highlight text-highlight" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground text-sm italic">"{review.review}"</p>
-              </motion.div>
-            ))}
-          </div>
+          <TestimonialMarquee />
         </div>
       </section>
 
@@ -1061,7 +1039,8 @@ const SocialMediaMarketing = () => {
             >
               <span className="text-accent font-medium">Happy Clients</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Social Results That Feel Human
+                Social Results That Feel{" "}
+                <FlipFadeText words={["Human", "Real", "Clear"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 We focus on real people, real stories, and sustainable growth - not just vanity metrics.
@@ -1117,7 +1096,8 @@ const SocialMediaMarketing = () => {
             >
               <span className="text-accent font-medium">Case Studies</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Success Stories
+                Success{" "}
+                <FlipFadeText words={["Stories", "Proof", "Wins"]} interval={2400} />
               </h2>
             </motion.div>
           </div>
@@ -1160,7 +1140,8 @@ const SocialMediaMarketing = () => {
             viewport={{ once: true }}
           >
             <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Stop Struggling With Social Media
+              Stop Struggling With{" "}
+              <FlipFadeText words={["Social Media", "Content", "Growth"]} interval={2400} />
             </h2>
             <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
               Let's talk about what's not working and how we can fix it. Free consultation, no pressure.

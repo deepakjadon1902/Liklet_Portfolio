@@ -2,13 +2,14 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Heart, Target, Rocket, Users, ArrowRight } from "lucide-react";
 import { LampContainer } from "@/components/ui/lamp-effect";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 import teamImg from "@/assets/team.jpg";
 
 const values = [
   {
     icon: Heart,
     title: "Honesty First",
-    description: "We tell you what works and what doesn't — even if it means less work for us.",
+    description: "We tell you what works and what doesn't - even if it means less work for us.",
   },
   {
     icon: Target,
@@ -29,11 +30,11 @@ const values = [
 
 const timeline = [
   { year: "2019", title: "The Beginning", description: "Started with one goal: help small businesses compete online against bigger competitors." },
-  { year: "2020", title: "Growing Together", description: "Expanded our services based on what our clients actually needed — not what we wanted to sell." },
-  { year: "2021", title: "Recognition", description: "Our clients' success stories started spreading — new businesses found us through referrals." },
-  { year: "2022", title: "Full Service", description: "Built a complete team covering web, social media, and marketing — everything under one roof." },
+  { year: "2020", title: "Growing Together", description: "Expanded our services based on what our clients actually needed - not what we wanted to sell." },
+  { year: "2021", title: "Recognition", description: "Our clients' success stories started spreading - new businesses found us through referrals." },
+  { year: "2022", title: "Full Service", description: "Built a complete team covering web, social media, and marketing - everything under one roof." },
   { year: "2023", title: "Embracing AI", description: "Started using smart tools to get better results faster and at lower costs for our clients." },
-  { year: "2024", title: "50+ Happy Clients", description: "Now serving businesses across India and internationally — from local shops to tech startups." },
+  { year: "2024", title: "50+ Happy Clients", description: "Now serving businesses across India and internationally - from local shops to tech startups." },
 ];
 
 const About = () => {
@@ -56,10 +57,12 @@ const About = () => {
           </span>
           <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6">
             We Help Small Businesses
-            <span className="block text-white mt-2">Win Big Online</span>
+            <span className="block text-white mt-2">
+              <FlipFadeText words={["Win Big Online", "Grow With Clarity", "Stand Out Online"]} interval={2600} />
+            </span>
           </h1>
           <p className="text-lg md:text-xl text-white max-w-3xl mx-auto">
-            Too many small businesses struggle to be seen online while big companies dominate. We believe that's not fair — and we're here to change it. At Liklet, we give growing businesses the same digital tools and strategies that big brands use.
+            Too many small businesses struggle to be seen online while big companies dominate. We believe that's not fair - and we're here to change it. At Liklet, we give growing businesses the same digital tools and strategies that big brands use.
           </p>
         </motion.div>
       </LampContainer>
@@ -76,7 +79,8 @@ const About = () => {
             >
               <span className="text-accent font-medium">Why We Started</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-6">
-                Built From Frustration
+                Built From{" "}
+                <FlipFadeText words={["Frustration", "Experience", "Purpose"]} interval={2400} />
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
@@ -86,7 +90,7 @@ const About = () => {
                   Our founders came from backgrounds in tech and marketing, and we knew there had to be a better way. A way that focused on what actually matters: getting real customers through the door (or to your website).
                 </p>
                 <p>
-                  Today, we work with startups, local businesses, and entrepreneurs across India and beyond. We're not the biggest agency — and we don't want to be. We'd rather do great work for clients we genuinely care about than chase numbers.
+                  Today, we work with startups, local businesses, and entrepreneurs across India and beyond. We're not the biggest agency - and we don't want to be. We'd rather do great work for clients we genuinely care about than chase numbers.
                 </p>
               </div>
             </motion.div>
@@ -123,7 +127,7 @@ const About = () => {
               </div>
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">Our Mission</h3>
               <p className="text-muted-foreground">
-                To give small businesses and startups the same digital advantages that big companies have — without the big price tag or confusing jargon. We want every business owner to understand exactly what we're doing and why it works.
+                To give small businesses and startups the same digital advantages that big companies have - without the big price tag or confusing jargon. We want every business owner to understand exactly what we're doing and why it works.
               </p>
             </motion.div>
             <motion.div
@@ -156,7 +160,8 @@ const About = () => {
             >
               <span className="text-accent font-medium">How We Work</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                What We Stand For
+                What We{" "}
+                <FlipFadeText words={["Stand For", "Believe In", "Protect"]} interval={2500} />
               </h2>
             </motion.div>
           </div>
@@ -193,7 +198,8 @@ const About = () => {
             >
               <span className="text-accent font-medium">Our Journey</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Milestones That Define Us
+                Milestones That{" "}
+                <FlipFadeText words={["Define Us", "Guide Us", "Built Us"]} interval={2600} />
               </h2>
             </motion.div>
           </div>
@@ -253,7 +259,8 @@ const About = () => {
             viewport={{ once: true }}
           >
             <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Let's Talk About Your Business
+              Let's Talk About Your{" "}
+              <FlipFadeText words={["Business", "Goals", "Growth"]} interval={2400} />
             </h2>
             <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
               No sales pitch. No pressure. Just an honest conversation about where you are, where you want to be, and how we might help you get there.

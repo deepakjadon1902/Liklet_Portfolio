@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 
 const TermsOfService = () => {
   return (
@@ -6,7 +7,8 @@ const TermsOfService = () => {
       <section className="hero-gradient section-padding pt-32">
         <div className="container-max text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-display text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
-            Terms of Service
+            Terms of{" "}
+            <FlipFadeText words={["Service", "Trust", "Work"]} interval={2400} />
           </motion.h1>
           <p className="text-primary-foreground/80">Last updated: December 2024</p>
         </div>

@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Code, Globe, Smartphone, Database, Cloud, Shield, ArrowRight, Star, Quote, Layout, Server, Layers, FileCode, Palette, Monitor } from "lucide-react";
+import FlipFadeText from "@/components/ui/flip-fade-text";
+import TestimonialMarquee from "@/components/ui/marquee-01";
 import webDevImg from "@/assets/web-dev.jpg";
 import ProjectCardStack from "@/components/ui/project-card-stack";
 
@@ -8,7 +10,7 @@ const services = [
   {
     icon: Globe,
     title: "Business Websites",
-    description: "A professional website that makes visitors trust you — fast, mobile-friendly, and built to turn browsers into buyers.",
+    description: "A professional website that makes visitors trust you - fast, mobile-friendly, and built to turn browsers into buyers.",
   },
   {
     icon: Smartphone,
@@ -23,7 +25,7 @@ const services = [
   {
     icon: Database,
     title: "Easy Content Updates",
-    description: "Update your website yourself — no tech skills needed. We set you up with simple tools you'll actually use.",
+    description: "Update your website yourself - no tech skills needed. We set you up with simple tools you'll actually use.",
   },
   {
     icon: Cloud,
@@ -53,7 +55,7 @@ const projectTypes = [
   {
     icon: Layers,
     title: "Complete Web Apps",
-    description: "Full applications built from scratch — everything from login to checkout.",
+    description: "Full applications built from scratch - everything from login to checkout.",
     features: ["All-in-One Solutions", "Real-Time Updates", "Third-Party Connections", "Built to Scale"],
   },
   {
@@ -255,10 +257,12 @@ const WebDevelopment = () => {
               </span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 Websites That
-                <span className="block text-white">Bring You Customers</span>
+                <span className="block text-white">
+                  <FlipFadeText words={["Bring You Customers", "Build Trust Fast", "Convert Visitors"]} interval={2600} />
+                </span>
               </h1>
               <p className="text-lg md:text-xl text-white mb-8">
-                A pretty website is nice, but what you really need is a website that works — one that shows up on Google, loads fast on phones, and convinces visitors to contact you.
+                A pretty website is nice, but what you really need is a website that works - one that shows up on Google, loads fast on phones, and convinces visitors to contact you.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
                 {stats.map((stat, index) => (
@@ -307,7 +311,8 @@ const WebDevelopment = () => {
             >
               <span className="text-accent font-medium">What We Build</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Types of Projects We Work On
+                Types of Projects{" "}
+                <FlipFadeText words={["We Work On", "We Build", "We Launch"]} interval={2600} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 From simple landing pages to complex enterprise applications, we handle it all.
@@ -363,7 +368,8 @@ const WebDevelopment = () => {
             >
               <span className="text-accent font-medium">Our Services</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                IT Services
+                IT{" "}
+                <FlipFadeText words={["Services", "Solutions", "Systems"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 Comprehensive web development solutions tailored to your business needs.
@@ -421,7 +427,8 @@ const WebDevelopment = () => {
             >
               <span className="text-accent font-medium">Technologies</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Technologies We Master
+                Technologies We{" "}
+                <FlipFadeText words={["Master", "Use", "Trust"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 We use the latest and most reliable technologies to build your projects.
@@ -469,7 +476,8 @@ const WebDevelopment = () => {
             >
               <span className="text-accent font-medium">Testimonials</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                What Our Clients Say
+                What Our Clients{" "}
+                <FlipFadeText words={["Say", "Value", "Remember"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 Don't just take our word for it - hear from our satisfied clients.
@@ -477,37 +485,7 @@ const WebDevelopment = () => {
             </motion.div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {customerReviews.map((review, index) => (
-              <motion.div
-                key={review.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="card-premium p-6 relative"
-              >
-                <Quote className="absolute top-4 right-4 w-8 h-8 text-accent/20" />
-                <div className="flex items-center gap-4 mb-4">
-                  <img
-                    src={review.image}
-                    alt={review.name}
-                    className="w-14 h-14 rounded-full object-cover border-2 border-accent"
-                  />
-                  <div>
-                    <h4 className="font-semibold text-foreground">{review.name}</h4>
-                    <p className="text-sm text-muted-foreground">{review.role}, {review.company}</p>
-                  </div>
-                </div>
-                <div className="flex gap-1 mb-3">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-highlight text-highlight" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground italic">"{review.review}"</p>
-              </motion.div>
-            ))}
-          </div>
+          <TestimonialMarquee />
         </div>
       </section>
 
@@ -522,7 +500,8 @@ const WebDevelopment = () => {
             >
               <span className="text-accent font-medium">Our Work</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Featured Projects
+                Featured{" "}
+                <FlipFadeText words={["Projects", "Work", "Builds"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 Click on a card to view project details, or cycle through our portfolio
@@ -543,7 +522,8 @@ const WebDevelopment = () => {
             viewport={{ once: true }}
           >
             <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready to Build Your Website?
+              Ready to Build Your{" "}
+              <FlipFadeText words={["Website?", "Platform?", "Experience?"]} interval={2400} />
             </h2>
             <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
               Let's discuss your project and create something amazing together.

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Mail, MapPin, Clock, Send, Globe, Share2, BarChart3, ArrowRight, PlayCircle, ChevronDown, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { LampContainer } from "@/components/ui/lamp-effect";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 import webDevImg from "@/assets/web-dev.jpg";
 import socialMediaImg from "@/assets/social-media.jpg";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
@@ -188,10 +189,12 @@ ${formData.message}`;
           </span>
           <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6">
             Have a Question?
-            <span className="block text-white mt-2">We're Here to Help</span>
+            <span className="block text-white mt-2">
+              <FlipFadeText words={["We're Here to Help", "Let's Build Clarity", "Let's Talk Growth"]} interval={2600} />
+            </span>
           </h1>
           <p className="text-lg md:text-xl text-white max-w-3xl mx-auto">
-            Not sure what you need? That's okay. Tell us about your business and what you're trying to achieve — we'll help you figure out the best path forward. No pressure, just honest advice.
+            Not sure what you need? That's okay. Tell us about your business and what you're trying to achieve - we'll help you figure out the best path forward. No pressure, just honest advice.
           </p>
         </motion.div>
       </LampContainer>
@@ -207,7 +210,8 @@ ${formData.message}`;
             >
               <span className="text-accent font-medium">What We Do</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                What Are You Looking For?
+                What Are You{" "}
+                <FlipFadeText words={["Looking For?", "Planning?", "Building?"]} interval={2400} />
               </h2>
             </motion.div>
           </div>
@@ -267,7 +271,8 @@ ${formData.message}`;
             >
               <span className="text-accent font-medium">Get in Touch</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2 mb-8">
-                Contact Information
+                Contact{" "}
+                <FlipFadeText words={["Information", "Details", "Access"]} interval={2600} />
               </h2>
 
               <div className="space-y-6">
@@ -507,11 +512,12 @@ ${formData.message}`;
             viewport={{ once: true }}
           >
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Here's What Happens After You Reach Out
+              Here's What Happens{" "}
+              <FlipFadeText words={["After You Reach Out", "Next", "From Here"]} interval={2600} />
             </h2>
             <div className="grid md:grid-cols-3 gap-8 mt-12">
               {[
-                { step: "1", title: "Quick Reply", description: "We'll get back to you within 24 hours — usually much faster." },
+                { step: "1", title: "Quick Reply", description: "We'll get back to you within 24 hours - usually much faster." },
                 { step: "2", title: "Free Consultation", description: "A quick call to understand your business and goals. No sales pitch." },
                 { step: "3", title: "Clear Proposal", description: "If we're a good fit, you'll get a clear plan with honest pricing." },
               ].map((item, index) => (

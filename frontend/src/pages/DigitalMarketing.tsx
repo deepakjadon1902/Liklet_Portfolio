@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Search, BarChart3, Mail, Target, Megaphone, LineChart, ArrowRight, CheckCircle, Star, Quote, Rocket, TrendingUp, PieChart } from "lucide-react";
+import FlipFadeText from "@/components/ui/flip-fade-text";
+import TestimonialMarquee from "@/components/ui/marquee-01";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
 
 const services = [
   {
     icon: Search,
     title: "Search Engine Optimization",
-    description: "Get found when people search for what you offer. We help you show up on Google so customers find you — not your competitors.",
+    description: "Get found when people search for what you offer. We help you show up on Google so customers find you - not your competitors.",
   },
   {
     icon: Target,
@@ -22,7 +24,7 @@ const services = [
   {
     icon: BarChart3,
     title: "Analytics & Reporting",
-    description: "Know exactly what's working and what's not. We give you clear reports you can actually understand — no confusing charts.",
+    description: "Know exactly what's working and what's not. We give you clear reports you can actually understand - no confusing charts.",
   },
   {
     icon: Megaphone,
@@ -184,10 +186,13 @@ const DigitalMarketing = () => {
               </span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 Stop Guessing.
-                <span className="block text-white">Start Growing.</span>
+                <span className="block text-white">
+                  Start{" "}
+                  <FlipFadeText words={["Growing.", "Scaling.", "Winning."]} interval={2400} />
+                </span>
               </h1>
               <p className="text-lg md:text-xl text-white mb-8">
-                Tired of spending money on marketing that doesn't work? We create clear, trackable campaigns that show you exactly where your customers come from — and bring you more of them.
+                Tired of spending money on marketing that doesn't work? We create clear, trackable campaigns that show you exactly where your customers come from - and bring you more of them.
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
                 {stats.map((stat, index) => (
@@ -236,7 +241,8 @@ const DigitalMarketing = () => {
             >
               <span className="text-accent font-medium">What We Do</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Types of Marketing We Specialize In
+                Types of Marketing{" "}
+                <FlipFadeText words={["We Specialize In", "That Convert", "That Scale"]} interval={2600} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 From growth hacking to performance marketing, we've got you covered.
@@ -291,7 +297,8 @@ const DigitalMarketing = () => {
             >
               <span className="text-accent font-medium">Our Services</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Digital Marketing Services
+                Digital Marketing{" "}
+                <FlipFadeText words={["Services", "Systems", "Strategy"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 Comprehensive digital marketing solutions to accelerate your growth.
@@ -334,7 +341,8 @@ const DigitalMarketing = () => {
             >
               <span className="text-accent font-medium">Our Approach</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Marketing Strategies We Deploy
+                Marketing Strategies We{" "}
+                <FlipFadeText words={["Deploy", "Measure", "Improve"]} interval={2400} />
               </h2>
             </motion.div>
           </div>
@@ -368,7 +376,8 @@ const DigitalMarketing = () => {
             >
               <span className="text-accent font-medium">Happy Clients</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Real Stories, Real Growth
+                Real Stories, Real{" "}
+                <FlipFadeText words={["Growth", "Clarity", "Results"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 Human-first marketing that respects budgets and delivers clarity
@@ -425,7 +434,8 @@ const DigitalMarketing = () => {
             >
               <span className="text-accent font-medium">Testimonials</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Client Reviews & Ratings
+                Client Reviews &{" "}
+                <FlipFadeText words={["Ratings", "Results", "Trust"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 See what our clients say about our digital marketing services.
@@ -433,37 +443,7 @@ const DigitalMarketing = () => {
             </motion.div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {customerReviews.map((review, index) => (
-              <motion.div
-                key={review.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="card-premium p-5 relative"
-              >
-                <Quote className="absolute top-3 right-3 w-6 h-6 text-accent/20" />
-                <div className="flex items-center gap-3 mb-3">
-                  <img
-                    src={review.image}
-                    alt={review.name}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-accent"
-                  />
-                  <div>
-                    <h4 className="font-semibold text-foreground text-sm">{review.name}</h4>
-                    <p className="text-xs text-muted-foreground">{review.company}</p>
-                  </div>
-                </div>
-                <div className="flex gap-0.5 mb-2">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-highlight text-highlight" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground text-sm italic">"{review.review}"</p>
-              </motion.div>
-            ))}
-          </div>
+          <TestimonialMarquee />
         </div>
       </section>
 
@@ -478,7 +458,8 @@ const DigitalMarketing = () => {
             >
               <span className="text-accent font-medium">Results</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Proven Results
+                Proven{" "}
+                <FlipFadeText words={["Results", "Growth", "Returns"]} interval={2400} />
               </h2>
             </motion.div>
           </div>
@@ -521,7 +502,8 @@ const DigitalMarketing = () => {
             viewport={{ once: true }}
           >
             <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready to Scale Your Marketing?
+              Ready to Scale Your{" "}
+              <FlipFadeText words={["Marketing?", "Growth?", "Revenue?"]} interval={2400} />
             </h2>
             <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
               Let's create a data-driven marketing strategy that delivers real results.

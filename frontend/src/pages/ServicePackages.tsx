@@ -5,6 +5,7 @@ import { CheckCircle, ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
 import { Currency, detectCurrency, formatMoney, getStoredCurrency, inrToUsd, setStoredCurrency } from "@/lib/currency";
 import { getUserToken } from "@/lib/userAuth";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 
 type Service = {
   _id: string;
@@ -102,7 +103,8 @@ export default function ServicePackages() {
               </div>
               <div className="flex-1 min-w-0">
                 <h1 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground">
-                  {data?.service?.name} Packages
+                  {data?.service?.name}{" "}
+                  <FlipFadeText words={["Packages", "Plans", "Growth Options"]} interval={2500} />
                 </h1>
                 <p className="text-primary-foreground/80 max-w-2xl">
                   {data?.service?.tagline || "Choose the package that fits your goals."}

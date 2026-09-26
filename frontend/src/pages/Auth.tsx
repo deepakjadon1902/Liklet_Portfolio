@@ -4,6 +4,7 @@ import { ArrowLeft, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { API_BASE_URL, apiFetch } from "@/lib/apiClient";
 import { setUserToken } from "@/lib/userAuth";
 import { useToast } from "@/hooks/use-toast";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 
 type GoogleAuthResponse = { ok: true; token: string };
 type GoogleClientIdResponse = { ok: true; clientId: string };
@@ -196,7 +197,10 @@ export default function Auth() {
                 Secure checkout
               </div>
 
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-4">Continue with Google</h1>
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-4">
+                Continue with{" "}
+                <FlipFadeText words={["Google", "Confidence", "Speed"]} interval={2400} />
+              </h1>
               <p className="text-muted-foreground mt-3 max-w-lg">
                 We use Google Sign-In to protect your booking and keep the ordering process fast. No passwords, no email verification.
               </p>
@@ -220,7 +224,10 @@ export default function Auth() {
             </div>
 
             <div className="card-premium p-6 md:p-8">
-              <h2 className="font-display text-2xl font-bold text-foreground">Sign in</h2>
+              <h2 className="font-display text-2xl font-bold text-foreground">
+                Sign{" "}
+                <FlipFadeText words={["in", "securely", "fast"]} interval={2400} />
+              </h2>
               <p className="text-muted-foreground mt-2">Click below to continue to your booking.</p>
 
               <div className="mt-6">
@@ -235,7 +242,7 @@ export default function Auth() {
                     ) : null}
                   </>
                 ) : isClientIdLoading ? (
-                  <div className="text-xs text-muted-foreground text-center">Loading Google sign-inâ€¦</div>
+                  <div className="text-xs text-muted-foreground text-center">Loading Google sign-in...</div>
                 ) : (
                   <>
                     <button

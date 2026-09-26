@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/apiClient";
 import { Currency, formatMoney } from "@/lib/currency";
 import { getUserToken } from "@/lib/userAuth";
 import { useToast } from "@/hooks/use-toast";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 
 type ProfileData = {
   id: string;
@@ -136,7 +137,10 @@ export default function Profile() {
           <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="text-sm font-semibold uppercase tracking-wider text-accent">Account</div>
-              <h1 className="mt-2 font-display text-3xl font-bold text-foreground md:text-4xl">My Profile</h1>
+              <h1 className="mt-2 font-display text-3xl font-bold text-foreground md:text-4xl">
+                My{" "}
+                <FlipFadeText words={["Profile", "Account", "Workspace"]} interval={2400} />
+              </h1>
               <p className="mt-2 max-w-2xl text-muted-foreground">
                 Manage your details and review your saved order history.
               </p>
@@ -156,7 +160,10 @@ export default function Profile() {
                   <UserRound className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="font-display text-2xl font-bold text-foreground">Profile Details</h2>
+                  <h2 className="font-display text-2xl font-bold text-foreground">
+                    Profile{" "}
+                    <FlipFadeText words={["Details", "Info", "Settings"]} interval={2400} />
+                  </h2>
                   <p className="text-sm text-muted-foreground">{profile?.email || "Loading account..."}</p>
                 </div>
               </div>
@@ -201,7 +208,10 @@ export default function Profile() {
                     <CreditCard className="h-5 w-5" />
                   </div>
                   <div>
-                    <h2 className="font-display text-2xl font-bold text-foreground">Order History</h2>
+                    <h2 className="font-display text-2xl font-bold text-foreground">
+                      Order{" "}
+                      <FlipFadeText words={["History", "Timeline", "Records"]} interval={2400} />
+                    </h2>
                     <p className="text-sm text-muted-foreground">Orders linked to your login account.</p>
                   </div>
                 </div>

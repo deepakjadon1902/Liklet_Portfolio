@@ -4,6 +4,7 @@ import { Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "react-router-dom";
 import { apiFetch } from "@/lib/apiClient";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 
 type Props = {
   pageTitle: string;
@@ -132,10 +133,11 @@ ${formData.message}`;
             animate={{ opacity: 1, y: 0 }}
             className="font-display text-4xl md:text-5xl font-bold text-primary-foreground mb-4"
           >
-            Contact Us
+            Contact{" "}
+            <FlipFadeText words={["Us", "Liklet", "Our Team"]} interval={2400} />
           </motion.h1>
           <p className="text-primary-foreground/80 max-w-2xl mx-auto">
-            Tell us what you need and we’ll reply quickly on WhatsApp.
+            Tell us what you need and we'll reply quickly on WhatsApp.
           </p>
         </div>
       </section>
@@ -144,7 +146,8 @@ ${formData.message}`;
         <div className="container-max max-w-3xl">
           <div className="card-premium p-6 md:p-8">
             <h2 className="font-display text-2xl font-bold text-foreground mb-1">
-              {pageTitle} Query
+              {pageTitle}{" "}
+              <FlipFadeText words={["Query", "Request", "Brief"]} interval={2400} />
             </h2>
             <p className="text-muted-foreground mb-6">
               Fill the form and click submit to open WhatsApp with your message.

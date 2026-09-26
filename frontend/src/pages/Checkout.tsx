@@ -8,6 +8,7 @@ import { countryCodes as allCountryCodes, getFlagUrl } from "@/lib/countries";
 import { loadRazorpayCheckout } from "@/lib/razorpay";
 import { useToast } from "@/hooks/use-toast";
 import { getUserToken } from "@/lib/userAuth";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 
 type Package = {
   _id: string;
@@ -271,7 +272,8 @@ export default function Checkout() {
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div>
                   <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                    Book {data.package.name}
+                    Book{" "}
+                    <FlipFadeText words={[data.package.name, "Your Package", "Your Growth"]} interval={2600} />
                   </h1>
                   <p className="text-muted-foreground">
                     {data.service.name}  {formatMoney(displayAmount, currency)}/{data.package.interval || "mo"}

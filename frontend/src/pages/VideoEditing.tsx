@@ -18,6 +18,7 @@ import {
   ThumbsUp,
   Youtube,
 } from "lucide-react";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 import youtubeImg from "@/assets/youtube.jpg";
 
 const editServices = [
@@ -164,7 +165,9 @@ const VideoEditing = () => {
               </span>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 Video Editing That
-                <span className="block text-white">Respects Your Viewers</span>
+                <span className="block text-white">
+                  <FlipFadeText words={["Respects Your Viewers", "Keeps People Watching", "Builds Trust"]} interval={2600} />
+                </span>
               </h1>
               <p className="text-lg md:text-xl text-white mb-8">
                 We craft clean, engaging edits and honest tech reviews that make
@@ -221,7 +224,8 @@ const VideoEditing = () => {
             >
               <span className="text-accent font-medium">Editing Services</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                What We Handle For You
+                What We Handle{" "}
+                <FlipFadeText words={["For You", "With Care", "Every Week"]} interval={2500} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 You stay focused on creating. We take care of pacing, polish, and
@@ -271,7 +275,8 @@ const VideoEditing = () => {
             >
               <span className="text-accent font-medium">Tech Review Focus</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Our Review Framework
+                Our Review{" "}
+                <FlipFadeText words={["Framework", "Method", "Standard"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 We review like a buyer, not a brand. Every verdict is built on
@@ -320,7 +325,8 @@ const VideoEditing = () => {
             >
               <span className="text-accent font-medium">Production Flow</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                A Clean, Reliable Workflow
+                A Clean, Reliable{" "}
+                <FlipFadeText words={["Workflow", "Process", "System"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 We keep the process simple and transparent so you always know
@@ -362,7 +368,8 @@ const VideoEditing = () => {
             >
               <span className="text-accent font-medium">Our Channels</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Watch The Work In Action
+                Watch The Work{" "}
+                <FlipFadeText words={["In Action", "On YouTube", "Come Alive"]} interval={2600} />
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
                 Explore our two YouTube channels for tech reviews, product
@@ -429,7 +436,8 @@ const VideoEditing = () => {
             >
               <span className="text-accent font-medium">Viewer-First Promise</span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Tech Content That Feels Trustworthy
+                Tech Content That Feels{" "}
+                <FlipFadeText words={["Trustworthy", "Useful", "Clear"]} interval={2400} />
               </h2>
               <p className="text-muted-foreground mt-4">
                 Our edits prioritize clarity, honesty, and pace. We avoid hype,
@@ -495,7 +503,8 @@ const VideoEditing = () => {
             viewport={{ once: true }}
           >
             <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready for Better Tech Videos?
+              Ready for Better{" "}
+              <FlipFadeText words={["Tech Videos?", "Reviews?", "Edits?"]} interval={2400} />
             </h2>
             <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
               Let us edit your next review or product video so your audience

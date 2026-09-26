@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
 import { Currency, formatMoney } from "@/lib/currency";
+import FlipFadeText from "@/components/ui/flip-fade-text";
 
 type OrderSummary = {
   _id: string;
@@ -62,7 +63,10 @@ export default function MyOrders() {
             Back to Home
           </Link>
 
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2">My Orders</h1>
+          <h1 className="font-display text-3xl font-bold text-foreground mb-2">
+            My{" "}
+            <FlipFadeText words={["Orders", "Purchases", "Projects"]} interval={2400} />
+          </h1>
           <p className="text-muted-foreground mb-6">
             Orders are stored in this browser after successful payment.
           </p>
@@ -73,7 +77,7 @@ export default function MyOrders() {
             </div>
           ) : (
             <div className="card-premium p-6">
-              {isLoading ? <div className="text-muted-foreground">Loading ordersâ€¦</div> : null}
+              {isLoading ? <div className="text-muted-foreground">Loading orders...</div> : null}
               {error ? <div className="text-muted-foreground">Unable to load orders.</div> : null}
 
               <div className="overflow-x-auto">

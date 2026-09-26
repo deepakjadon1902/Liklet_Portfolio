@@ -1,71 +1,68 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Liklet Premium Design System
-   Public app: 60% royal blue, 30% white, 10% pure black.
-   Admin app: 60% white, 30% #c5c5c5, 10% #4169E1 with pure black/white contrast.
-*/
+/* Liklet design system: calm neutral surfaces, focused blue actions, subtle warm accents. */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 225 73% 57%;
+    --primary: 224 71% 39%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 100%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 26%;
+    --muted: 214 32% 93%;
+    --muted-foreground: 215 16% 42%;
 
-    --accent: 225 73% 57%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --highlight: 225 73% 57%;
-    --highlight-foreground: 0 0% 100%;
+    --highlight: 38 92% 50%;
+    --highlight-foreground: 222 47% 11%;
 
-    --navy-dark: 0 0% 0%;
-    --navy-medium: 225 73% 57%;
-    --navy-light: 0 0% 100%;
+    --navy-dark: 222 47% 11%;
+    --navy-medium: 224 71% 39%;
+    --navy-light: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 77%;
-    --input: 0 0% 77%;
-    --ring: 225 73% 57%;
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 217 91% 60%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 0%;
-    --sidebar-primary: 225 73% 57%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 224 71% 39%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 0%;
-    --sidebar-border: 0 0% 77%;
-    --sidebar-ring: 225 73% 57%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 88%;
+    --sidebar-ring: 217 91% 60%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(225 73% 57%) 0%, hsl(225 73% 49%) 72%, hsl(0 0% 0%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(225 73% 57%) 0%, hsl(225 73% 47%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
-    --gradient-section: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(225 73% 97%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(224 71% 27%) 56%, hsl(217 91% 60%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(224 71% 39%) 0%, hsl(217 91% 60%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 99%) 100%);
+    --gradient-section: linear-gradient(180deg, hsl(210 40% 98%) 0%, hsl(0 0% 100%) 100%);
 
-    --shadow-sm: 0 2px 10px -4px hsl(0 0% 0% / 0.16);
-    --shadow-md: 0 14px 36px -18px hsl(0 0% 0% / 0.32);
-    --shadow-lg: 0 24px 70px -30px hsl(0 0% 0% / 0.42);
-    --shadow-glow: 0 0 36px hsl(225 73% 57% / 0.28);
+    --shadow-sm: 0 1px 2px hsl(222 47% 11% / 0.06);
+    --shadow-md: 0 16px 40px -24px hsl(222 47% 11% / 0.28);
+    --shadow-lg: 0 30px 80px -42px hsl(222 47% 11% / 0.35);
+    --shadow-glow: 0 18px 40px -26px hsl(217 91% 60% / 0.7);
   }
 
   .dark {
@@ -130,6 +127,7 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   *::selection {
@@ -139,13 +137,14 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+    letter-spacing: 0;
   }
 }
 
 @layer components {
   .section-padding {
-    @apply px-4 sm:px-6 lg:px-8 py-16 md:py-24;
+    @apply px-4 py-14 sm:px-6 md:py-20 lg:px-8;
   }
 
   .container-max {
@@ -158,12 +157,12 @@
   }
 
   .card-premium {
-    @apply rounded-xl border border-border bg-card shadow-md hover:shadow-lg transition-all duration-300;
+    @apply rounded-lg border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-md;
     background: var(--gradient-card);
   }
 
   .btn-accent {
-    @apply inline-flex items-center justify-center rounded-lg px-6 py-3 font-medium text-accent-foreground transition-all duration-300 hover:scale-105;
+    @apply inline-flex items-center justify-center rounded-lg px-5 py-3 text-sm font-semibold text-accent-foreground transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
     background: var(--gradient-accent);
     box-shadow: var(--shadow-md);
   }
@@ -185,11 +184,15 @@
   }
 
   .hero-gradient {
-    background: var(--gradient-hero);
+    background:
+      radial-gradient(circle at 18% 18%, hsl(217 91% 60% / 0.22), transparent 28rem),
+      radial-gradient(circle at 86% 20%, hsl(38 92% 50% / 0.12), transparent 24rem),
+      var(--gradient-hero);
   }
 
   .section-gradient {
-    background: var(--gradient-section);
+    background:
+      linear-gradient(180deg, hsl(210 40% 98%) 0%, hsl(0 0% 100%) 100%);
   }
 
   .glass-card {
@@ -337,5 +340,23 @@
   @keyframes scaleIn {
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
+  }
+
+  .animate-marquee {
+    animation: marquee var(--duration, 26s) linear infinite;
+  }
+
+  .animate-marquee-reverse {
+    animation: marquee-reverse var(--duration, 26s) linear infinite;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% - 1rem)); }
+  }
+
+  @keyframes marquee-reverse {
+    from { transform: translateX(calc(-100% - 1rem)); }
+    to { transform: translateX(0); }
   }
 }
