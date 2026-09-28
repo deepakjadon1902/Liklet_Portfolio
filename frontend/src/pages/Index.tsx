@@ -9,6 +9,7 @@ import webDevImg from "@/assets/web-dev.jpg";
 import socialMediaImg from "@/assets/social-media.jpg";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
 import youtubeImg from "@/assets/youtube.jpg";
+import heroBgImg from "@/assets/hero-bg.jpg";
 
 const heroVideos = [
   "/hero%20section/development.mp4",
@@ -76,49 +77,90 @@ const testimonials = [
 ];
 
 const HeroVideoBackground = () => {
-  const videoRefs = [useRef<HTMLVideoElement | null>(null), useRef<HTMLVideoElement | null>(null)];
-  const [activeSlot, setActiveSlot] = useState(0);
-  const [slotIndexes, setSlotIndexes] = useState<[number, number]>([0, 1]);
+  const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
+  const transitionLockRef = useRef(false);
+  const resetTimerRef = useRef<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    videoRefs[activeSlot].current?.play().catch(() => undefined);
-  }, [activeSlot, slotIndexes]);
+    heroVideos.forEach((_, index) => {
+      const video = videoRefs.current[index];
+      if (!video) return;
 
-  const handleEnded = () => {
-    const nextSlot = activeSlot === 0 ? 1 : 0;
-
-    setActiveSlot(nextSlot);
-    setSlotIndexes((current) => {
-      const updated: [number, number] = [...current];
-      updated[activeSlot] = (current[nextSlot] + 1) % heroVideos.length;
-      return updated;
+      video.muted = true;
+      video.preload = "auto";
+      video.load();
     });
 
-    requestAnimationFrame(() => {
-      const nextVideo = videoRefs[nextSlot].current;
-      if (nextVideo) {
-        nextVideo.currentTime = 0;
-        nextVideo.play().catch(() => undefined);
+    const activeVideo = videoRefs.current[0];
+    activeVideo?.play().catch(() => undefined);
+
+    return () => {
+      if (resetTimerRef.current) {
+        window.clearTimeout(resetTimerRef.current);
       }
-    });
+    };
+  }, []);
+
+  const playNextVideo = () => {
+    if (transitionLockRef.current) return;
+
+    const currentVideo = videoRefs.current[activeIndex];
+    const nextIndex = (activeIndex + 1) % heroVideos.length;
+    const nextVideo = videoRefs.current[nextIndex];
+
+    if (!nextVideo) return;
+
+    transitionLockRef.current = true;
+    nextVideo.currentTime = 0;
+    nextVideo.play().catch(() => undefined);
+
+    setActiveIndex(nextIndex);
+
+    resetTimerRef.current = window.setTimeout(() => {
+      currentVideo?.pause();
+      if (currentVideo) {
+        currentVideo.currentTime = 0;
+      }
+      transitionLockRef.current = false;
+    }, 500);
+  };
+
+  const handleTimeUpdate = (index: number) => {
+    const video = videoRefs.current[index];
+    if (!video || index !== activeIndex || !Number.isFinite(video.duration)) return;
+
+    if (video.duration - video.currentTime <= 0.45) {
+      playNextVideo();
+    }
   };
 
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden bg-black">
-      {slotIndexes.map((videoIndex, slot) => (
+      <img
+        src={heroBgImg}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      {heroVideos.map((videoSrc, index) => (
         <video
-          key={`${slot}-${videoIndex}`}
-          ref={videoRefs[slot]}
-          src={heroVideos[videoIndex]}
-          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-150 ${
-            slot === activeSlot ? "opacity-100" : "opacity-0"
+          key={videoSrc}
+          ref={(element) => {
+            videoRefs.current[index] = element;
+          }}
+          src={videoSrc}
+          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500 ${
+            index === activeIndex ? "opacity-100" : "opacity-0"
           }`}
           style={{ filter: "brightness(1.38) saturate(1.08) contrast(1.02)" }}
           muted
           playsInline
           preload="auto"
-          autoPlay={slot === activeSlot}
-          onEnded={slot === activeSlot ? handleEnded : undefined}
+          autoPlay={index === activeIndex}
+          poster={heroBgImg}
+          onTimeUpdate={() => handleTimeUpdate(index)}
+          onEnded={index === activeIndex ? playNextVideo : undefined}
         />
       ))}
       <div className="absolute inset-0 bg-white/38" />
