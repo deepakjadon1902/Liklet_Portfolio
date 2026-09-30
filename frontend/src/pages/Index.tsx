@@ -80,6 +80,7 @@ const HeroVideoBackground = () => {
   const transitionLockRef = useRef(false);
   const resetTimerRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [readyVideos, setReadyVideos] = useState<boolean[]>(() => heroVideos.map(() => false));
 
   useEffect(() => {
     heroVideos.forEach((_, index) => {
@@ -134,8 +135,21 @@ const HeroVideoBackground = () => {
     }
   };
 
+  const handleVideoReady = (index: number) => {
+    setReadyVideos((current) => {
+      if (current[index]) return current;
+      const next = [...current];
+      next[index] = true;
+      return next;
+    });
+  };
+
   return (
-    <div className="absolute inset-0 h-full w-full overflow-hidden bg-black">
+    <div className="absolute inset-0 h-full w-full overflow-hidden bg-[linear-gradient(115deg,#050b3d_0%,#2d63d8_42%,#c9fbff_100%)]">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_18%_28%,rgba(255,255,255,0.35),transparent_26%),radial-gradient(circle_at_76%_20%,rgba(255,255,255,0.45),transparent_30%),linear-gradient(115deg,rgba(3,7,36,0.75)_0%,rgba(65,105,225,0.72)_46%,rgba(221,255,255,0.72)_100%)]"
+      />
       {heroVideos.map((videoSrc, index) => (
         <video
           key={videoSrc}
@@ -145,13 +159,14 @@ const HeroVideoBackground = () => {
           src={videoSrc}
           aria-hidden="true"
           className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500 ${
-            index === activeIndex ? "opacity-100" : "opacity-0"
+            index === activeIndex && readyVideos[index] ? "opacity-100" : "opacity-0"
           }`}
           style={{ filter: "brightness(1.38) saturate(1.08) contrast(1.02)" }}
           muted
           playsInline
           preload="auto"
           autoPlay={index === activeIndex}
+          onLoadedData={() => handleVideoReady(index)}
           onTimeUpdate={() => handleTimeUpdate(index)}
           onEnded={index === activeIndex ? playNextVideo : undefined}
         />
@@ -165,7 +180,7 @@ const Index = () => {
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-black">
+      <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[linear-gradient(115deg,#050b3d_0%,#2d63d8_42%,#c9fbff_100%)]">
         <HeroVideoBackground />
         
         <div className="container-max relative z-10 px-4 pb-14 pt-28 text-center sm:px-6 md:pb-20 md:pt-32 lg:px-8">
