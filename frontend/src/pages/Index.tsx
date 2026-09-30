@@ -9,7 +9,6 @@ import webDevImg from "@/assets/web-dev.jpg";
 import socialMediaImg from "@/assets/social-media.jpg";
 import digitalMarketingImg from "@/assets/digital-marketing.jpg";
 import youtubeImg from "@/assets/youtube.jpg";
-import heroBgImg from "@/assets/hero-bg.jpg";
 
 const heroVideos = [
   "/hero%20section/development.mp4",
@@ -137,12 +136,6 @@ const HeroVideoBackground = () => {
 
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden bg-black">
-      <img
-        src={heroBgImg}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover object-center"
-      />
       {heroVideos.map((videoSrc, index) => (
         <video
           key={videoSrc}
@@ -150,6 +143,7 @@ const HeroVideoBackground = () => {
             videoRefs.current[index] = element;
           }}
           src={videoSrc}
+          aria-hidden="true"
           className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500 ${
             index === activeIndex ? "opacity-100" : "opacity-0"
           }`}
@@ -158,7 +152,6 @@ const HeroVideoBackground = () => {
           playsInline
           preload="auto"
           autoPlay={index === activeIndex}
-          poster={heroBgImg}
           onTimeUpdate={() => handleTimeUpdate(index)}
           onEnded={index === activeIndex ? playNextVideo : undefined}
         />
