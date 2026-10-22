@@ -1,210 +1,206 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import {
-  LogIn,
-  LogOut,
-  Menu,
-  UserRound,
-  X,
-} from "lucide-react";
-import { FaGoogle, FaInstagram, FaReact, FaYoutube } from "react-icons/fa";
-import { IconType } from "react-icons";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { USER_AUTH_EVENT, clearUserToken, getUserToken } from "@/lib/userAuth";
-import StaggeredDropDown from "@/components/ui/animated-staggered-dropdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Brand from "@/components/brand/Brand";
+import ServiceMark from "@/components/brand/ServiceMark";
+import { serviceLinks } from "@/data/services";
 import { cn } from "@/lib/utils";
 
-const serviceLinks: Array<{ name: string; path: string; icon: IconType; iconClassName: string }> = [
-  { name: "IT Services", path: "/it-services", icon: FaReact, iconClassName: "text-sky-500" },
-  { name: "Social Media", path: "/social-media-marketing", icon: FaInstagram, iconClassName: "text-pink-600" },
-  { name: "Digital Marketing", path: "/digital-marketing", icon: FaGoogle, iconClassName: "text-blue-600" },
-  { name: "Video Editing", path: "/video-editing", icon: FaYoutube, iconClassName: "text-red-600" },
-];
-
-const navLinks = [
-  { name: "About", path: "/about" },
-  { name: "Contact", path: "/contact" },
-];
-
-const Navbar = () => {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(getUserToken()));
   const location = useLocation();
   const navigate = useNavigate();
-
-  const isActive = (path: string) => location.pathname === path;
-  const isServiceActive = serviceLinks.some((link) => isActive(link.path));
-  const serviceOptions = serviceLinks.map((service) => ({
-    text: service.name,
-    Icon: service.icon,
-    onSelect: () => navigate(service.path),
-    iconClassName: service.iconClassName,
-  }));
+  const isHome = location.pathname === "/";
+  const active = (path: string) =>
+    location.pathname === path || location.pathname.startsWith(path + "/");
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 12);
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
+    setIsOpen(false);
+  }, [location.pathname]);
   useEffect(() => {
     const sync = () => setIsLoggedIn(Boolean(getUserToken()));
     sync();
     window.addEventListener("storage", sync);
-    window.addEventListener(USER_AUTH_EVENT, sync as EventListener);
+    window.addEventListener(USER_AUTH_EVENT, sync);
     return () => {
       window.removeEventListener("storage", sync);
-      window.removeEventListener(USER_AUTH_EVENT, sync as EventListener);
+      window.removeEventListener(USER_AUTH_EVENT, sync);
     };
-  }, [location.pathname]);
+  }, []);
 
-  const closeMenu = () => setIsOpen(false);
-
-  const onLogout = () => {
+  const logout = () => {
     clearUserToken();
-    closeMenu();
-    navigate("/", { replace: false });
+    setIsOpen(false);
+    navigate("/");
   };
-
-  const authHref = `/auth?redirect=${encodeURIComponent(location.pathname || "/")}`;
+  const authHref = "/auth?redirect=" + encodeURIComponent(location.pathname + location.search);
+  const navClass =
+    "rounded-md px-3 py-2 text-sm font-medium text-black transition-colors hover:bg-black/5 hover:text-black";
 
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-all duration-300",
-        scrolled && "shadow-none",
+        "top-0 z-50 text-black",
+        isHome ? "fixed inset-x-0 bg-transparent" : "sticky border-b border-border bg-white",
       )}
     >
-      <div className="container-max px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between gap-5">
-          <Link to="/" className="flex min-w-0 items-center gap-3" onClick={closeMenu}>
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-white shadow-sm">
-              <img src="/images/logo.jpg" alt="Liklet Logo" className="h-full w-full object-cover" />
-            </span>
-            <span className="font-display text-2xl font-extrabold tracking-normal text-black">Liklet</span>
-          </Link>
-
-          <nav className="hidden items-center gap-1 lg:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={cn(
-                  "rounded-lg px-3.5 py-2 text-sm font-extrabold text-black transition hover:bg-white/55",
-                  isActive(link.path) && "bg-white/55 text-black",
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <StaggeredDropDown
-              label="Services"
-              options={serviceOptions}
-              buttonClassName={cn(isServiceActive && "bg-white/55 text-black")}
-              menuClassName="top-[135%]"
-            />
-          </nav>
-
-          <div className="hidden items-center gap-2 lg:flex">
-            {isLoggedIn ? (
-              <>
-                <Link
-                  to="/profile"
-                  className={cn(
-                    "inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-extrabold text-black transition hover:bg-white/55",
-                    isActive("/profile") && "bg-white/55 text-black",
-                  )}
-                >
-                  <UserRound className="h-4 w-4" />
-                  Profile
-                </Link>
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  className="inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-extrabold text-black transition hover:bg-white/55"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </button>
-              </>
-            ) : (
-              <Link to={authHref} className="btn-accent py-2.5">
-                <LogIn className="h-4 w-4" />
-                Login
-              </Link>
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsOpen((open) => !open)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-black/10 bg-white/55 text-black shadow-sm backdrop-blur-md lg:hidden"
-            aria-label="Toggle navigation"
-            aria-expanded={isOpen}
-          >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
-      </div>
-
-      {isOpen ? (
-        <div className="border-t border-border bg-white lg:hidden">
-          <div className="container-max px-4 py-4 sm:px-6">
-            <div className="grid gap-1">
-              {[...navLinks, ...serviceLinks].map((link) => {
-                const Icon = "icon" in link ? link.icon : null;
-                return (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={closeMenu}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-extrabold text-black transition hover:bg-muted",
-                      isActive(link.path) && "bg-muted text-black",
-                    )}
-                  >
-                    {Icon ? (
-                      <span className="flex h-9 w-9 items-center justify-center rounded-md bg-white text-black shadow-sm">
-                        <Icon className={cn("h-4 w-4", "iconClassName" in link ? link.iconClassName : "")} />
-                      </span>
-                    ) : null}
-                    {link.name}
-                  </Link>
-                );
-              })}
-              <div className="my-2 h-px bg-border" />
-              {isLoggedIn ? (
-                <>
-                  <Link
-                    to="/profile"
-                    onClick={closeMenu}
-                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-extrabold text-black hover:bg-muted"
-                  >
-                    <UserRound className="h-4 w-4" />
-                    Profile
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={onLogout}
-                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-extrabold text-black hover:bg-muted"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <Link to={authHref} onClick={closeMenu} className="btn-accent mt-1 w-full py-2.5">
-                  <LogIn className="h-4 w-4" />
-                  Login
-                </Link>
+      <div className="container-max flex h-20 items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
+        <Link to="/" aria-label="Liklet home" className="shrink-0 text-black">
+          <Brand />
+        </Link>
+        <nav aria-label="Main navigation" className="hidden items-center gap-2 lg:flex">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className={cn(
+                navClass,
+                "inline-flex items-center gap-2",
+                serviceLinks.some((s) => active(s.path)) && "bg-black/5",
               )}
-            </div>
-          </div>
+            >
+              Services <ChevronDown aria-hidden="true" className="h-3.5 w-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              sideOffset={14}
+              className="w-[360px] max-w-[calc(100vw-2rem)] bg-white p-2 text-black"
+            >
+              {serviceLinks.map((service) => (
+                <DropdownMenuItem key={service.path} asChild>
+                  <Link
+                    to={service.path}
+                    aria-current={active(service.path) ? "page" : undefined}
+                    className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-3 text-left text-black focus:bg-black/5 focus:text-black"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-white">
+                      <ServiceMark path={service.path} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-black">
+                        {service.title}
+                      </span>
+                      <span className="mt-1 block text-xs leading-5 text-black">
+                        {service.description}
+                      </span>
+                    </span>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Link
+            to="/about"
+            aria-current={active("/about") ? "page" : undefined}
+            className={cn(navClass, active("/about") && "bg-black/5")}
+          >
+            About
+          </Link>
+          <Link
+            to="/contact"
+            aria-current={active("/contact") ? "page" : undefined}
+            className={cn(navClass, active("/contact") && "bg-black/5")}
+          >
+            Contact
+          </Link>
+        </nav>
+        <div className="hidden items-center gap-4 lg:flex">
+          {isLoggedIn ? (
+            <>
+              <Link to="/profile" className={navClass}>
+                My account
+              </Link>
+              <button type="button" onClick={logout} className={navClass}>
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to={authHref} className={navClass}>
+              Sign in
+            </Link>
+          )}
+          <Link
+            to="/contact"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-black/25 bg-transparent px-4 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-black/5"
+          >
+            Let's talk
+          </Link>
         </div>
-      ) : null}
+        <button
+          type="button"
+          aria-label={isOpen ? "Close navigation" : "Open navigation"}
+          aria-controls="mobile-navigation"
+          aria-expanded={isOpen}
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex h-11 w-11 items-center justify-center rounded-lg border border-black/25 bg-transparent text-black lg:hidden"
+        >
+          {isOpen ? (
+            <X aria-hidden="true" className="h-5 w-5" />
+          ) : (
+            <Menu aria-hidden="true" className="h-5 w-5" />
+          )}
+        </button>
+      </div>
+      {isOpen && (
+        <nav
+          id="mobile-navigation"
+          aria-label="Mobile navigation"
+          className="max-h-[calc(100dvh-5rem)] overflow-y-auto border-t border-border bg-white px-4 py-5 text-black lg:hidden"
+        >
+          <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-widest text-black">
+            Services
+          </p>
+          {serviceLinks.map((service) => (
+            <Link
+              key={service.path}
+              to={service.path}
+              aria-current={active(service.path) ? "page" : undefined}
+              className="flex items-center gap-3 rounded-lg px-3 py-3 text-black hover:bg-black/5"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-white">
+                <ServiceMark path={service.path} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-black">{service.title}</span>
+                <span className="mt-1 block text-xs leading-5 text-black">
+                  {service.description}
+                </span>
+              </span>
+            </Link>
+          ))}
+          <div className="my-3 border-t border-border" />
+          <Link to="/about" className="block rounded-lg px-3 py-3 text-sm">
+            About
+          </Link>
+          <Link to="/contact" className="block rounded-lg px-3 py-3 text-sm">
+            Contact
+          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link to="/profile" className="block rounded-lg px-3 py-3 text-sm">
+                My account
+              </Link>
+              <button
+                onClick={logout}
+                type="button"
+                className="block w-full rounded-lg px-3 py-3 text-left text-sm"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to={authHref} className="block rounded-lg px-3 py-3 text-sm">
+              Sign in
+            </Link>
+          )}
+        </nav>
+      )}
     </header>
   );
-};
-
-export default Navbar;
+}

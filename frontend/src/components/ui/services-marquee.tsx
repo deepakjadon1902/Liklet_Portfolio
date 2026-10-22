@@ -13,7 +13,7 @@ export type ServiceMarqueeItem = {
 };
 
 const serviceMeta: Record<string, string> = {
-  "IT Services": "High-converting websites",
+  "IT Services": "Websites, mobile apps & CRM",
   "Social Media Marketing": "Content that gets noticed",
   "Digital Marketing": "Measurable growth campaigns",
   "Video Editing & Reviews": "Edits that hold attention",
@@ -53,7 +53,9 @@ export default function ServicesMarquee({ services }: { services: ServiceMarquee
               onClick={() => setActiveIndex(index)}
               className={cn(
                 "h-2 rounded-full transition-all duration-300",
-                index === activeIndex ? "w-9 bg-accent" : "w-2.5 bg-foreground/16 hover:bg-foreground/35",
+                index === activeIndex
+                  ? "w-9 bg-accent"
+                  : "w-2.5 bg-foreground/16 hover:bg-foreground/35",
               )}
             />
           ))}
@@ -128,7 +130,12 @@ function ServiceAccordionCard({
           <span>{isActive ? serviceMeta[service.title] : String(index + 1).padStart(2, "0")}</span>
         </div>
 
-        <h3 className={cn("font-display font-extrabold leading-tight text-white", isActive ? "text-2xl xl:text-3xl" : "text-xl")}>
+        <h3
+          className={cn(
+            "font-display font-extrabold leading-tight text-white",
+            isActive ? "text-2xl xl:text-3xl" : "text-xl",
+          )}
+        >
           {service.title}
         </h3>
 

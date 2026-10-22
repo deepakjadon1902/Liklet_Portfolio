@@ -1,27 +1,23 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import FlipFadeText from "@/components/ui/flip-fade-text";
+import { Link } from "react-router-dom";
 
-const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-  }, [location.pathname]);
-
+export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">
-          <FlipFadeText words={["404", "Lost", "Oops"]} interval={2200} />
-        </h1>
-        <p className="mb-4 text-xl text-muted-foreground">Oops! Page not found</p>
-        <a href="/" className="text-primary underline hover:text-primary/90">
-          Return to Home
-        </a>
+    <section className="section-padding flex min-h-[60vh] items-center">
+      <div className="container-max w-full max-w-2xl text-center">
+        <p className="eyebrow">404 / Page not found</p>
+        <h1 className="page-title mt-5">This page isn't here.</h1>
+        <p className="mt-5 leading-7 text-muted-foreground">
+          The address may have changed. Head back to the homepage or contact us for help.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-6">
+          <Link to="/" className="btn-accent">
+            Back to home
+          </Link>
+          <Link to="/contact" className="text-sm font-semibold text-accent hover:underline">
+            Contact us
+          </Link>
+        </div>
       </div>
-    </div>
+    </section>
   );
-};
-
-export default NotFound;
+}

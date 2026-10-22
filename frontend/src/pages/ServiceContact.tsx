@@ -1,255 +1,59 @@
-import { FormEvent, useMemo, useState } from "react";
-import { motion } from "framer-motion";
-import { Send } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useSearchParams } from "react-router-dom";
-import { apiFetch } from "@/lib/apiClient";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import EnquiryForm from "@/components/marketing/EnquiryForm";
 import FlipFadeText from "@/components/ui/flip-fade-text";
 
-type Props = {
+const servicePaths: Record<string, string> = {
+  "IT Services": "/it-services",
+  "Social Media Marketing": "/social-media-marketing",
+  "Digital Marketing": "/digital-marketing",
+  "Video Editing & Reviews": "/video-editing",
+};
+
+export default function ServiceContact({
+  pageTitle,
+  defaultSubject,
+}: {
   pageTitle: string;
   defaultSubject: string;
-};
-
-const whatsappNumber = "919634359003";
-
-const subjectGroups = [
-  {
-    label: "IT Services",
-    options: [
-      "Frontend Development",
-      "Backend Development",
-      "Full-Stack Development",
-      "Website Redesign",
-      "Bug Fixing & Maintenance",
-    ],
-  },
-  {
-    label: "Social Media",
-    options: [
-      "Instagram",
-      "Facebook",
-      "YouTube",
-      "Twitter/X",
-      "LinkedIn",
-      "TikTok",
-      "Telegram",
-      "WhatsApp Business",
-    ],
-  },
-  {
-    label: "Digital Marketing",
-    options: ["SEO", "Google Ads", "Meta Ads", "Lead Generation", "Email Marketing"],
-  },
-  {
-    label: "Video Editing",
-    options: ["YouTube Editing", "Reels/Shorts", "Product Review Videos", "Thumbnail Design"],
-  },
-] as const;
-
-const ServiceContact = ({ pageTitle, defaultSubject }: Props) => {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [searchParams] = useSearchParams();
-
-  const allSubjects = useMemo(
-    () => subjectGroups.flatMap((g) => g.options),
-    []
-  );
-
-  const subjectFromUrl = searchParams.get("subject") || "";
-  const initialSubject = allSubjects.includes(subjectFromUrl)
-    ? subjectFromUrl
-    : allSubjects.includes(defaultSubject)
-      ? defaultSubject
-      : allSubjects[0] ?? "General";
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: initialSubject,
-    message: "",
-  });
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      await apiFetch("/public/contact", {
-        method: "POST",
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          subject: formData.subject,
-          message: formData.message,
-          pageTitle,
-        }),
-      });
-    } catch (err) {
-      // Still proceed to WhatsApp fallback.
-      console.warn("[frontend] contact email failed", err);
-    }
-
-    const whatsappMessage = `*New Query - Liklet*
-
-*Page:* ${pageTitle}
-*Name:* ${formData.name}
-*Email:* ${formData.email}
-*Phone:* ${formData.phone}
-*Subject:* ${formData.subject}
-
-*Message:*
-${formData.message}`;
-
-    const encodedMessage = encodeURIComponent(whatsappMessage);
-    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-    window.open(whatsappURL, "_blank");
-
-    setTimeout(() => {
-      toast({
-        title: "WhatsApp + Email",
-        description: "Your message is emailed to our team and opened in WhatsApp (tap send).",
-      });
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: initialSubject,
-        message: "",
-      });
-      setIsSubmitting(false);
-    }, 500);
-  };
-
+}) {
   return (
-    <div className="overflow-hidden">
-      <section className="hero-gradient section-padding pt-32">
-        <div className="container-max text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="font-display text-4xl md:text-5xl font-bold text-primary-foreground mb-4"
-          >
-            Contact{" "}
-            <FlipFadeText words={["Us", "Liklet", "Our Team"]} interval={2400} />
-          </motion.h1>
-          <p className="text-primary-foreground/80 max-w-2xl mx-auto">
-            Tell us what you need and we'll reply quickly on WhatsApp.
-          </p>
-        </div>
-      </section>
-
-      <section className="bg-card section-padding">
-        <div className="container-max max-w-3xl">
-          <div className="card-premium p-6 md:p-8">
-            <h2 className="font-display text-2xl font-bold text-foreground mb-1">
-              {pageTitle}{" "}
-              <FlipFadeText words={["Query", "Request", "Brief"]} interval={2400} />
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Fill the form and click submit to open WhatsApp with your message.
+    <section className="section-padding">
+      <div className="container-max max-w-5xl">
+        <Link
+          to={servicePaths[pageTitle] || "/contact"}
+          className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft aria-hidden="true" className="h-4 w-4" />
+          Back to {pageTitle.toLowerCase()}
+        </Link>
+        <div className="mt-8 grid gap-9 lg:grid-cols-[0.75fr_1.25fr] lg:gap-12">
+          <div>
+            <p className="eyebrow">{pageTitle}</p>
+            <h1 className="page-title mt-5 !text-4xl md:!text-5xl">
+              Contact <FlipFadeText words={["Us", "Liklet", "Our Team"]} interval={2400} />
+            </h1>
+            <p className="mt-5 leading-8 text-muted-foreground">
+              {pageTitle === "IT Services"
+                ? "Need a website, mobile app, CRM, or online store? Tell us what your business needs and we'll help you choose the right approach."
+                : "Tell us about your business, what you need help with, and any timing you have in mind."}
             </p>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-foreground">Name</label>
-                  <input
-                    required
-                    name="name"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, name: e.target.value }))
-                    }
-                    className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground">Email</label>
-                  <input
-                    required
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, email: e.target.value }))
-                    }
-                    className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="you@example.com"
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-foreground">Phone</label>
-                  <input
-                    required
-                    name="phone"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, phone: e.target.value }))
-                    }
-                    className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
-                    placeholder="+91 XXXXX XXXXX"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground">Subject</label>
-                  <select
-                    required
-                    name="subject"
-                    value={formData.subject}
-                    onChange={(e) =>
-                      setFormData((p) => ({ ...p, subject: e.target.value }))
-                    }
-                    className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
-                  >
-                    {subjectGroups.map((group) => (
-                      <optgroup key={group.label} label={group.label}>
-                        {group.options.map((opt) => (
-                          <option key={opt} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-foreground">Message</label>
-                <textarea
-                  required
-                  name="message"
-                  value={formData.message}
-                  onChange={(e) =>
-                    setFormData((p) => ({ ...p, message: e.target.value }))
-                  }
-                  className="mt-2 w-full min-h-[140px] rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="Write your query..."
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="btn-accent w-full inline-flex items-center justify-center gap-2"
+            <p className="mt-7 text-sm leading-7 text-muted-foreground">
+              Prefer to talk directly?
+              <br />
+              <a
+                href="mailto:support@liklet.com"
+                className="font-medium text-accent hover:underline"
               >
-                {isSubmitting ? "Opening WhatsApp..." : "Submit on WhatsApp"}
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
+                support@liklet.com
+              </a>
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-5 sm:p-8">
+            <EnquiryForm key={pageTitle} pageTitle={pageTitle} defaultSubject={defaultSubject} />
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
-};
-
-export default ServiceContact;
+}

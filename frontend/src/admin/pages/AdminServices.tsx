@@ -30,7 +30,7 @@ export default function AdminServices() {
 
   const selected = useMemo(
     () => services.find((s) => s._id === selectedId) || services[0] || null,
-    [services, selectedId]
+    [services, selectedId],
   );
 
   const [form, setForm] = useState({
@@ -85,8 +85,14 @@ export default function AdminServices() {
         description="Edit the platform services that appear across the public website."
       />
 
-      {isLoading ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Loading...</div> : null}
-      {error ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Unable to load services.</div> : null}
+      {isLoading ? (
+        <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Loading...</div>
+      ) : null}
+      {error ? (
+        <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">
+          Unable to load services.
+        </div>
+      ) : null}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="admin-card p-4">
@@ -114,9 +120,13 @@ export default function AdminServices() {
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="font-semibold">{s.name}</div>
-                    <div className={active ? "text-xs text-white/75" : "text-xs text-black/50"}>{s.slug}</div>
+                    <div className={active ? "text-xs text-white/75" : "text-xs text-black/50"}>
+                      {s.slug}
+                    </div>
                   </div>
-                  <div className={active ? "mt-1 text-xs text-white/75" : "mt-1 text-xs text-black/55"}>
+                  <div
+                    className={active ? "mt-1 text-xs text-white/75" : "mt-1 text-xs text-black/55"}
+                  >
                     {s.type} / {s.isActive ? "Active" : "Hidden"}
                   </div>
                 </button>
@@ -150,16 +160,22 @@ export default function AdminServices() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="text-sm font-semibold text-black">Name</label>
+                  <label htmlFor="admin-service-name" className="text-sm font-semibold text-black">
+                    Name
+                  </label>
                   <input
+                    id="admin-service-name"
                     value={form.name}
                     onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                     className="admin-input mt-2"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-black">Logo URL</label>
+                  <label htmlFor="admin-service-logo" className="text-sm font-semibold text-black">
+                    Logo URL
+                  </label>
                   <input
+                    id="admin-service-logo"
                     value={form.logoUrl}
                     onChange={(e) => setForm((p) => ({ ...p, logoUrl: e.target.value }))}
                     className="admin-input mt-2"
@@ -169,8 +185,11 @@ export default function AdminServices() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-black">Tagline</label>
+                <label htmlFor="admin-service-tagline" className="text-sm font-semibold text-black">
+                  Tagline
+                </label>
                 <input
+                  id="admin-service-tagline"
                   value={form.tagline}
                   onChange={(e) => setForm((p) => ({ ...p, tagline: e.target.value }))}
                   className="admin-input mt-2"
@@ -178,8 +197,14 @@ export default function AdminServices() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-black">Features (one per line)</label>
+                <label
+                  htmlFor="admin-service-features"
+                  className="text-sm font-semibold text-black"
+                >
+                  Features (one per line)
+                </label>
                 <textarea
+                  id="admin-service-features"
                   value={form.featuresText}
                   onChange={(e) => setForm((p) => ({ ...p, featuresText: e.target.value }))}
                   className="admin-input mt-2 min-h-[160px]"
@@ -195,8 +220,12 @@ export default function AdminServices() {
                   <Save className="h-4 w-4" />
                   {saveMutation.isPending ? "Saving..." : "Save Changes"}
                 </button>
-                {saveMutation.isError ? <div className="text-sm font-medium text-black/60">Save failed.</div> : null}
-                {saveMutation.isSuccess ? <div className="text-sm font-medium text-black/60">Saved.</div> : null}
+                {saveMutation.isError ? (
+                  <div className="text-sm font-medium text-black/60">Save failed.</div>
+                ) : null}
+                {saveMutation.isSuccess ? (
+                  <div className="text-sm font-medium text-black/60">Saved.</div>
+                ) : null}
               </div>
             </div>
           )}

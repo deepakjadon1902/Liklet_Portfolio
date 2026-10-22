@@ -28,12 +28,11 @@ export function AdminMetricCard({
   label,
   value,
   detail,
-  icon,
 }: {
   label: string;
   value: ReactNode;
   detail: string;
-  icon: ReactNode;
+  icon?: ReactNode;
 }) {
   return (
     <div className="admin-card p-5">
@@ -42,26 +41,26 @@ export function AdminMetricCard({
           <div className="text-sm font-semibold text-black/60">{label}</div>
           <div className="mt-3 text-4xl font-bold text-black">{value}</div>
         </div>
-        <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#4169E1] text-white">
-          {icon}
-        </div>
-      </div>
-      <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-[#c5c5c5]">
-        <div className="h-full w-2/3 rounded-full bg-[#4169E1]" />
       </div>
       <div className="mt-3 text-xs font-medium text-black/55">{detail}</div>
     </div>
   );
 }
 
-export function AdminStatusPill({ children, tone = "neutral" }: { children: ReactNode; tone?: "blue" | "dark" | "neutral" }) {
+export function AdminStatusPill({
+  children,
+  tone = "neutral",
+}: {
+  children: ReactNode;
+  tone?: "blue" | "dark" | "neutral";
+}) {
   return (
     <span
       className={cn(
         "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold capitalize",
         tone === "blue" && "border-[#4169E1] bg-[#4169E1] text-white",
         tone === "dark" && "border-black bg-black text-white",
-        tone === "neutral" && "border-[#c5c5c5] bg-white text-black"
+        tone === "neutral" && "border-[#c5c5c5] bg-white text-black",
       )}
     >
       {children}
@@ -71,8 +70,6 @@ export function AdminStatusPill({ children, tone = "neutral" }: { children: Reac
 
 export function AdminEmptyState({ children }: { children: ReactNode }) {
   return (
-    <div className="admin-panel p-8 text-center text-sm font-medium text-black/55">
-      {children}
-    </div>
+    <div className="admin-panel p-8 text-center text-sm font-medium text-black/55">{children}</div>
   );
 }

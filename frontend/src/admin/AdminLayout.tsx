@@ -1,7 +1,24 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { BarChart3, Box, CreditCard, LayoutDashboard, LogOut, Menu, Package, Users } from "lucide-react";
+import {
+  BarChart3,
+  Box,
+  CreditCard,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Package,
+  Users,
+} from "lucide-react";
 import { clearAdminToken } from "./adminAuth";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import Brand from "@/components/brand/Brand";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
@@ -35,12 +52,12 @@ export default function AdminLayout() {
       <header className="sticky top-0 z-40 border-b border-[#c5c5c5] bg-white/95 backdrop-blur-xl">
         <div className="container-max flex items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-black text-white">
-              <span className="font-display text-xl font-bold">L</span>
-            </div>
+            <Brand className="text-black" />
             <div>
-              <div className="font-display text-xl font-bold text-black">Liklet Admin</div>
-              <div className="text-xs font-medium text-black/55">Premium control center</div>
+              <div className="text-sm font-semibold text-black">Administration</div>
+              <div className="hidden text-xs text-black/55 sm:block">
+                Services, orders & accounts
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -54,7 +71,10 @@ export default function AdminLayout() {
                   <Menu className="w-4 h-4" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="border-[#c5c5c5] bg-white p-4 text-black [&>button]:text-black">
+              <SheetContent
+                side="left"
+                className="border-[#c5c5c5] bg-white p-4 text-black [&>button]:text-black"
+              >
                 <SheetHeader className="text-left">
                   <SheetTitle className="text-black">Admin Menu</SheetTitle>
                 </SheetHeader>
@@ -62,12 +82,12 @@ export default function AdminLayout() {
                   {navItems.map((item) => {
                     const Icon = item.icon;
                     return (
-                    <SheetClose asChild key={item.to}>
-                      <NavLink to={item.to} className={drawerLinkClass}>
-                        <Icon className="h-4 w-4 text-black" />
-                        {item.label}
-                      </NavLink>
-                    </SheetClose>
+                      <SheetClose asChild key={item.to}>
+                        <NavLink to={item.to} className={drawerLinkClass}>
+                          <Icon className="h-4 w-4 text-black" />
+                          {item.label}
+                        </NavLink>
+                      </SheetClose>
                     );
                   })}
                 </div>
@@ -86,10 +106,7 @@ export default function AdminLayout() {
               </SheetContent>
             </Sheet>
 
-            <button
-              onClick={logout}
-              className="admin-btn-secondary hidden gap-2 md:inline-flex"
-            >
+            <button onClick={logout} className="admin-btn-secondary hidden gap-2 md:inline-flex">
               <LogOut className="h-4 w-4" />
               Logout
             </button>
@@ -99,10 +116,10 @@ export default function AdminLayout() {
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
-            <NavLink key={item.to} to={item.to} className={linkClass}>
-              <Icon className="h-4 w-4" />
-              {item.label}
-            </NavLink>
+              <NavLink key={item.to} to={item.to} className={linkClass}>
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </NavLink>
             );
           })}
         </div>

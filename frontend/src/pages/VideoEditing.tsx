@@ -1,527 +1,129 @@
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  CheckCircle,
-  Clock,
-  Cpu,
-  Film,
-  Gauge,
-  Headphones,
-  MessageSquare,
-  Mic2,
-  PlayCircle,
-  Scissors,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
-  ThumbsUp,
-  Youtube,
-} from "lucide-react";
+import ServicePage, { Offering } from "@/components/marketing/ServicePage";
+import PlatformMark from "@/components/brand/PlatformMark";
+import { ArrowUpRight } from "lucide-react";
 import FlipFadeText from "@/components/ui/flip-fade-text";
-import youtubeImg from "@/assets/youtube.jpg";
 
-const editServices = [
+const offerings: Offering[] = [
   {
-    icon: Scissors,
-    title: "Story-First Editing",
+    title: "YouTube video editing",
     description:
-      "Tight pacing, clean cuts, and intentional flow so viewers stay for the full video.",
-  },
-  {
-    icon: Mic2,
-    title: "Crisp Audio Cleanup",
-    description:
-      "Noise removal, leveling, and clarity boosts so your voice is always easy to follow.",
-  },
-  {
-    icon: Sparkles,
-    title: "Polished Visuals",
-    description:
-      "Color balancing, graphics, and subtle motion that feels premium without being distracting.",
-  },
-  {
-    icon: Clock,
-    title: "Fast Turnaround",
-    description:
-      "We keep your upload schedule consistent with efficient workflows and clear timelines.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Brand Consistency",
-    description:
-      "Titles, thumbnails, lower-thirds, and style guidelines that keep your channel recognizable.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Audience-Focused Cuts",
-    description:
-      "We edit around questions real viewers ask, so the content feels helpful and human.",
-  },
-];
-
-const reviewPillars = [
-  {
-    icon: Cpu,
-    title: "Real-World Performance",
-    points: [
-      "Speed, thermals, and multitasking",
-      "Gaming and creative workloads",
-      "Consistency over time",
+      "Turn your footage into a structured video with clear pacing, useful graphics, and clean transitions.",
+    features: [
+      "Footage selection and cuts",
+      "Titles and supporting graphics",
+      "Exports ready for YouTube",
     ],
+    subject: "YouTube Editing",
   },
   {
-    icon: Smartphone,
-    title: "Everyday Experience",
-    points: [
-      "Display, speakers, haptics",
-      "Battery life and charging",
-      "Camera and video quality",
-    ],
-  },
-  {
-    icon: Headphones,
-    title: "Honest Value Check",
-    points: [
-      "Price vs competitors",
-      "Who should buy it",
-      "Who should skip it",
-    ],
-  },
-];
-
-const workflowSteps = [
-  {
-    title: "Plan the Angle",
+    title: "Reels & short clips",
     description:
-      "We start with the viewer question: What should they know before buying?",
+      "Create short, focused videos from your footage for Instagram Reels, YouTube Shorts, and other channels.",
+    features: ["Vertical video formats", "On-screen captions", "Clips from longer videos"],
+    subject: "Reels/Shorts",
   },
   {
-    title: "Edit for Clarity",
+    title: "Product review videos",
     description:
-      "Trim the fluff, highlight the proof, and keep the narrative smooth.",
+      "Organise demonstrations, comparisons, and product details so viewers can understand what is being shown.",
+    features: ["Product footage editing", "Feature callouts", "Comparison layouts"],
+    subject: "Product Review Videos",
   },
   {
-    title: "Review + Revise",
+    title: "Thumbnails & titles",
     description:
-      "We fact-check, tune the pacing, and finalize titles, captions, and thumbnails.",
+      "Help viewers understand what your video covers with a clear thumbnail and a relevant title.",
+    features: ["Thumbnail design", "Readable text", "A consistent channel style"],
+    subject: "Thumbnail Design",
   },
   {
-    title: "Publish With Purpose",
+    title: "Audio & colour",
     description:
-      "Deliverables ready for YouTube with short clips for reels and shorts.",
+      "Make voices easier to follow and bring footage from different sources into a consistent visual style.",
+    features: ["Background noise cleanup", "Audio level balancing", "Colour correction"],
+    subject: "Audio & Colour Editing",
+  },
+  {
+    title: "Captions & delivery",
+    description: "Finish your videos in the sizes and file formats you need for each channel.",
+    features: ["Caption formatting", "Aspect ratio adjustments", "Final export checks"],
+    subject: "Captions & Video Delivery",
   },
 ];
 
 const channels = [
   {
     name: "BrajBuzzTech",
-    url: "https://www.youtube.com/@BrajBuzzTech",
-    focus:
-      "Latest phones, smart gadgets, and quick buyer-friendly breakdowns.",
-    highlights: [
-      "Fast comparisons",
-      "Hands-on demos",
-      "Clear buying advice",
-    ],
+    href: "https://www.youtube.com/@BrajBuzzTech",
+    description: "Phones, gadgets, and product comparisons.",
   },
   {
     name: "Liklet Tech",
-    url: "https://www.youtube.com/@liklet_tech",
-    focus:
-      "In-depth tech reviews, software tips, and practical setup guides.",
-    highlights: [
-      "Long-form reviews",
-      "Creator workflows",
-      "Helpful tutorials",
-    ],
+    href: "https://www.youtube.com/@liklet_tech",
+    description: "Tech reviews, software tips, and setup guides.",
   },
 ];
-
-const VideoEditing = () => {
+export default function VideoEditing() {
   return (
-    <div className="overflow-hidden">
-      <section
-        className="relative px-4 py-10 sm:px-6 md:py-12 lg:px-8 lg:py-14"
-        style={{
-          background:
-            "linear-gradient(135deg, #4169E1 0%, #4169E1 68%, #000000 100%)",
-        }}
-      >
-        <div className="absolute inset-0 opacity-15 pointer-events-none">
-          <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[#4169E1] blur-[120px]" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-highlight blur-[100px]" />
-        </div>
-        <div className="container-max relative">
-          <div className="grid min-h-[calc(100vh-9rem)] items-center gap-8 lg:grid-cols-2 lg:gap-10">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 text-white text-sm font-medium mb-6">
-                <Youtube className="w-4 h-4" />
-                YouTube Editing + Tech Reviews
-              </span>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                Video Editing That
-                <span className="block text-white">
-                  <FlipFadeText words={["Respects Your Viewers", "Keeps People Watching", "Builds Trust"]} interval={2600} />
-                </span>
-              </h1>
-              <p className="text-lg md:text-xl text-white mb-8">
-                We craft clean, engaging edits and honest tech reviews that make
-                buying decisions easier. Every cut, graphic, and caption is
-                designed to help your audience feel confident and informed.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href="https://www.youtube.com/@BrajBuzzTech"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center rounded-lg px-6 py-3 font-medium text-white transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: "linear-gradient(135deg, #4169E1 0%, #3158ce 100%)",
-                    boxShadow: "0 12px 28px -12px rgba(65, 105, 225, 0.6)",
-                  }}
-                >
-                  Watch on YouTube
-                  <PlayCircle className="w-5 h-5 ml-2" />
-                </a>
-                <Link
-                  to="/video-editing/contact"
-                  className="inline-flex items-center justify-center rounded-lg px-6 py-3 font-medium text-white border border-white/40 hover:bg-white/10 transition-all duration-300"
-                >
-                  Plan a Video
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <div className="mx-auto aspect-[4/3] w-full max-w-[540px] rounded-2xl overflow-hidden shadow-lg border border-white/10 bg-black/10">
-                <img
-                  src={youtubeImg}
-                  alt="Video editing and YouTube production"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-card section-padding">
+    <ServicePage
+      label="04 / Video editing"
+      title={
+        <>
+          Video Editing That
+          <span className="block">
+            <FlipFadeText
+              words={["Respects Your Viewers", "Keeps People Watching", "Builds Trust"]}
+              interval={2600}
+              className="max-w-full text-2xl sm:text-3xl lg:text-4xl"
+            />
+          </span>
+        </>
+      }
+      intro={
+        <>
+          Video Editing{" "}
+          <FlipFadeText words={["For You", "With Care", "Every Week"]} interval={2500} />
+        </>
+      }
+      description="YouTube edits, short clips, product reviews, and thumbnails. We shape your footage into a clear story and prepare it for the platforms where you publish."
+      contactHref="/video-editing/contact"
+      offerings={offerings}
+    >
+      <section className="section-padding border-t border-border bg-card">
         <div className="container-max">
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-accent font-medium">Editing Services</span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                What We Handle{" "}
-                <FlipFadeText words={["For You", "With Care", "Every Week"]} interval={2500} />
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
-                You stay focused on creating. We take care of pacing, polish, and
-                delivery so every upload feels intentional and professional.
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {editServices.map((service, index) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -10 }}
-                className="card-premium p-6"
-              >
-                <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #4169E1 0%, #3158ce 100%)",
-                    boxShadow: "0 12px 28px -16px rgba(65, 105, 225, 0.6)",
-                  }}
-                >
-                  <service.icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="font-display text-xl font-semibold text-foreground mb-2">
-                  {service.title}
-                </h3>
-                <p className="text-muted-foreground">{service.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-gradient section-padding">
-        <div className="container-max">
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-accent font-medium">Tech Review Focus</span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Our Review{" "}
-                <FlipFadeText words={["Framework", "Method", "Standard"]} interval={2400} />
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
-                We review like a buyer, not a brand. Every verdict is built on
-                real-world testing and honest trade-offs.
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {reviewPillars.map((pillar, index) => (
-              <motion.div
-                key={pillar.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="card-premium p-6"
-              >
-                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-                  <pillar.icon className="w-6 h-6 text-accent" />
-                </div>
-                <h3 className="font-display text-xl font-semibold text-foreground mb-3">
-                  {pillar.title}
-                </h3>
-                <ul className="space-y-2">
-                  {pillar.points.map((point) => (
-                    <li key={point} className="flex items-start gap-2 text-sm text-foreground/80">
-                      <CheckCircle className="w-4 h-4 text-accent mt-0.5" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-card section-padding">
-        <div className="container-max">
-          <div className="text-center mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-accent font-medium">Production Flow</span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                A Clean, Reliable{" "}
-                <FlipFadeText words={["Workflow", "Process", "System"]} interval={2400} />
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
-                We keep the process simple and transparent so you always know
-                what is happening and what comes next.
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {workflowSteps.map((step, index) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="card-premium p-6"
-              >
-                <div className="text-sm font-semibold text-accent mb-2">
-                  Step {index + 1}
-                </div>
-                <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground text-sm">{step.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-gradient section-padding">
-        <div className="container-max">
-          <div className="text-center mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-accent font-medium">Our Channels</span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Watch The Work{" "}
-                <FlipFadeText words={["In Action", "On YouTube", "Come Alive"]} interval={2600} />
-              </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto mt-4">
-                Explore our two YouTube channels for tech reviews, product
-                breakdowns, and creator-friendly tutorials.
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {channels.map((channel, index) => (
-              <motion.div
+          <p className="eyebrow">On YouTube</p>
+          <h2 className="section-title mt-3">
+            Our Channels{" "}
+            <FlipFadeText words={["In Action", "On YouTube", "Come Alive"]} interval={2600} />
+          </h2>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2">
+            {channels.map((channel) => (
+              <a
                 key={channel.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="card-premium p-6 flex flex-col gap-4"
+                href={channel.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group rounded-xl border border-border p-6 sm:p-8"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                    <Film className="w-6 h-6 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-xl font-semibold text-foreground">
-                      {channel.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {channel.focus}
-                    </p>
-                  </div>
+                <div className="flex items-center justify-between gap-5">
+                  <PlatformMark slug="youtube" />
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="h-5 w-5 text-muted-foreground group-hover:text-accent"
+                  />
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {channel.highlights.map((item) => (
-                    <span
-                      key={item}
-                      className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-                <a
-                  href={channel.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-accent font-semibold hover:gap-3 transition-all"
-                >
-                  Visit Channel
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-              </motion.div>
+                <h3 className="mt-6 font-display text-xl font-semibold">{channel.name}</h3>
+                <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                  {channel.description}
+                </p>
+                <span className="mt-5 inline-block text-sm font-semibold text-accent">
+                  Visit channel
+                </span>
+              </a>
             ))}
           </div>
         </div>
       </section>
-
-      <section className="bg-card section-padding">
-        <div className="container-max">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="text-accent font-medium">Viewer-First Promise</span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Tech Content That Feels{" "}
-                <FlipFadeText words={["Trustworthy", "Useful", "Clear"]} interval={2400} />
-              </h2>
-              <p className="text-muted-foreground mt-4">
-                Our edits prioritize clarity, honesty, and pace. We avoid hype,
-                highlight trade-offs, and keep the focus on what matters for real
-                users.
-              </p>
-              <ul className="space-y-3 mt-6">
-                {[
-                  "Simple explanations without jargon",
-                  "Balanced pros and cons for every product",
-                  "Helpful visuals that guide decision-making",
-                  "Consistent branding across every upload",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-foreground/80">
-                    <ThumbsUp className="w-5 h-5 text-accent mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="card-premium p-8"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Gauge className="w-6 h-6 text-accent" />
-                </div>
-                <div>
-                  <h3 className="font-display text-xl font-semibold text-foreground">
-                    What Viewers Get
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    A user-centric review experience.
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-4">
-                {[
-                  "Clear timestamps and chapters for easy navigation.",
-                  "Side-by-side comparisons to save research time.",
-                  "Actionable takeaways for every budget.",
-                  "Short-form highlights optimized for social.",
-                ].map((item) => (
-                  <div key={item} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-accent mt-0.5" />
-                    <span className="text-foreground/80">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-padding hero-gradient">
-        <div className="container-max text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready for Better{" "}
-              <FlipFadeText words={["Tech Videos?", "Reviews?", "Edits?"]} interval={2400} />
-            </h2>
-            <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
-              Let us edit your next review or product video so your audience
-              stays engaged and informed.
-            </p>
-            <Link
-              to="/video-editing/contact"
-              className="inline-flex items-center px-8 py-4 rounded-lg bg-primary-foreground text-primary font-medium hover:scale-105 transition-transform"
-            >
-              Start a Project
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-    </div>
+    </ServicePage>
   );
-};
-
-export default VideoEditing;
+}

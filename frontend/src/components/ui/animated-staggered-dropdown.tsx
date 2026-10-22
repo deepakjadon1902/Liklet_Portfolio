@@ -52,7 +52,7 @@ const StaggeredDropDown = ({
         </button>
 
         <motion.ul
-          initial={wrapperVariants.closed}
+          initial="closed"
           variants={wrapperVariants}
           style={{ originY: "top", translateX: "-50%" }}
           className={cn(
@@ -89,7 +89,10 @@ const Option = ({
         className,
       )}
     >
-      <motion.span variants={actionIconVariants} className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-50">
+      <motion.span
+        variants={actionIconVariants}
+        className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-50"
+      >
         <Icon className={cn("h-4 w-4", iconClassName)} />
       </motion.span>
       <span>{text}</span>

@@ -47,7 +47,7 @@ function getErrorMessage(data: unknown, status: number) {
 
 export async function apiFetch<T = Json>(
   path: string,
-  options: RequestInit & { token?: string } = {}
+  options: RequestInit & { token?: string } = {},
 ): Promise<T> {
   const url = `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
   const headers = new Headers(options.headers || {});
@@ -84,8 +84,8 @@ export async function apiFetch<T = Json>(
 
   if (!contentType.includes("application/json")) {
     throw new ApiError(
-      "Invalid server response (expected JSON). Check `VITE_API_BASE_URL` and that the backend is running.",
-      res.status
+      "We couldn't connect to this service. Please try again in a moment, or contact support@liklet.com.",
+      res.status,
     );
   }
 

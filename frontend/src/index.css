@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -26,7 +24,7 @@
     --muted: 214 32% 93%;
     --muted-foreground: 215 16% 42%;
 
-    --accent: 217 91% 60%;
+    --accent: 224 71% 39%;
     --accent-foreground: 0 0% 100%;
 
     --highlight: 38 92% 50%;
@@ -54,7 +52,12 @@
     --sidebar-border: 214 32% 88%;
     --sidebar-ring: 217 91% 60%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(224 71% 27%) 56%, hsl(217 91% 60%) 100%);
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(222 47% 11%) 0%,
+      hsl(224 71% 27%) 56%,
+      hsl(217 91% 60%) 100%
+    );
     --gradient-accent: linear-gradient(135deg, hsl(224 71% 39%) 0%, hsl(217 91% 60%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 99%) 100%);
     --gradient-section: linear-gradient(180deg, hsl(210 40% 98%) 0%, hsl(0 0% 100%) 100%);
@@ -110,7 +113,12 @@
     --sidebar-border: 0 0% 77%;
     --sidebar-ring: 225 73% 57%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(225 73% 57%) 0%, hsl(225 73% 48%) 68%, hsl(0 0% 0%) 100%);
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(225 73% 57%) 0%,
+      hsl(225 73% 48%) 68%,
+      hsl(0 0% 0%) 100%
+    );
     --gradient-accent: linear-gradient(135deg, hsl(225 73% 57%) 0%, hsl(225 73% 47%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(0 0% 6%) 100%);
     --gradient-section: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(0 0% 5%) 100%);
@@ -126,19 +134,33 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+
+  :where(section[id]) {
+    scroll-margin-top: 6rem;
+  }
+
   *::selection {
-    background: #4169E1;
+    background: #4169e1;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
-    letter-spacing: 0;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Manrope", "Inter", system-ui, sans-serif;
+    letter-spacing: -0.025em;
   }
 }
 
@@ -157,18 +179,15 @@
   }
 
   .card-premium {
-    @apply rounded-lg border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-md;
-    background: var(--gradient-card);
+    @apply rounded-xl border border-border bg-card shadow-sm;
   }
 
   .btn-accent {
-    @apply inline-flex items-center justify-center rounded-lg px-5 py-3 text-sm font-semibold text-accent-foreground transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
-    background: var(--gradient-accent);
-    box-shadow: var(--shadow-md);
+    @apply inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors duration-200 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
   }
 
   .btn-accent:hover {
-    box-shadow: var(--shadow-glow);
+    box-shadow: none;
   }
 
   .nav-link {
@@ -184,15 +203,58 @@
   }
 
   .hero-gradient {
-    background:
-      radial-gradient(circle at 18% 18%, hsl(217 91% 60% / 0.22), transparent 28rem),
-      radial-gradient(circle at 86% 20%, hsl(38 92% 50% / 0.12), transparent 24rem),
-      var(--gradient-hero);
+    background: hsl(222 47% 14%);
   }
 
   .section-gradient {
-    background:
-      linear-gradient(180deg, hsl(210 40% 98%) 0%, hsl(0 0% 100%) 100%);
+    background: hsl(var(--background));
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.15em] text-accent;
+  }
+
+  .page-title {
+    @apply font-display text-4xl font-bold leading-[1.12] tracking-[-0.045em] sm:text-5xl lg:text-6xl;
+    text-wrap: balance;
+  }
+
+  .section-title {
+    @apply font-display text-3xl font-semibold leading-tight tracking-[-0.035em] md:text-4xl;
+    text-wrap: balance;
+  }
+
+  .form-field {
+    @apply mt-2 min-h-12 w-full rounded-lg border border-input bg-card px-3.5 py-3 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent/15;
+  }
+
+  .google-signin-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 40px;
+    padding: 10px 12px;
+    border: 1px solid #747775;
+    border-radius: 4px;
+    background: #fff;
+    color: #1f1f1f;
+    font:
+      500 14px/20px "Google Sans",
+      "Roboto",
+      Arial,
+      sans-serif;
+    letter-spacing: 0.25px;
+    transition: background-color 150ms;
+  }
+
+  .google-signin-button:hover {
+    background: #f8faff;
+  }
+  .google-signin-button:disabled {
+    cursor: wait;
+    opacity: 0.65;
   }
 
   .glass-card {
@@ -200,8 +262,7 @@
   }
 
   .admin-shell {
-    background:
-      linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 58%, hsl(0 0% 96%) 100%);
+    background: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100%) 58%, hsl(0 0% 96%) 100%);
   }
 
   .admin-card {
@@ -225,13 +286,13 @@
   }
 
   .admin-input:focus {
-    border-color: #4169E1;
+    border-color: #4169e1;
     box-shadow: 0 0 0 3px rgb(65 105 225 / 0.14);
   }
 
   .admin-btn-primary {
     @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60;
-    background: #4169E1;
+    background: #4169e1;
   }
 
   .admin-btn-primary:hover {
@@ -245,8 +306,8 @@
   }
 
   .admin-btn-secondary:hover {
-    border-color: #4169E1;
-    color: #4169E1;
+    border-color: #4169e1;
+    color: #4169e1;
   }
 
   .admin-table {
@@ -277,7 +338,7 @@
 
   .admin-kicker {
     @apply text-xs font-semibold uppercase tracking-wider;
-    color: #4169E1;
+    color: #4169e1;
   }
 }
 
@@ -296,14 +357,25 @@
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
   }
 
   @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   .fade-in {
@@ -311,8 +383,14 @@
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .slide-in-left {
@@ -320,8 +398,14 @@
   }
 
   @keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-50px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   .slide-in-right {
@@ -329,8 +413,14 @@
   }
 
   @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(50px); }
-    to { opacity: 1; transform: translateX(0); }
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   .scale-in {
@@ -338,8 +428,14 @@
   }
 
   @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
   .animate-marquee {
@@ -351,12 +447,31 @@
   }
 
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(calc(-100% - 1rem)); }
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - 1rem));
+    }
   }
 
   @keyframes marquee-reverse {
-    from { transform: translateX(calc(-100% - 1rem)); }
-    to { transform: translateX(0); }
+    from {
+      transform: translateX(calc(-100% - 1rem));
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

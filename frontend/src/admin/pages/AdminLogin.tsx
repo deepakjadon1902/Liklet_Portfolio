@@ -1,8 +1,8 @@
 import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { LockKeyhole, LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { adminApiFetch } from "../adminApi";
 import { setAdminToken } from "../adminAuth";
+import Brand from "@/components/brand/Brand";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -10,9 +10,8 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (event: FormEvent) => {
+    event.preventDefault();
     setError(null);
     setIsLoading(true);
     try {
@@ -22,73 +21,68 @@ export default function AdminLogin() {
       });
       setAdminToken(data.token);
       navigate("/admin/dashboard", { replace: true });
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Login failed");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to sign in.");
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
-    <div className="admin-shell flex min-h-screen items-center justify-center px-4 py-10 text-black">
-      <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-[#c5c5c5] bg-white shadow-lg lg:grid-cols-[1fr_0.9fr]">
-        <div className="bg-[#4169E1] p-8 text-white md:p-10">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white text-[#4169E1]">
-            <LockKeyhole className="h-6 w-6" />
-          </div>
-          <h1 className="mt-8 font-display text-4xl font-bold">Liklet Admin</h1>
-          <p className="mt-4 max-w-md text-sm leading-6 text-white/80">
-            A focused command center for services, packages, orders, payments, and user management.
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12">
+      <Link to="/" aria-label="Liklet home" className="mb-8">
+        <Brand />
+      </Link>
+      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-sm sm:p-9">
+        <p className="eyebrow">Team access</p>
+        <h1 className="mt-4 font-display text-3xl font-semibold">Admin sign-in</h1>
+        <p className="mt-3 text-sm leading-7 text-muted-foreground">
+          Sign in with your team account to manage services, packages, orders, and payments.
+        </p>
+        {error && (
+          <p
+            role="alert"
+            className="mt-5 rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive"
+          >
+            {error}
           </p>
-          <div className="mt-10 grid gap-3 text-sm font-semibold">
-            {["White surfaces", "#c5c5c5 structure", "#4169E1 actions"].map((item) => (
-              <div key={item} className="rounded-lg border border-white/20 bg-white/10 px-4 py-3">
-                {item}
-              </div>
-            ))}
+        )}
+        <form onSubmit={onSubmit} className="mt-7 space-y-5">
+          <div>
+            <label htmlFor="admin-email" className="text-sm font-medium">
+              Email
+            </label>
+            <input
+              id="admin-email"
+              type="email"
+              autoComplete="username"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-field"
+            />
           </div>
-        </div>
-
-        <div className="p-8 md:p-10">
-          <div className="admin-kicker mb-2">Secure access</div>
-          <h2 className="font-display text-3xl font-bold text-black">Sign in</h2>
-          <p className="mt-2 text-sm leading-6 text-black/60">Manage your platform with a premium, modern workspace.</p>
-
-          {error ? (
-            <div className="mt-6 rounded-lg border border-black bg-black px-4 py-3 text-sm font-medium text-white">
-              {error}
-            </div>
-          ) : null}
-
-          <form onSubmit={onSubmit} className="mt-6 space-y-4">
-            <div>
-              <label className="text-sm font-semibold text-black">Email</label>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="admin-input mt-2"
-                autoComplete="username"
-                required
-              />
-            </div>
-            <div>
-              <label className="text-sm font-semibold text-black">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="admin-input mt-2"
-                autoComplete="current-password"
-                required
-              />
-            </div>
-            <button disabled={isLoading} className="admin-btn-primary w-full gap-2">
-              <LogIn className="h-4 w-4" />
-              {isLoading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-        </div>
+          <div>
+            <label htmlFor="admin-password" className="text-sm font-medium">
+              Password
+            </label>
+            <input
+              id="admin-password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-field"
+            />
+          </div>
+          <button type="submit" disabled={isLoading} className="btn-accent w-full">
+            {isLoading ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
       </div>
+      <Link to="/" className="mt-7 text-sm text-muted-foreground hover:text-foreground">
+        Return to website
+      </Link>
     </div>
   );
 }

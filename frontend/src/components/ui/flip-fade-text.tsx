@@ -132,8 +132,13 @@ export function FlipFadeText({
   const currentWord = useMemo(() => words[index], [words, index]);
 
   return (
-    <span className={cn("inline-flex min-h-0 items-center justify-center align-baseline", className)}>
-      <span className="relative inline-flex items-center justify-center" style={{ perspective: "1000px" }}>
+    <span
+      className={cn("inline-flex min-h-0 items-center justify-center align-baseline", className)}
+    >
+      <span
+        className="relative inline-flex items-center justify-center"
+        style={{ perspective: "1000px" }}
+      >
         <AnimatePresence mode="wait">
           <Word
             key={currentWord}

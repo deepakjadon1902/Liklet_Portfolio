@@ -1,7 +1,7 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useId, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, CheckCircle2, CreditCard, Save, UserRound } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
 import { Currency, formatMoney } from "@/lib/currency";
 import { getUserToken } from "@/lib/userAuth";
@@ -127,19 +127,23 @@ export default function Profile() {
 
   return (
     <div className="overflow-hidden">
-      <section className="section-padding pt-28 bg-card">
+      <section className="section-padding bg-background">
         <div className="container-max">
-          <Link to="/" className="mb-6 inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
+          <Link
+            to="/"
+            className="mb-6 inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
 
           <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <div className="text-sm font-semibold uppercase tracking-wider text-accent">Account</div>
+              <div className="text-sm font-semibold uppercase tracking-wider text-accent">
+                Account
+              </div>
               <h1 className="mt-2 font-display text-3xl font-bold text-foreground md:text-4xl">
-                My{" "}
-                <FlipFadeText words={["Profile", "Account", "Workspace"]} interval={2400} />
+                My <FlipFadeText words={["Profile", "Account", "Workspace"]} interval={2400} />
               </h1>
               <p className="mt-2 max-w-2xl text-muted-foreground">
                 Manage your details and review your saved order history.
@@ -156,33 +160,63 @@ export default function Profile() {
           <div className="grid gap-6 lg:grid-cols-[0.95fr_1.25fr]">
             <form onSubmit={onSubmit} className="card-premium p-6">
               <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-                  <UserRound className="h-5 w-5" />
-                </div>
                 <div>
                   <h2 className="font-display text-2xl font-bold text-foreground">
-                    Profile{" "}
-                    <FlipFadeText words={["Details", "Info", "Settings"]} interval={2400} />
+                    Profile <FlipFadeText words={["Details", "Info", "Settings"]} interval={2400} />
                   </h2>
-                  <p className="text-sm text-muted-foreground">{profile?.email || "Loading account..."}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {profile?.email || "Loading account..."}
+                  </p>
                 </div>
               </div>
 
-              {profileQuery.isLoading ? <div className="text-sm text-muted-foreground">Loading profile...</div> : null}
-              {profileQuery.error ? <div className="text-sm text-muted-foreground">Unable to load profile.</div> : null}
+              {profileQuery.isLoading ? (
+                <div className="text-sm text-muted-foreground">Loading profile...</div>
+              ) : null}
+              {profileQuery.error ? (
+                <div className="text-sm text-muted-foreground">Unable to load profile.</div>
+              ) : null}
 
               <div className="grid gap-4">
-                <Field label="Full Name" required value={form.name} onChange={(value) => setForm((p) => ({ ...p, name: value }))} />
-                <Field label="Phone" value={form.phone} onChange={(value) => setForm((p) => ({ ...p, phone: value }))} />
-                <Field label="Company" value={form.company} onChange={(value) => setForm((p) => ({ ...p, company: value }))} />
-                <Field label="Website" value={form.website} onChange={(value) => setForm((p) => ({ ...p, website: value }))} />
+                <Field
+                  label="Full Name"
+                  required
+                  value={form.name}
+                  onChange={(value) => setForm((p) => ({ ...p, name: value }))}
+                />
+                <Field
+                  label="Phone"
+                  value={form.phone}
+                  onChange={(value) => setForm((p) => ({ ...p, phone: value }))}
+                />
+                <Field
+                  label="Company"
+                  value={form.company}
+                  onChange={(value) => setForm((p) => ({ ...p, company: value }))}
+                />
+                <Field
+                  label="Website"
+                  value={form.website}
+                  onChange={(value) => setForm((p) => ({ ...p, website: value }))}
+                />
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="City" value={form.city} onChange={(value) => setForm((p) => ({ ...p, city: value }))} />
-                  <Field label="Country" value={form.country} onChange={(value) => setForm((p) => ({ ...p, country: value }))} />
+                  <Field
+                    label="City"
+                    value={form.city}
+                    onChange={(value) => setForm((p) => ({ ...p, city: value }))}
+                  />
+                  <Field
+                    label="Country"
+                    value={form.country}
+                    onChange={(value) => setForm((p) => ({ ...p, country: value }))}
+                  />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">Bio / Notes</label>
+                  <label htmlFor="profile-notes" className="text-sm font-medium text-foreground">
+                    Bio / Notes
+                  </label>
                   <textarea
+                    id="profile-notes"
                     value={form.bio}
                     onChange={(event) => setForm((p) => ({ ...p, bio: event.target.value }))}
                     className="mt-2 min-h-[120px] w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
@@ -196,7 +230,6 @@ export default function Profile() {
                 disabled={saveProfile.isPending || profileQuery.isLoading}
                 className="btn-accent mt-6 w-full gap-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <Save className="h-4 w-4" />
                 {saveProfile.isPending ? "Saving..." : "Save Profile"}
               </button>
             </form>
@@ -204,25 +237,31 @@ export default function Profile() {
             <div className="card-premium overflow-hidden p-0">
               <div className="border-b border-border p-6">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                    <CreditCard className="h-5 w-5" />
-                  </div>
                   <div>
                     <h2 className="font-display text-2xl font-bold text-foreground">
                       Order{" "}
                       <FlipFadeText words={["History", "Timeline", "Records"]} interval={2400} />
                     </h2>
-                    <p className="text-sm text-muted-foreground">Orders linked to your login account.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Orders linked to your login account.
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {ordersQuery.isLoading ? <div className="p-6 text-sm text-muted-foreground">Loading orders...</div> : null}
-              {ordersQuery.error ? <div className="p-6 text-sm text-muted-foreground">Unable to load orders.</div> : null}
+              {ordersQuery.isLoading ? (
+                <div className="p-6 text-sm text-muted-foreground">Loading orders...</div>
+              ) : null}
+              {ordersQuery.error ? (
+                <div className="p-6 text-sm text-muted-foreground">Unable to load orders.</div>
+              ) : null}
 
-              {!ordersQuery.isLoading && !orders.length ? (
+              {!ordersQuery.isLoading && !ordersQuery.error && !orders.length ? (
                 <div className="p-6 text-sm text-muted-foreground">
-                  No orders yet. <Link className="text-accent underline" to="/social-media-marketing">Browse services</Link>
+                  No orders yet.{" "}
+                  <Link className="text-accent underline" to="/social-media-marketing">
+                    Browse services
+                  </Link>
                 </div>
               ) : null}
 
@@ -242,11 +281,15 @@ export default function Profile() {
                     <tbody>
                       {orders.map((order) => (
                         <tr key={order._id} className="border-t border-border">
-                          <td className="px-4 py-4 align-top">{new Date(order.createdAt).toLocaleString()}</td>
+                          <td className="px-4 py-4 align-top">
+                            {new Date(order.createdAt).toLocaleString()}
+                          </td>
                           <td className="px-4 py-4 align-top">{order.serviceName || "-"}</td>
                           <td className="px-4 py-4 align-top">{order.packageName || "-"}</td>
                           <td className="px-4 py-4 align-top font-semibold">
-                            {order.amount != null && order.currency ? formatMoney(order.amount, order.currency) : "-"}
+                            {order.amount != null && order.currency
+                              ? formatMoney(order.amount, order.currency)
+                              : "-"}
                           </td>
                           <td className="px-4 py-4 align-top">
                             <span className="inline-flex rounded-full border border-border bg-background px-3 py-1 text-xs font-semibold capitalize">
@@ -254,10 +297,14 @@ export default function Profile() {
                             </span>
                           </td>
                           <td className="px-4 py-4 align-top text-muted-foreground">
-                            <div className="font-medium text-foreground">{order.customerName || "-"}</div>
+                            <div className="font-medium text-foreground">
+                              {order.customerName || "-"}
+                            </div>
                             <div>{order.customerPhone || "-"}</div>
                             <div>{order.customerEmail || "-"}</div>
-                            {order.platformDetails?.accountUsername ? <div>@{order.platformDetails.accountUsername}</div> : null}
+                            {order.platformDetails?.accountUsername ? (
+                              <div>@{order.platformDetails.accountUsername}</div>
+                            ) : null}
                           </td>
                         </tr>
                       ))}
@@ -284,10 +331,14 @@ function Field({
   required?: boolean;
   onChange: (value: string) => void;
 }) {
+  const fieldId = useId();
   return (
     <div>
-      <label className="text-sm font-medium text-foreground">{label}</label>
+      <label htmlFor={fieldId} className="text-sm font-medium text-foreground">
+        {label}
+      </label>
       <input
+        id={fieldId}
         required={required}
         value={value}
         onChange={(event) => onChange(event.target.value)}

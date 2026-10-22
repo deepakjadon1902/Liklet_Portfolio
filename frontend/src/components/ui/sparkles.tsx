@@ -20,18 +20,10 @@ type ParticlesProps = {
 };
 
 export const SparklesCore = (props: ParticlesProps) => {
-  const {
-    id,
-    className,
-    background,
-    minSize,
-    maxSize,
-    speed,
-    particleColor,
-    particleDensity,
-  } = props;
+  const { id, className, background, minSize, maxSize, speed, particleColor, particleDensity } =
+    props;
   const [init, setInit] = useState(false);
-  
+
   useEffect(() => {
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
@@ -39,7 +31,7 @@ export const SparklesCore = (props: ParticlesProps) => {
       setInit(true);
     });
   }, []);
-  
+
   const controls = useAnimation();
 
   const particlesLoaded = async (container?: Container) => {
@@ -54,7 +46,7 @@ export const SparklesCore = (props: ParticlesProps) => {
   };
 
   const generatedId = useId();
-  
+
   return (
     <motion.div animate={controls} className={cn("opacity-0", className)}>
       {init && (
@@ -83,7 +75,7 @@ export const SparklesCore = (props: ParticlesProps) => {
                   enable: false,
                   mode: "repulse",
                 },
-                resize: true,
+                resize: { enable: true },
               },
               modes: {
                 push: {
@@ -114,9 +106,33 @@ export const SparklesCore = (props: ParticlesProps) => {
               color: {
                 value: particleColor || "#ffffff",
                 animation: {
-                  h: { count: 0, enable: false, speed: 1, decay: 0, delay: 0, sync: true, offset: 0 },
-                  s: { count: 0, enable: false, speed: 1, decay: 0, delay: 0, sync: true, offset: 0 },
-                  l: { count: 0, enable: false, speed: 1, decay: 0, delay: 0, sync: true, offset: 0 },
+                  h: {
+                    count: 0,
+                    enable: false,
+                    speed: 1,
+                    decay: 0,
+                    delay: 0,
+                    sync: true,
+                    offset: 0,
+                  },
+                  s: {
+                    count: 0,
+                    enable: false,
+                    speed: 1,
+                    decay: 0,
+                    delay: 0,
+                    sync: true,
+                    offset: 0,
+                  },
+                  l: {
+                    count: 0,
+                    enable: false,
+                    speed: 1,
+                    decay: 0,
+                    delay: 0,
+                    sync: true,
+                    offset: 0,
+                  },
                 },
               },
               effect: {

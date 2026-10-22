@@ -205,3 +205,14 @@ export const countryCodes: CountryCodeOption[] = [
 export function getFlagUrl(countryId: string) {
   return `https://flagcdn.com/w40/${countryId.toLowerCase()}.png`;
 }
+
+export function withCallingCode(countryId: string, phone: string) {
+  const number = phone.trim();
+  if (!number) return "";
+  if (number.startsWith("+")) return number;
+  if (/^00\d/.test(number)) return "+" + number.slice(2);
+  const country =
+    countryCodes.find((option) => option.id === countryId) ||
+    countryCodes.find((option) => option.id === "IN")!;
+  return country.code + " " + number;
+}

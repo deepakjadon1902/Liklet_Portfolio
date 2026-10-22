@@ -14,35 +14,35 @@ type SeoConfig = {
 
 const seoByPath: Record<string, SeoConfig> = {
   "/": {
-    title: "Liklet - Websites, SEO & Social Media Marketing for Growth",
+    title: "Liklet - Websites, Apps, CRM & Digital Services",
     description:
-      "Liklet helps startups and small businesses win more customers with conversion-focused websites, SEO, digital marketing, social media campaigns, and video editing.",
+      "Websites, mobile apps, CRM systems, online stores, social media, digital marketing, and video editing for your business. Explore what Liklet can help you build.",
   },
   "/about": {
-    title: "About Liklet - Practical Digital Growth Team",
+    title: "About Liklet - Development, Content & Marketing",
     description:
-      "Meet Liklet, a digital growth team helping small businesses compete online with practical strategy, honest execution, and measurable marketing results.",
+      "Learn how Liklet brings development, content, and marketing together, with clear project scopes, agreed deliverables, and a practical approach to your business needs.",
   },
   "/contact": {
-    title: "Contact Liklet - Book a Free Growth Consultation",
+    title: "Contact Liklet - Discuss Your Project",
     description:
       "Contact Liklet to discuss web development, SEO, digital marketing, social media growth, video editing, or a custom online growth plan.",
   },
   "/it-services": {
-    title: "IT Services & Web Development for Businesses - Liklet",
+    title: "IT Services: Websites, Mobile Apps & CRM - Liklet",
     description:
-      "Build a fast, mobile-friendly website or web application with Liklet's IT services, frontend development, and conversion-focused design support.",
+      "Liklet builds business websites, mobile applications, CRM systems, online stores, booking systems, and custom software to make everyday work easier.",
   },
   "/web-development": {
     title: "Web Development Services - Liklet",
     description:
-      "Liklet builds business websites and web applications that load quickly, work on mobile, and turn visitors into real leads.",
+      "Explore Liklet's IT services, from business websites and online stores to mobile apps, CRM systems, booking tools, and custom business software.",
     canonical: `${SITE_URL}/it-services`,
   },
   "/it-services/contact": {
     title: "Discuss an IT Services Project with Liklet",
     description:
-      "Share your website, frontend development, or web application requirements with Liklet and get a practical project recommendation.",
+      "Tell Liklet about your website, mobile app, CRM, online store, or business software needs. Describe your idea in your own words and get help choosing a solution.",
   },
   "/social-media-marketing": {
     title: "Social Media Marketing Services for Brands - Liklet",
@@ -76,15 +76,18 @@ const seoByPath: Record<string, SeoConfig> = {
   },
   "/terms-of-service": {
     title: "Terms of Service - Liklet",
-    description: "Read the terms that apply when you use Liklet's web development, digital marketing, social media, and content services.",
+    description:
+      "Read the terms that apply when you use Liklet's web development, digital marketing, social media, and content services.",
   },
   "/privacy-policy": {
     title: "Privacy Policy - Liklet",
-    description: "Learn how Liklet collects, uses, stores, and protects information when you visit the website, contact the team, or use services.",
+    description:
+      "Learn how Liklet collects, uses, stores, and protects information when you visit the website, contact the team, or use services.",
   },
   "/auth": {
     title: "Client Sign In - Liklet",
-    description: "Sign in to your Liklet client account to access service details and account features.",
+    description:
+      "Sign in to your Liklet client account to access service details and account features.",
     noindex: true,
   },
   "/my-orders": {
@@ -102,35 +105,43 @@ const seoByPath: Record<string, SeoConfig> = {
 const serviceSeoBySlug: Record<string, SeoConfig> = {
   youtube: {
     title: "YouTube Marketing Packages for Channel Growth - Liklet",
-    description: "Choose Liklet YouTube marketing packages for views, subscribers, likes, comments, shares, and stronger channel growth.",
+    description:
+      "Choose Liklet YouTube marketing packages for views, subscribers, likes, comments, shares, and stronger channel growth.",
   },
   facebook: {
     title: "Facebook Marketing Packages for Business Pages - Liklet",
-    description: "Explore Liklet Facebook marketing packages for page likes, post engagement, followers, shares, comments, and community growth.",
+    description:
+      "Explore Liklet Facebook marketing packages for page likes, post engagement, followers, shares, comments, and community growth.",
   },
   instagram: {
     title: "Instagram Marketing Packages for Reels & Growth - Liklet",
-    description: "Grow your Instagram presence with Liklet packages for followers, likes, comments, Reels views, Story views, and brand engagement.",
+    description:
+      "Grow your Instagram presence with Liklet packages for followers, likes, comments, Reels views, Story views, and brand engagement.",
   },
   "twitter-x": {
     title: "X Marketing Packages for Reach & Engagement - Liklet",
-    description: "Build a stronger presence on X with Liklet packages for followers, likes, reposts, impressions, replies, and audience growth.",
+    description:
+      "Build a stronger presence on X with Liklet packages for followers, likes, reposts, impressions, replies, and audience growth.",
   },
   linkedin: {
     title: "LinkedIn Marketing Packages for B2B Growth - Liklet",
-    description: "Use Liklet LinkedIn marketing packages to grow connections, followers, profile views, post engagement, and professional authority.",
+    description:
+      "Use Liklet LinkedIn marketing packages to grow connections, followers, profile views, post engagement, and professional authority.",
   },
   tiktok: {
     title: "TikTok Marketing Packages for Short-Form Growth - Liklet",
-    description: "Create TikTok momentum with Liklet packages for followers, views, likes, comments, shares, and short-form content growth.",
+    description:
+      "Create TikTok momentum with Liklet packages for followers, views, likes, comments, shares, and short-form content growth.",
   },
   telegram: {
     title: "Telegram Marketing Packages for Channel Growth - Liklet",
-    description: "Build Telegram channel growth with Liklet packages for members, views, post reach, engagement, and loyal subscribers.",
+    description:
+      "Build Telegram channel growth with Liklet packages for members, views, post reach, engagement, and loyal subscribers.",
   },
   "whatsapp-business": {
     title: "WhatsApp Business Marketing Packages - Liklet",
-    description: "Use Liklet WhatsApp Business packages to improve broadcasts, customer engagement, response rate, catalog views, and conversions.",
+    description:
+      "Use Liklet WhatsApp Business packages to improve broadcasts, customer engagement, response rate, catalog views, and conversions.",
   },
 };
 
@@ -142,32 +153,38 @@ const adminSeoByPath: Record<string, SeoConfig> = {
   },
   "/admin/login": {
     title: "Admin Login - Liklet",
-    description: "Secure Liklet admin login for managing services, packages, orders, payments, and users.",
+    description:
+      "Secure Liklet admin login for managing services, packages, orders, payments, and users.",
     noindex: true,
   },
   "/admin/dashboard": {
     title: "Admin Dashboard - Liklet",
-    description: "Internal Liklet dashboard for reviewing users, services, orders, and payment activity.",
+    description:
+      "Internal Liklet dashboard for reviewing users, services, orders, and payment activity.",
     noindex: true,
   },
   "/admin/services": {
     title: "Manage Services - Liklet Admin",
-    description: "Internal Liklet service catalog management page for editing public service details.",
+    description:
+      "Internal Liklet service catalog management page for editing public service details.",
     noindex: true,
   },
   "/admin/packages": {
     title: "Manage Packages - Liklet Admin",
-    description: "Internal Liklet package management page for editing pricing, plans, and package features.",
+    description:
+      "Internal Liklet package management page for editing pricing, plans, and package features.",
     noindex: true,
   },
   "/admin/orders": {
     title: "Manage Orders - Liklet Admin",
-    description: "Internal Liklet order management page for reviewing client purchases and service requests.",
+    description:
+      "Internal Liklet order management page for reviewing client purchases and service requests.",
     noindex: true,
   },
   "/admin/payments": {
     title: "Manage Payments - Liklet Admin",
-    description: "Internal Liklet payment management page for reviewing payment records and transactions.",
+    description:
+      "Internal Liklet payment management page for reviewing payment records and transactions.",
     noindex: true,
   },
   "/admin/users": {
@@ -212,7 +229,8 @@ function getSeoConfig(pathname: string): SeoConfig {
     return (
       serviceSeoBySlug[slug] || {
         title: "Service Packages - Liklet",
-        description: "Explore Liklet service packages for social media marketing and business growth.",
+        description:
+          "Explore Liklet service packages for social media marketing and business growth.",
         noindex: true,
       }
     );
@@ -237,59 +255,95 @@ export default function SeoManager() {
 
     document.title = seo.title;
 
-    upsertMeta('meta[name="description"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("name", "description");
-      return meta;
-    }, seo.description);
+    upsertMeta(
+      'meta[name="description"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("name", "description");
+        return meta;
+      },
+      seo.description,
+    );
 
-    upsertMeta('meta[name="robots"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("name", "robots");
-      return meta;
-    }, robots);
+    upsertMeta(
+      'meta[name="robots"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("name", "robots");
+        return meta;
+      },
+      robots,
+    );
 
-    upsertMeta('meta[property="og:title"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("property", "og:title");
-      return meta;
-    }, seo.title);
+    upsertMeta(
+      'meta[property="og:title"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("property", "og:title");
+        return meta;
+      },
+      seo.title,
+    );
 
-    upsertMeta('meta[property="og:description"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("property", "og:description");
-      return meta;
-    }, seo.description);
+    upsertMeta(
+      'meta[property="og:description"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("property", "og:description");
+        return meta;
+      },
+      seo.description,
+    );
 
-    upsertMeta('meta[property="og:url"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("property", "og:url");
-      return meta;
-    }, canonicalUrl);
+    upsertMeta(
+      'meta[property="og:url"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("property", "og:url");
+        return meta;
+      },
+      canonicalUrl,
+    );
 
-    upsertMeta('meta[property="og:image"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("property", "og:image");
-      return meta;
-    }, LOGO_URL);
+    upsertMeta(
+      'meta[property="og:image"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("property", "og:image");
+        return meta;
+      },
+      LOGO_URL,
+    );
 
-    upsertMeta('meta[name="twitter:title"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("name", "twitter:title");
-      return meta;
-    }, seo.title);
+    upsertMeta(
+      'meta[name="twitter:title"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("name", "twitter:title");
+        return meta;
+      },
+      seo.title,
+    );
 
-    upsertMeta('meta[name="twitter:description"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("name", "twitter:description");
-      return meta;
-    }, seo.description);
+    upsertMeta(
+      'meta[name="twitter:description"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("name", "twitter:description");
+        return meta;
+      },
+      seo.description,
+    );
 
-    upsertMeta('meta[name="twitter:image"]', () => {
-      const meta = document.createElement("meta");
-      meta.setAttribute("name", "twitter:image");
-      return meta;
-    }, LOGO_URL);
+    upsertMeta(
+      'meta[name="twitter:image"]',
+      () => {
+        const meta = document.createElement("meta");
+        meta.setAttribute("name", "twitter:image");
+        return meta;
+      },
+      LOGO_URL,
+    );
 
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {

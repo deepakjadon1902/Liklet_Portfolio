@@ -3,7 +3,14 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronDown, CreditCard, Search } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
-import { Currency, detectCurrency, formatMoney, getStoredCurrency, inrToUsd, setStoredCurrency } from "@/lib/currency";
+import {
+  Currency,
+  detectCurrency,
+  formatMoney,
+  getStoredCurrency,
+  inrToUsd,
+  setStoredCurrency,
+} from "@/lib/currency";
 import { countryCodes as allCountryCodes, getFlagUrl } from "@/lib/countries";
 import { loadRazorpayCheckout } from "@/lib/razorpay";
 import { useToast } from "@/hooks/use-toast";
@@ -99,7 +106,10 @@ function getSavedOrders(): Array<{ id: string; token: string }> {
 
 function addSavedOrder(entry: { id: string; token: string }) {
   const existing = getSavedOrders();
-  const next = [{ id: entry.id, token: entry.token }, ...existing.filter((o) => o.id !== entry.id)].slice(0, 25);
+  const next = [
+    { id: entry.id, token: entry.token },
+    ...existing.filter((o) => o.id !== entry.id),
+  ].slice(0, 25);
   localStorage.setItem("liklet:orders", JSON.stringify(next));
 }
 
@@ -113,7 +123,7 @@ export default function Checkout() {
   const [isCountryOpen, setIsCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["public-package", packageId],
     enabled: Boolean(packageId),
     queryFn: () => apiFetch<PackageLookup>(`/public/packages/${packageId}`),
@@ -122,7 +132,9 @@ export default function Checkout() {
   useEffect(() => {
     const cached = getStoredCurrency();
     if (cached) setCurrency(cached);
-    detectCurrency().then(setCurrency).catch(() => setCurrency("INR"));
+    detectCurrency()
+      .then(setCurrency)
+      .catch(() => setCurrency("INR"));
   }, []);
 
   const displayAmount = useMemo(() => {
@@ -144,7 +156,7 @@ export default function Checkout() {
 
   const selectedCountry = useMemo(
     () => allCountryCodes.find((item) => item.id === formData.countryId) || allCountryCodes[0],
-    [formData.countryId]
+    [formData.countryId],
   );
 
   const filteredCountries = useMemo(() => {
@@ -226,7 +238,10 @@ export default function Checkout() {
             setIsPaying(false);
             toast({
               title: "Payment captured, verification failed",
-              description: err instanceof Error ? err.message : "Please contact support with your payment reference.",
+              description:
+                err instanceof Error
+                  ? err.message
+                  : "Please contact support with your payment reference.",
             });
           }
         },
@@ -244,39 +259,78 @@ export default function Checkout() {
         setIsPaying(false);
         toast({
           title: "Payment failed",
-          description: response.error?.description || response.error?.reason || "Please try again or use another payment method.",
+          description:
+            response.error?.description ||
+            response.error?.reason ||
+            "Please try again or use another payment method.",
         });
       });
       rp.open();
     } catch (err: unknown) {
-      toast({ title: "Unable to start payment", description: err instanceof Error ? err.message : "Try again." });
+      toast({
+        title: "Unable to start payment",
+        description: err instanceof Error ? err.message : "Try again.",
+      });
       setIsPaying(false);
     }
   };
 
   return (
     <div className="overflow-hidden">
-      <section className="section-padding pt-28 bg-card">
+      <section className="section-padding bg-background">
         <div className="container-max max-w-3xl">
-          <Link to={data?.service?.slug ? `/services/${data.service.slug}` : "/social-media-marketing"} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">
+          <Link
+            to={data?.service?.slug ? `/services/${data.service.slug}` : "/social-media-marketing"}
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
+          >
             <ArrowLeft className="w-4 h-4" />
             Back
           </Link>
 
+          <p className="eyebrow">Your booking</p>
+          <h1 className="mb-7 mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            {data ? (
+              <>
+                Book{" "}
+                <FlipFadeText
+                  words={[data.package.name, "Your Package", "Your Growth"]}
+                  interval={2600}
+                />
+              </>
+            ) : (
+              "Checkout"
+            )}
+          </h1>
+
           {isLoading ? (
-            <div className="text-muted-foreground">Loading package </div>
+            <div role="status" className="text-muted-foreground">
+              Loading package...
+            </div>
           ) : error ? (
-            <div className="text-muted-foreground">Unable to load package.</div>
+            <div role="alert" className="card-premium p-6">
+              <h2 className="font-semibold">This package couldn't be loaded.</h2>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                Please try again or contact us for help with your booking.
+              </p>
+              <div className="mt-5 flex flex-wrap items-center gap-5">
+                <button type="button" onClick={() => refetch()} className="btn-accent">
+                  Try again
+                </button>
+                <Link to="/contact" className="text-sm font-semibold text-accent underline">
+                  Contact our team
+                </Link>
+              </div>
+            </div>
           ) : data ? (
             <div className="card-premium p-6 md:p-8">
-              <div className="flex items-start justify-between gap-4 mb-6">
+              <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row">
                 <div>
-                  <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                    Book{" "}
-                    <FlipFadeText words={[data.package.name, "Your Package", "Your Growth"]} interval={2600} />
-                  </h1>
+                  <h2 className="font-display text-xl font-semibold text-foreground">
+                    Your details
+                  </h2>
                   <p className="text-muted-foreground">
-                    {data.service.name}  {formatMoney(displayAmount, currency)}/{data.package.interval || "mo"}
+                    {data.service.name} {formatMoney(displayAmount, currency)}/
+                    {data.package.interval || "mo"}
                   </p>
                 </div>
                 <div className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-black">
@@ -291,8 +345,12 @@ export default function Checkout() {
                       }}
                       className="bg-white text-black font-semibold outline-none"
                     >
-                      <option className="bg-white text-black" value="USD">USD ($)</option>
-                      <option className="bg-white text-black" value="INR">INR (₹)</option>
+                      <option className="bg-white text-black" value="USD">
+                        USD ($)
+                      </option>
+                      <option className="bg-white text-black" value="INR">
+                        INR (₹)
+                      </option>
                     </select>
                   </label>
                 </div>
@@ -301,8 +359,12 @@ export default function Checkout() {
               <form onSubmit={onSubmit} className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-foreground">Full Name</label>
+                    <label htmlFor="checkout-name" className="text-sm font-medium text-foreground">
+                      Full name
+                    </label>
                     <input
+                      id="checkout-name"
+                      autoComplete="name"
                       required
                       value={formData.fullName}
                       onChange={(e) => setFormData((p) => ({ ...p, fullName: e.target.value }))}
@@ -311,7 +373,12 @@ export default function Checkout() {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground">Mobile</label>
+                    <label
+                      htmlFor="checkout-mobile"
+                      className="text-sm font-medium text-foreground"
+                    >
+                      Mobile
+                    </label>
                     <div
                       className="relative mt-2 flex rounded-lg border border-border bg-background focus-within:ring-2 focus-within:ring-accent"
                       onBlur={(e) => {
@@ -325,7 +392,7 @@ export default function Checkout() {
                         aria-expanded={isCountryOpen}
                         aria-label="Select country code"
                         onClick={() => setIsCountryOpen((open) => !open)}
-                        className="flex w-[150px] items-center gap-2 border-r border-border bg-white px-3 py-3 text-left text-sm font-semibold text-black outline-none"
+                        className="flex w-[116px] shrink-0 items-center gap-2 border-r border-border bg-white px-3 py-3 text-left text-sm font-semibold text-black outline-none"
                       >
                         <img
                           src={getFlagUrl(selectedCountry.id)}
@@ -340,6 +407,7 @@ export default function Checkout() {
                           <div className="relative border-b border-border">
                             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black/45" />
                             <input
+                              aria-label="Search country or calling code"
                               value={countrySearch}
                               onChange={(e) => setCountrySearch(e.target.value)}
                               className="w-full bg-white py-3 pl-9 pr-3 text-sm text-black outline-none"
@@ -371,6 +439,8 @@ export default function Checkout() {
                         </div>
                       ) : null}
                       <input
+                        id="checkout-mobile"
+                        autoComplete="tel-national"
                         required
                         type="tel"
                         inputMode="tel"
@@ -384,8 +454,12 @@ export default function Checkout() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground">Email</label>
+                  <label htmlFor="checkout-email" className="text-sm font-medium text-foreground">
+                    Email
+                  </label>
                   <input
+                    id="checkout-email"
+                    autoComplete="email"
                     required
                     type="email"
                     value={formData.email}
@@ -397,8 +471,14 @@ export default function Checkout() {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-foreground">Account Link (optional)</label>
+                    <label
+                      htmlFor="checkout-account-link"
+                      className="text-sm font-medium text-foreground"
+                    >
+                      Account link (optional)
+                    </label>
                     <input
+                      id="checkout-account-link"
                       value={formData.accountLink}
                       onChange={(e) => setFormData((p) => ({ ...p, accountLink: e.target.value }))}
                       className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
@@ -406,10 +486,18 @@ export default function Checkout() {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground">Account Username (optional)</label>
+                    <label
+                      htmlFor="checkout-username"
+                      className="text-sm font-medium text-foreground"
+                    >
+                      Account username (optional)
+                    </label>
                     <input
+                      id="checkout-username"
                       value={formData.accountUsername}
-                      onChange={(e) => setFormData((p) => ({ ...p, accountUsername: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((p) => ({ ...p, accountUsername: e.target.value }))
+                      }
                       className="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"
                       placeholder="@username"
                     />
@@ -417,8 +505,11 @@ export default function Checkout() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-foreground">Notes (optional)</label>
+                  <label htmlFor="checkout-notes" className="text-sm font-medium text-foreground">
+                    Notes (optional)
+                  </label>
                   <textarea
+                    id="checkout-notes"
                     value={formData.notes}
                     onChange={(e) => setFormData((p) => ({ ...p, notes: e.target.value }))}
                     className="mt-2 w-full min-h-[110px] rounded-lg border border-border bg-background px-4 py-3 text-foreground outline-none focus:ring-2 focus:ring-accent"

@@ -114,7 +114,9 @@ const ReviewCard = ({ name, username, body, rating = 5, service }: TestimonialRe
           <span className="ml-1 shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[11px] font-extrabold leading-none text-slate-800">
             {rating.toFixed(1)}/5
           </span>
-          {service ? <span className="ml-2 truncate text-xs font-semibold text-slate-500">{service}</span> : null}
+          {service ? (
+            <span className="ml-2 truncate text-xs font-semibold text-slate-500">{service}</span>
+          ) : null}
         </div>
         <p className="line-clamp-3 text-sm leading-6 text-slate-700">{body}</p>
       </CardContent>
@@ -124,7 +126,12 @@ const ReviewCard = ({ name, username, body, rating = 5, service }: TestimonialRe
 
 export default function TestimonialMarquee({ className }: { className?: string }) {
   return (
-    <div className={cn("relative flex w-full flex-col items-center justify-center overflow-hidden", className)}>
+    <div
+      className={cn(
+        "relative flex w-full flex-col items-center justify-center overflow-hidden",
+        className,
+      )}
+    >
       <Marquee pauseOnHover className="[--duration:26s]">
         {firstRow.map((review) => (
           <ReviewCard key={`${review.name}-${review.service}`} {...review} />

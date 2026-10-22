@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { API_BASE_URL, apiFetch } from "@/lib/apiClient";
 import { setUserToken } from "@/lib/userAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -14,40 +14,56 @@ declare global {
     google?: {
       accounts?: {
         id?: {
-          initialize?: (opts: { client_id: string; callback: (resp: { credential?: string }) => void }) => void;
+          initialize?: (opts: {
+            client_id: string;
+            callback: (resp: { credential?: string }) => void;
+          }) => void;
           renderButton?: (el: HTMLElement, opts: Record<string, unknown>) => void;
-          prompt?: () => void;
         };
       };
     };
   }
 }
 
+let googleScriptPromise: Promise<void> | undefined;
 function loadGoogleScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (window.google?.accounts?.id) return resolve();
-
-    const existing = document.querySelector<HTMLScriptElement>('script[data-google-identity="true"]');
-    if (existing) {
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Failed to load Google script")), { once: true });
-      return;
+  if (window.google?.accounts?.id) return Promise.resolve();
+  if (googleScriptPromise) return googleScriptPromise;
+  googleScriptPromise = new Promise<void>((resolve, reject) => {
+    const script =
+      document.querySelector<HTMLScriptElement>('script[data-google-identity="true"]') ||
+      document.createElement("script");
+    const timeout = window.setTimeout(() => {
+      script.remove();
+      reject(new Error("Google sign-in took too long to load."));
+    }, 12_000);
+    script.onload = () => {
+      window.clearTimeout(timeout);
+      resolve();
+    };
+    script.onerror = () => {
+      window.clearTimeout(timeout);
+      script.remove();
+      reject(new Error("Google sign-in could not load."));
+    };
+    if (!script.isConnected) {
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.dataset.googleIdentity = "true";
+      document.head.appendChild(script);
     }
-
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.dataset.googleIdentity = "true";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Google script"));
-    document.head.appendChild(script);
+  }).catch((error) => {
+    googleScriptPromise = undefined;
+    throw error;
   });
+  return googleScriptPromise;
 }
 
-function parseHashParams(hash: string): URLSearchParams {
-  const raw = hash.startsWith("#") ? hash.slice(1) : hash;
-  return new URLSearchParams(raw);
+function localRedirect(value: string | null) {
+  return value && value.startsWith("/") && !value.startsWith("//") && !value.includes("\\")
+    ? value
+    : "/";
 }
 
 export default function Auth() {
@@ -55,34 +71,29 @@ export default function Auth() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
-
-  const redirect = useMemo(() => {
-    const raw = searchParams.get("redirect");
-    return raw && raw.startsWith("/") ? raw : "/";
-  }, [searchParams]);
-
+  const redirect = useMemo(() => localRedirect(searchParams.get("redirect")), [searchParams]);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [isGoogleReady, setIsGoogleReady] = useState(false);
+  const [isGoogleFailed, setIsGoogleFailed] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const envGoogleClientId = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) || "";
   const [googleClientId, setGoogleClientId] = useState(envGoogleClientId);
   const [isClientIdLoading, setIsClientIdLoading] = useState(!envGoogleClientId.trim());
 
   useEffect(() => {
-    const params = parseHashParams(window.location.hash || "");
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const token = params.get("token");
-    const err = params.get("error");
-    const hashRedirect = params.get("redirect");
-
-    if (err) {
-      toast({ title: "Login failed", description: err });
+    if (params.get("error")) {
+      toast({
+        title: "Sign-in unsuccessful",
+        description: "Please try again, or contact support if you need help.",
+      });
       window.location.hash = "";
       return;
     }
-
     if (token) {
       setUserToken(token);
-      const next = hashRedirect && hashRedirect.startsWith("/") ? hashRedirect : redirect;
+      const next = params.has("redirect") ? localRedirect(params.get("redirect")) : redirect;
       window.location.hash = "";
       navigate(next, { replace: true });
     }
@@ -90,192 +101,220 @@ export default function Auth() {
 
   useEffect(() => {
     if (envGoogleClientId.trim()) return;
-
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 10_000);
     let cancelled = false;
-    setIsClientIdLoading(true);
-
-    apiFetch<GoogleClientIdResponse>("/auth/google/client-id")
+    apiFetch<GoogleClientIdResponse>("/auth/google/client-id", { signal: controller.signal })
       .then((data) => {
-        if (cancelled) return;
-        setGoogleClientId((data.clientId || "").trim());
+        if (!cancelled) setGoogleClientId((data.clientId || "").trim());
       })
       .catch(() => {
-        // Keep fallback button if we can't get it.
+        /* The server redirect flow remains available. */
       })
       .finally(() => {
-        if (cancelled) return;
-        setIsClientIdLoading(false);
+        window.clearTimeout(timeout);
+        if (!cancelled) setIsClientIdLoading(false);
       });
-
     return () => {
       cancelled = true;
+      window.clearTimeout(timeout);
+      controller.abort();
     };
   }, [envGoogleClientId]);
 
   useEffect(() => {
     if (!googleClientId.trim()) return;
-    let isCancelled = false;
-
+    let cancelled = false;
+    let resizeObserver: ResizeObserver | undefined;
+    setIsGoogleFailed(false);
+    setIsGoogleReady(false);
     loadGoogleScript()
       .then(() => {
-        if (isCancelled) return;
+        if (cancelled) return;
         const google = window.google?.accounts?.id;
-        if (!google?.initialize || !google?.renderButton) throw new Error("Google Identity not available");
-
+        if (!google?.initialize || !google?.renderButton)
+          throw new Error("Google sign-in is unavailable.");
         google.initialize({
           client_id: googleClientId.trim(),
-          callback: async (resp) => {
-            const idToken = resp?.credential;
-            if (!idToken) {
-              toast({ title: "Google sign-in failed", description: "No credential returned." });
+          callback: async (response) => {
+            if (!response.credential) {
+              toast({
+                title: "Sign-in unsuccessful",
+                description: "Please choose your Google account again.",
+              });
               return;
             }
-
             setIsGoogleLoading(true);
             try {
               const data = await apiFetch<GoogleAuthResponse>("/auth/google", {
                 method: "POST",
-                body: JSON.stringify({ idToken }),
+                body: JSON.stringify({ idToken: response.credential }),
               });
               setUserToken(data.token);
               navigate(redirect, { replace: true });
-            } catch (err: unknown) {
-              toast({ title: "Google sign-in failed", description: err instanceof Error ? err.message : "Try again." });
+            } catch {
+              toast({
+                title: "Unable to sign in",
+                description: "Please try again, or contact support if the problem continues.",
+              });
             } finally {
               setIsGoogleLoading(false);
             }
           },
         });
-
-        if (googleButtonRef.current) {
+        const renderButton = () => {
+          if (cancelled || !googleButtonRef.current) return;
+          const width = Math.min(
+            400,
+            Math.max(200, Math.floor(googleButtonRef.current.clientWidth)),
+          );
           googleButtonRef.current.innerHTML = "";
-          google.renderButton(googleButtonRef.current, {
-            theme: "filled_blue",
+          google.renderButton?.(googleButtonRef.current, {
+            theme: "outline",
             size: "large",
             text: "continue_with",
-            shape: "pill",
-            width: 340,
+            shape: "rectangular",
+            logo_alignment: "left",
+            width,
           });
+        };
+        renderButton();
+        if (googleButtonRef.current) {
+          resizeObserver = new ResizeObserver(renderButton);
+          resizeObserver.observe(googleButtonRef.current);
         }
-
         setIsGoogleReady(true);
-        google.prompt?.();
       })
-      .catch((err: unknown) => {
-        toast({ title: "Google sign-in unavailable", description: err instanceof Error ? err.message : "Try again." });
+      .catch(() => {
+        if (!cancelled) setIsGoogleFailed(true);
       });
-
     return () => {
-      isCancelled = true;
+      cancelled = true;
+      resizeObserver?.disconnect();
     };
   }, [googleClientId, navigate, redirect, toast]);
 
   const startGoogleLogin = () => {
     setIsRedirecting(true);
-    const url = `${API_BASE_URL}/auth/google/start?redirect=${encodeURIComponent(redirect)}`;
-    window.location.href = url;
+    window.location.href =
+      API_BASE_URL + "/auth/google/start?redirect=" + encodeURIComponent(redirect);
   };
+  const showFallback = !isClientIdLoading && (!googleClientId.trim() || isGoogleFailed);
 
   return (
-    <div className="overflow-hidden">
-      <section className="pt-28 pb-16 md:pb-24 bg-card relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-accent/20 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-highlight/20 blur-3xl" />
-        </div>
-
-        <div className="container-max section-padding !py-0">
-          <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-
-          <div className="grid md:grid-cols-2 gap-8 items-start">
-            <div className="md:pt-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-sm text-muted-foreground">
-                <Sparkles className="w-4 h-4 text-accent" />
-                Secure checkout
-              </div>
-
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-4">
-                Continue with{" "}
+    <section className="section-padding bg-background">
+      <div className="container-max max-w-5xl">
+        <Link
+          to="/"
+          className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft aria-hidden="true" className="h-4 w-4" />
+          Back to home
+        </Link>
+        <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-16">
+          <div className="py-2">
+            <p className="eyebrow">Your Liklet account</p>
+            <h1 className="page-title mt-5">
+              Continue with{" "}
+              <span className="block">
                 <FlipFadeText words={["Google", "Confidence", "Speed"]} interval={2400} />
-              </h1>
-              <p className="text-muted-foreground mt-3 max-w-lg">
-                We use Google Sign-In to protect your booking and keep the ordering process fast. No passwords, no email verification.
-              </p>
-
-              <div className="mt-6 space-y-3">
-                <div className="flex gap-3 items-start">
-                  <ShieldCheck className="w-5 h-5 text-accent mt-0.5" />
-                  <div>
-                    <div className="font-medium text-foreground">Safer orders</div>
-                    <div className="text-sm text-muted-foreground">Your booking is linked to your Google account.</div>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start">
-                  <Zap className="w-5 h-5 text-accent mt-0.5" />
-                  <div>
-                    <div className="font-medium text-foreground">Faster checkout</div>
-                    <div className="text-sm text-muted-foreground">Sign in once, then continue to payment.</div>
-                  </div>
-                </div>
+              </span>
+            </h1>
+            <p className="mt-6 max-w-md text-lg leading-8 text-muted-foreground">
+              Sign in to book a service, save your details, and review your orders.
+            </p>
+            <dl className="mt-8 max-w-md space-y-5 border-t border-border pt-6">
+              <div className="flex gap-5">
+                <dt className="pt-1 text-xs tabular-nums text-accent">01</dt>
+                <dd>
+                  <span className="block text-sm font-semibold">Use your Google account</span>
+                  <span className="mt-1 block text-sm leading-6 text-muted-foreground">
+                    Choose the account you want to link to your bookings.
+                  </span>
+                </dd>
               </div>
+              <div className="flex gap-5">
+                <dt className="pt-1 text-xs tabular-nums text-accent">02</dt>
+                <dd>
+                  <span className="block text-sm font-semibold">Pick up where you left off</span>
+                  <span className="mt-1 block text-sm leading-6 text-muted-foreground">
+                    Continue to your selected service or your account.
+                  </span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div className="min-w-0 rounded-xl border border-border bg-card p-6 shadow-sm sm:p-9">
+            <h2 className="font-display text-2xl font-semibold tracking-tight">
+              Sign <FlipFadeText words={["in", "securely", "fast"]} interval={2400} />
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              Use Google to sign in or create your account. There is no separate Liklet password.
+            </p>
+            <div className="mt-8 min-h-11" aria-busy={isClientIdLoading || isGoogleLoading}>
+              {googleClientId.trim() && !isGoogleFailed && (
+                <div ref={googleButtonRef} className="min-h-10 w-full min-w-0" />
+              )}
+              {!showFallback && !isGoogleReady && (
+                <p role="status" className="mt-3 text-sm text-muted-foreground">
+                  Loading Google sign-in...
+                </p>
+              )}
+              {isGoogleLoading && (
+                <p role="status" className="mt-3 text-sm text-muted-foreground">
+                  Signing you in...
+                </p>
+              )}
+              {showFallback && (
+                <button
+                  type="button"
+                  onClick={startGoogleLogin}
+                  disabled={isRedirecting}
+                  className="google-signin-button"
+                >
+                  <img
+                    src="/brand/google-g.png"
+                    width={20}
+                    height={20}
+                    alt=""
+                    className="h-5 w-5 shrink-0 object-contain"
+                  />
+                  <span>{isRedirecting ? "Opening Google..." : "Continue with Google"}</span>
+                </button>
+              )}
             </div>
-
-            <div className="card-premium p-6 md:p-8">
-              <h2 className="font-display text-2xl font-bold text-foreground">
-                Sign{" "}
-                <FlipFadeText words={["in", "securely", "fast"]} interval={2400} />
-              </h2>
-              <p className="text-muted-foreground mt-2">Click below to continue to your booking.</p>
-
-              <div className="mt-6">
-                {googleClientId.trim() ? (
-                  <>
-                    <div ref={googleButtonRef} className="flex justify-center" />
-                    {!isGoogleReady ? (
-                      <div className="text-xs text-muted-foreground mt-3 text-center">Loading Google sign-in…</div>
-                    ) : null}
-                    {isGoogleLoading ? (
-                      <div className="text-xs text-muted-foreground mt-3 text-center">Signing you in…</div>
-                    ) : null}
-                  </>
-                ) : isClientIdLoading ? (
-                  <div className="text-xs text-muted-foreground text-center">Loading Google sign-in...</div>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={startGoogleLogin}
-                      disabled={isRedirecting}
-                      className="btn-accent w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isRedirecting ? "Redirecting to Google..." : "Continue with Google"}
-                    </button>
-                    <div className="text-xs text-muted-foreground mt-3">
-                      Tip: set <span className="font-mono">VITE_GOOGLE_CLIENT_ID</span> to show the official Google
-                      button styling.
-                    </div>
-                  </>
-                )}
-              </div>
-
-              <div className="mt-6 text-xs text-muted-foreground">
-                By continuing, you agree to our{" "}
-                <Link className="underline hover:text-foreground" to="/terms-of-service">
-                  Terms
-                </Link>{" "}
-                and{" "}
-                <Link className="underline hover:text-foreground" to="/privacy-policy">
-                  Privacy Policy
-                </Link>
-                .
-              </div>
-            </div>
+            <p className="mt-5 text-xs leading-6 text-muted-foreground">
+              Google will ask you to choose an account. You can return to Liklet after signing in.
+            </p>
+            <p className="mt-7 border-t border-border pt-6 text-xs leading-6 text-muted-foreground">
+              By continuing, you agree to our{" "}
+              <Link
+                to="/terms-of-service"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                to="/privacy-policy"
+                className="underline underline-offset-2 hover:text-foreground"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
+            <p className="mt-5 text-xs text-muted-foreground">
+              Need help?{" "}
+              <a
+                href="mailto:support@liklet.com"
+                className="font-medium text-accent hover:underline"
+              >
+                Contact support
+              </a>
+            </p>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }

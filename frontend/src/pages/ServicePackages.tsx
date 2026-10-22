@@ -1,10 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { apiFetch } from "@/lib/apiClient";
-import { Currency, detectCurrency, formatMoney, getStoredCurrency, inrToUsd, setStoredCurrency } from "@/lib/currency";
+import {
+  Currency,
+  detectCurrency,
+  formatMoney,
+  getStoredCurrency,
+  inrToUsd,
+  setStoredCurrency,
+} from "@/lib/currency";
 import { getUserToken } from "@/lib/userAuth";
+import PlatformMark from "@/components/brand/PlatformMark";
 import FlipFadeText from "@/components/ui/flip-fade-text";
 
 type Service = {
@@ -15,7 +23,6 @@ type Service = {
   logoUrl?: string;
   features?: string[];
 };
-
 type Package = {
   _id: string;
   serviceId: string;
@@ -28,174 +35,171 @@ type Package = {
   isPopular?: boolean;
 };
 
-const brandColor = "#4169E1";
-
 export default function ServicePackages() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [currency, setCurrency] = useState<Currency>("INR");
-
   useEffect(() => {
     const cached = getStoredCurrency();
     if (cached) setCurrency(cached);
-    detectCurrency().then(setCurrency).catch(() => setCurrency("INR"));
+    detectCurrency()
+      .then(setCurrency)
+      .catch(() => setCurrency("INR"));
   }, []);
-
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["public-service", slug],
     enabled: Boolean(slug),
-    queryFn: () => apiFetch<{ service: Service; packages: Package[] }>(`/public/services/${slug}`),
+    queryFn: () => apiFetch<{ service: Service; packages: Package[] }>("/public/services/" + slug),
   });
-
   const sortedPackages = useMemo(() => {
-    const pkgs = data?.packages ?? [];
     const order = ["basic", "premium", "elite"];
-    return [...pkgs].sort((a, b) => {
+    return [...(data?.packages || [])].sort((a, b) => {
       const ai = order.indexOf(a.name.toLowerCase());
       const bi = order.indexOf(b.name.toLowerCase());
       if (ai !== -1 || bi !== -1) return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-      return (a.priceInr ?? 0) - (b.priceInr ?? 0);
+      return a.priceInr - b.priceInr;
     });
   }, [data?.packages]);
-
-  const formatPackagePrice = (pkg: Package) => {
-    if (currency === "USD") {
-      const usd = Number(pkg.priceUsd ?? inrToUsd(pkg.priceInr));
-      return formatMoney(usd, "USD");
-    }
-    return formatMoney(Number(pkg.priceInr || 0), "INR", "en-IN");
-  };
-
+  const price = (pkg: Package) =>
+    currency === "USD"
+      ? formatMoney(Number(pkg.priceUsd ?? inrToUsd(pkg.priceInr)), "USD")
+      : formatMoney(Number(pkg.priceInr), "INR", "en-IN");
   return (
-    <div className="overflow-hidden">
-      <section
-        className="section-padding pt-28"
-        style={{
-          background: "linear-gradient(135deg, #4169E1 0%, #4169E1 68%, #000000 100%)",
-        }}
-      >
+    <>
+      <section className="section-padding border-b border-border bg-card">
         <div className="container-max">
           <Link
-            to="/social-media-marketing"
-            className="inline-flex items-center gap-2 text-primary-foreground/90 hover:text-primary-foreground mb-6"
+            to="/social-media-marketing#platforms"
+            className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Social Media
+            <ArrowLeft aria-hidden="true" className="h-4 w-4" />
+            All social media services
           </Link>
-
-          {isLoading ? (
-            <div className="text-primary-foreground/90">Loading packages...</div>
-          ) : error ? (
-            <div className="text-primary-foreground/90">Unable to load packages.</div>
-          ) : (
-            <div className="flex items-start justify-between gap-4">
-              <div className="w-16 h-16 rounded-xl bg-background/80 border border-border flex items-center justify-center p-3">
-                {data?.service?.logoUrl ? (
-                  <img
-                    src={data.service.logoUrl}
-                    alt={`${data.service.name} logo`}
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
-                ) : null}
+          <div className="mt-7 flex flex-col gap-7 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="flex items-center gap-3">
+                <PlatformMark slug={slug || ""} />
+                <p className="eyebrow">Service packages</p>
               </div>
-              <div className="flex-1 min-w-0">
-                <h1 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground">
-                  {data?.service?.name}{" "}
-                  <FlipFadeText words={["Packages", "Plans", "Growth Options"]} interval={2500} />
-                </h1>
-                <p className="text-primary-foreground/80 max-w-2xl">
-                  {data?.service?.tagline || "Choose the package that fits your goals."}
-                </p>
-              </div>
-              <div className="shrink-0 rounded-lg border border-primary-foreground/20 bg-white px-3 py-2 text-sm text-black">
-                <label className="flex items-center gap-2">
-                  <span>Currency:</span>
-                  <select
-                    value={currency}
-                    onChange={(e) => {
-                      const next = e.target.value === "USD" ? "USD" : "INR";
-                      setCurrency(next);
-                      setStoredCurrency(next);
-                    }}
-                    className="bg-white text-black font-semibold outline-none"
-                  >
-                    <option className="bg-white text-black" value="USD">USD ($)</option>
-                    <option className="bg-white text-black" value="INR">INR (Rs)</option>
-                  </select>
-                </label>
+              <h1 className="page-title mt-4">
+                {data?.service.name ? (
+                  <>
+                    {data.service.name}{" "}
+                    <FlipFadeText words={["Packages", "Plans", "Growth Options"]} interval={2500} />
+                  </>
+                ) : (
+                  "Find your service package"
+                )}
+              </h1>
+              <p className="mt-5 max-w-2xl leading-7 text-muted-foreground">
+                Compare the included work, choose a package, and continue to your booking.
+              </p>
+            </div>
+            <label className="flex shrink-0 items-center gap-3 self-start rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium md:self-auto">
+              Currency
+              <select
+                value={currency}
+                onChange={(e) => {
+                  const next = e.target.value === "USD" ? "USD" : "INR";
+                  setCurrency(next);
+                  setStoredCurrency(next);
+                }}
+                className="bg-transparent text-sm outline-none"
+              >
+                <option value="INR">INR (₹)</option>
+                <option value="USD">USD ($)</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </section>
+      <section className="section-padding">
+        <div className="container-max">
+          {isLoading && (
+            <p role="status" className="text-muted-foreground">
+              Loading packages...
+            </p>
+          )}
+          {error && (
+            <div role="alert" className="rounded-xl border border-border bg-card p-6">
+              <h2 className="font-semibold">Packages couldn't be loaded.</h2>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                Please try again, or contact us to discuss the service you need.
+              </p>
+              <div className="mt-5 flex flex-wrap items-center gap-5">
+                <button type="button" onClick={() => refetch()} className="btn-accent">
+                  Try again
+                </button>
+                <Link to="/contact" className="text-sm font-semibold text-accent underline">
+                  Contact our team
+                </Link>
               </div>
             </div>
           )}
+          {!isLoading && !error && data && !sortedPackages.length && (
+            <div className="rounded-xl border border-border bg-card p-6">
+              <h2 className="font-semibold">Let's put a plan together.</h2>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                No packages are currently listed for this service.{" "}
+                <Link to="/contact" className="font-medium text-accent underline">
+                  Contact us about your requirements.
+                </Link>
+              </p>
+            </div>
+          )}
+          <div className="grid gap-6 md:grid-cols-3">
+            {sortedPackages.map((pkg) => (
+              <article
+                key={pkg._id}
+                className={
+                  "flex flex-col rounded-xl border bg-card p-6 sm:p-7 " +
+                  (pkg.isPopular ? "border-accent" : "border-border")
+                }
+              >
+                <div className="flex min-h-7 items-center justify-between gap-3">
+                  <h2 className="font-display text-xl font-semibold">{pkg.name}</h2>
+                  {pkg.isPopular && (
+                    <span className="rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                      Featured
+                    </span>
+                  )}
+                </div>
+                <p className="mt-6 text-3xl font-semibold tracking-tight">
+                  {price(pkg)}
+                  <span className="text-sm font-normal tracking-normal text-muted-foreground">
+                    /{pkg.interval || "mo"}
+                  </span>
+                </p>
+                {pkg.description && (
+                  <p className="mt-4 text-sm leading-7 text-muted-foreground">{pkg.description}</p>
+                )}
+                <ul className="my-6 space-y-3 border-t border-border pt-6">
+                  {(pkg.features || []).map((feature) => (
+                    <li key={feature} className="flex gap-3 text-sm leading-6">
+                      <span
+                        aria-hidden="true"
+                        className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-accent"
+                      />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to={"/checkout/" + pkg._id}
+                  className="btn-accent mt-auto w-full"
+                  onClick={(e) => {
+                    if (getUserToken()) return;
+                    e.preventDefault();
+                    navigate("/auth?redirect=" + encodeURIComponent("/checkout/" + pkg._id));
+                  }}
+                >
+                  Choose {pkg.name}
+                </Link>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
-
-      {!isLoading && data ? (
-        <section className="bg-card section-padding">
-          <div className="container-max">
-            <div className="grid md:grid-cols-3 gap-6">
-              {sortedPackages.map((pkg) => (
-                <div
-                  key={pkg._id}
-                  className="card-premium p-6"
-                  style={
-                    pkg.isPopular
-                      ? {
-                          borderColor: brandColor,
-                          boxShadow: `0 0 0 2px ${brandColor}33, var(--shadow-md)`,
-                        }
-                      : undefined
-                  }
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="font-display text-xl font-bold text-foreground">{pkg.name}</h2>
-                    {pkg.isPopular ? (
-                      <span
-                        className="text-xs px-2 py-1 rounded-full text-white"
-                        style={{ backgroundColor: brandColor }}
-                      >
-                        Popular
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="text-3xl font-bold text-foreground">
-                    {formatPackagePrice(pkg)}
-                    <span className="text-sm font-medium text-muted-foreground">/{pkg.interval || "mo"}</span>
-                  </div>
-                  {pkg.description ? (
-                    <p className="text-muted-foreground mt-2">{pkg.description}</p>
-                  ) : null}
-
-                  <ul className="space-y-2 mt-5">
-                    {(pkg.features || []).map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-sm text-foreground/90">
-                        <CheckCircle className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
-                    to={`/checkout/${pkg._id}`}
-                    className="w-full inline-flex items-center justify-center mt-6 px-4 py-3 rounded-lg font-medium text-white transition-colors"
-                    style={{ backgroundColor: brandColor }}
-                    onClick={(e) => {
-                      const token = getUserToken();
-                      if (token) return;
-                      e.preventDefault();
-                      navigate(`/auth?redirect=${encodeURIComponent(`/checkout/${pkg._id}`)}`, { replace: false });
-                    }}
-                  >
-                    Book / Order {pkg.name}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
-    </div>
+    </>
   );
 }

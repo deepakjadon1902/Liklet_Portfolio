@@ -56,16 +56,18 @@ export default function MyOrders() {
 
   return (
     <div className="overflow-hidden">
-      <section className="section-padding pt-28 bg-card">
+      <section className="section-padding bg-background">
         <div className="container-max max-w-4xl">
-          <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
+          >
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
 
           <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-            My{" "}
-            <FlipFadeText words={["Orders", "Purchases", "Projects"]} interval={2400} />
+            My <FlipFadeText words={["Orders", "Purchases", "Projects"]} interval={2400} />
           </h1>
           <p className="text-muted-foreground mb-6">
             Orders are stored in this browser after successful payment.
@@ -73,7 +75,10 @@ export default function MyOrders() {
 
           {!saved.length ? (
             <div className="card-premium p-6 text-muted-foreground">
-              No orders yet. <Link className="text-accent underline" to="/social-media-marketing">Browse services</Link>
+              No orders yet.{" "}
+              <Link className="text-accent underline" to="/social-media-marketing">
+                Browse services
+              </Link>
             </div>
           ) : (
             <div className="card-premium p-6">
@@ -122,4 +127,3 @@ export default function MyOrders() {
     </div>
   );
 }
-

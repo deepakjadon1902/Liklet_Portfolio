@@ -1,23 +1,21 @@
 import { ReactNode } from "react";
-import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-interface LayoutProps {
-  children: ReactNode;
-}
-
-const Layout = ({ children }: LayoutProps) => {
-  const location = useLocation();
-  const isHome = location.pathname === "/";
-
+export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-5 focus:py-3 focus:text-foreground"
+      >
+        Skip to content
+      </a>
       <Navbar />
-      <main className={`flex-1 ${isHome ? "pt-0" : "pt-20"}`}>{children}</main>
+      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+        {children}
+      </main>
       <Footer />
     </div>
   );
-};
-
-export default Layout;
+}

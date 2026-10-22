@@ -41,10 +41,17 @@ export default function AdminPackages() {
     if (!serviceId && services[0]?._id) setServiceId(services[0]._id);
   }, [serviceId, services]);
 
-  const { data: packagesData, isLoading, error } = useQuery({
+  const {
+    data: packagesData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["admin-packages", serviceId],
     enabled: Boolean(serviceId),
-    queryFn: () => adminApiFetch<{ packages: Package[] }>(`/packages?serviceId=${encodeURIComponent(serviceId)}`),
+    queryFn: () =>
+      adminApiFetch<{ packages: Package[] }>(
+        `/packages?serviceId=${encodeURIComponent(serviceId)}`,
+      ),
     staleTime: 2_000,
   });
 
@@ -60,7 +67,10 @@ export default function AdminPackages() {
   }, [packagesData?.packages]);
 
   const saveMutation = useMutation({
-    mutationFn: async (payload: { id: string; patch: Partial<Package> & { features?: string[] } }) => {
+    mutationFn: async (payload: {
+      id: string;
+      patch: Partial<Package> & { features?: string[] };
+    }) => {
       return adminApiFetch(`/packages/${payload.id}`, {
         method: "PATCH",
         body: JSON.stringify(payload.patch),
@@ -114,9 +124,19 @@ export default function AdminPackages() {
       <div className="admin-card mb-6 flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="admin-kicker">Service scope</div>
-          <label className="mt-1 block text-sm font-semibold text-black">Choose service</label>
+          <label
+            htmlFor="admin-package-service"
+            className="mt-1 block text-sm font-semibold text-black"
+          >
+            Choose service
+          </label>
         </div>
-        <select value={serviceId} onChange={(e) => setServiceId(e.target.value)} className="admin-input sm:max-w-md">
+        <select
+          id="admin-package-service"
+          value={serviceId}
+          onChange={(e) => setServiceId(e.target.value)}
+          className="admin-input sm:max-w-md"
+        >
           {services.map((s) => (
             <option key={s._id} value={s._id}>
               {s.name} ({s.slug})
@@ -125,8 +145,14 @@ export default function AdminPackages() {
         </select>
       </div>
 
-      {isLoading ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Loading...</div> : null}
-      {error ? <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Unable to load packages.</div> : null}
+      {isLoading ? (
+        <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">Loading...</div>
+      ) : null}
+      {error ? (
+        <div className="admin-panel mb-5 p-5 text-sm font-medium text-black/60">
+          Unable to load packages.
+        </div>
+      ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {packages.map((pkg) => (
@@ -173,37 +199,78 @@ function PackageCard({
     setFeaturesText(featuresKey);
     setIsPopular(Boolean(pkg.isPopular));
     setIsActive(pkg.isActive !== false);
-  }, [pkg._id, pkg.name, pkg.priceInr, pkg.interval, pkg.description, featuresKey, pkg.isPopular, pkg.isActive]);
+  }, [
+    pkg._id,
+    pkg.name,
+    pkg.priceInr,
+    pkg.interval,
+    pkg.description,
+    featuresKey,
+    pkg.isPopular,
+    pkg.isActive,
+  ]);
 
   return (
     <div className={`admin-card p-5 ${isPopular ? "ring-2 ring-[#4169E1]" : ""}`}>
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <div className="admin-kicker">Plan</div>
-          <input value={name} onChange={(e) => setName(e.target.value)} className="admin-input mt-2 font-semibold" />
+          <input
+            aria-label="Package name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="admin-input mt-2 font-semibold"
+          />
         </div>
-        <AdminStatusPill tone={isActive ? "blue" : "neutral"}>{isActive ? "Active" : "Hidden"}</AdminStatusPill>
+        <AdminStatusPill tone={isActive ? "blue" : "neutral"}>
+          {isActive ? "Active" : "Hidden"}
+        </AdminStatusPill>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-semibold text-black/60">Price (INR)</label>
-          <input value={priceInr} onChange={(e) => setPriceInr(e.target.value)} className="admin-input mt-1" />
+          <label htmlFor={pkg._id + "-price"} className="text-xs font-semibold text-black/60">
+            Price (INR)
+          </label>
+          <input
+            id={pkg._id + "-price"}
+            value={priceInr}
+            onChange={(e) => setPriceInr(e.target.value)}
+            className="admin-input mt-1"
+          />
         </div>
         <div>
-          <label className="text-xs font-semibold text-black/60">Interval</label>
-          <input value={interval} onChange={(e) => setInterval(e.target.value)} className="admin-input mt-1" placeholder="mo" />
+          <label htmlFor={pkg._id + "-interval"} className="text-xs font-semibold text-black/60">
+            Interval
+          </label>
+          <input
+            id={pkg._id + "-interval"}
+            value={interval}
+            onChange={(e) => setInterval(e.target.value)}
+            className="admin-input mt-1"
+            placeholder="mo"
+          />
         </div>
       </div>
 
       <div className="mt-3">
-        <label className="text-xs font-semibold text-black/60">Description</label>
-        <input value={description} onChange={(e) => setDescription(e.target.value)} className="admin-input mt-1" />
+        <label htmlFor={pkg._id + "-description"} className="text-xs font-semibold text-black/60">
+          Description
+        </label>
+        <input
+          id={pkg._id + "-description"}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="admin-input mt-1"
+        />
       </div>
 
       <div className="mt-3">
-        <label className="text-xs font-semibold text-black/60">Features (one per line)</label>
+        <label htmlFor={pkg._id + "-features"} className="text-xs font-semibold text-black/60">
+          Features (one per line)
+        </label>
         <textarea
+          id={pkg._id + "-features"}
           value={featuresText}
           onChange={(e) => setFeaturesText(e.target.value)}
           className="admin-input mt-1 min-h-[120px]"
@@ -213,11 +280,19 @@ function PackageCard({
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-4">
           <label className="inline-flex items-center gap-2 text-xs font-semibold text-black">
-            <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={isActive}
+              onChange={(e) => setIsActive(e.target.checked)}
+            />
             Active
           </label>
           <label className="inline-flex items-center gap-2 text-xs font-semibold text-black">
-            <input type="checkbox" checked={isPopular} onChange={(e) => setIsPopular(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={isPopular}
+              onChange={(e) => setIsPopular(e.target.checked)}
+            />
             Popular
           </label>
         </div>

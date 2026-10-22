@@ -34,11 +34,22 @@ const LayoutRoute = () => (
 );
 
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    if (hash) {
+      try {
+        const section = document.getElementById(decodeURIComponent(hash.slice(1)));
+        if (section) {
+          section.scrollIntoView({ block: "start" });
+          return;
+        }
+      } catch {
+        /* Fall back to the top for malformed anchors. */
+      }
+    }
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [pathname]);
+  }, [pathname, hash]);
 
   return null;
 };
@@ -61,12 +72,14 @@ const App = () => (
             <Route path="/web-development" element={<Navigate to="/it-services" replace />} />
             <Route
               path="/it-services/contact"
-              element={<ServiceContact pageTitle="IT Services" defaultSubject="Frontend Development" />}
+              element={<ServiceContact pageTitle="IT Services" defaultSubject="Business Website" />}
             />
             <Route path="/social-media-marketing" element={<SocialMediaMarketing />} />
             <Route
               path="/social-media-marketing/contact"
-              element={<ServiceContact pageTitle="Social Media Marketing" defaultSubject="Instagram" />}
+              element={
+                <ServiceContact pageTitle="Social Media Marketing" defaultSubject="Instagram" />
+              }
             />
             <Route path="/services/:slug" element={<ServicePackages />} />
             <Route path="/auth" element={<Auth />} />
@@ -95,7 +108,12 @@ const App = () => (
             <Route path="/video-editing" element={<VideoEditing />} />
             <Route
               path="/video-editing/contact"
-              element={<ServiceContact pageTitle="Video Editing & Reviews" defaultSubject="YouTube Editing" />}
+              element={
+                <ServiceContact
+                  pageTitle="Video Editing & Reviews"
+                  defaultSubject="YouTube Editing"
+                />
+              }
             />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
