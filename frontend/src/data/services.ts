@@ -4,24 +4,32 @@ export const serviceLinks = [
     path: "/it-services",
     description: "Websites, mobile apps, CRM & business software",
     number: "01",
+    highlights: ["Business websites", "Mobile apps", "CRM systems"],
+    outcome: "Build and automate",
   },
   {
     title: "Social media",
     path: "/social-media-marketing",
     description: "Content planning, posts & account management",
     number: "02",
+    highlights: ["Content calendars", "Posts & reels", "Account management"],
+    outcome: "Plan, create and grow",
   },
   {
     title: "Digital marketing",
     path: "/digital-marketing",
     description: "SEO, paid advertising & campaign reporting",
     number: "03",
+    highlights: ["SEO", "Google Ads", "Campaign reports"],
+    outcome: "Reach ready-to-buy customers",
   },
   {
     title: "Video editing",
     path: "/video-editing",
     description: "YouTube videos, short clips & product reviews",
     number: "04",
+    highlights: ["YouTube videos", "Short-form clips", "Product reviews"],
+    outcome: "Edit for every screen",
   },
 ];
 

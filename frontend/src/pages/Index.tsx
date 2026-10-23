@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { serviceLinks, websiteProjects } from "@/data/services";
 import { ProjectCta, ProjectProcess } from "@/components/marketing/ServicePage";
+import ServiceCardVisual from "@/components/marketing/ServiceCardVisual";
 
 const heroVideos = [
   "/hero%20section/development.mp4",
@@ -174,25 +175,56 @@ export default function Index() {
               understand what each part is for.
             </p>
           </div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2">
-            {serviceLinks.map((service) => (
-              <Link
+          <div className="mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {serviceLinks.map((service, index) => (
+              <motion.article
                 key={service.path}
-                to={service.path}
-                className="group rounded-xl border border-border bg-card p-6 transition-colors hover:border-accent/50 sm:p-8"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.18 }}
+                transition={{ duration: 0.55, delay: index * 0.08, ease: "easeOut" }}
+                className="h-full"
               >
-                <span className="text-xs tabular-nums text-muted-foreground">{service.number}</span>
-                <div className="mt-7 flex items-center justify-between gap-4">
-                  <h3 className="font-display text-2xl font-semibold">{service.title}</h3>
-                  <ArrowRight
-                    aria-hidden="true"
-                    className="h-5 w-5 text-accent transition-transform group-hover:translate-x-1"
-                  />
-                </div>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  {service.description}
-                </p>
-              </Link>
+                <Link
+                  to={service.path}
+                  aria-label={`Explore ${service.title}`}
+                  className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/35 hover:shadow-[0_20px_48px_-30px_rgba(30,64,175,0.5)]"
+                >
+                  <div className="aspect-video w-full overflow-hidden border-b border-border/70">
+                    <ServiceCardVisual path={service.path} title={service.title} />
+                  </div>
+                  <div className="flex flex-1 flex-col p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.13em] text-accent">
+                        {service.number} / {service.outcome}
+                      </span>
+                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border bg-background text-accent transition-all duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-white">
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                        />
+                      </span>
+                    </div>
+                    <h3 className="mt-4 font-display text-xl font-semibold">{service.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                      {service.description}
+                    </p>
+                    <ul
+                      className="mt-4 flex flex-wrap gap-x-3 gap-y-1.5 border-t border-border/70 pt-3"
+                      aria-label={`${service.title} includes`}
+                    >
+                      {service.highlights.map((highlight) => (
+                        <li
+                          key={highlight}
+                          className="relative pl-2.5 text-[11px] font-medium leading-5 text-foreground/70 before:absolute before:left-0 before:top-[0.55rem] before:h-1 before:w-1 before:rounded-full before:bg-accent"
+                        >
+                          {highlight}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Link>
+              </motion.article>
             ))}
           </div>
         </div>
